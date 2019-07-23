@@ -1,5 +1,16 @@
 body {
-	position: absolute;
+	display: grid;
+	grid-template-columns: 240px 1fr;
+	grid-template-rows: 50px 1fr;
+	grid-template-areas:
+		"sidenav header"
+		"sidenav main";
+	height: 100vh;
+	margin: 0;
+}
+
+.content-container {
+	position: relative;
 	top: 10px;
 	left: 10px;
 	width: calc(100% - 20px);
@@ -7,7 +18,74 @@ body {
 	display: grid;
 	grid-gap: 15px;
 	grid-auto-flow: row dense;
+}
+
+a {
+	text-decoration: none;
+	color: white;
+}
+
+a:visited {
+	text-decoration: none;
+	color: white;
+}
+
+a:hover {
+	text-decoration: none;
+	color: #fafafa;
+}
+
+a:active {
+	text-decoration: none;
+	color: lightgray;
+}
+
+/* base content */
+.header {
+	display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    background-color: #648ca6;
+	grid-area: header;
+	background-color: #648ca6;
+}
+
+.sidenav {
+	display: flex; /* Will be hidden on mobile */
+    flex-direction: column;
+	grid-area: sidenav;
+	background-color: #394263;
+}
+
+.sidenav-list {
+	padding: 0;
+	margin-top: 85px;
+	list-style-type: none;
+}
+
+.sidenav-list-item {
+	width: 100%;
+	color: #ddd;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.sidenav-list-item > a {
+	text-decoration: none;
+	display: block;
+	height: 100%;
+	padding: 20px 20px 20px 40px;
+}
+
+.sidenav-list-item:hover {
+	background-color: rgba(255, 255, 255, 0.2);
+	cursor: pointer;
+}
+
+.main {
 	background-color: #fafafa;
+	grid-area: main;
+	overflow-y: scroll;
 }
 
 button {
@@ -15,10 +93,6 @@ button {
 	background-color: white;
 	border: 1px solid lightgray;
 	min-height: 100px;
-}
-
-.btn-confirm {
-	background-color: green;
 }
 
 button:hover {
@@ -42,7 +116,6 @@ button:focus {
 	width: calc(100% - 10px);
 	height: calc(100% - 10px);
 	padding: 5px;
-
 	text-align: center;
 }
 
@@ -59,6 +132,7 @@ button:focus {
 	min-height: 50px;
 }
 
+/* element styles */
 .el-full-width {
 	grid-column: 1 / -1;
 }
@@ -69,4 +143,16 @@ button:focus {
 
 .el-rightbound {
 	text-align: right;
+}
+
+/* Non-mobile styles for side nav responsiveness, 750px breakpoint */
+@media only screen and (min-width: 46.875em) {
+	.sidenav {
+		position: relative; /* Fixed position on mobile */
+		transform: translateX(0);
+	}
+
+	.sidenav__close-icon {
+		visibility: hidden;
+	}
 }
