@@ -2,10 +2,12 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
 public enum WebinterfaceElementLayout {
 
-	NONE(""),
-	FULL_WIDTH_BOX("box full-width-box"),
-	HALF_WIDTH_BOX("box half-width-box"),
-	SMALL_SQUARE_BOX("box small-square-box"),
+	NONE(null),
+	FULL_WIDTH("el-full-width"),
+	FULL_WIDTH_LEFTBOUND("el-full-width el-leftbound"),
+	FULL_WIDTH_RIGHTBOUND("el-full-width el-rightbound"),
+	LEFTBOUND("el-leftbound"),
+	RIGHTBOUND("el-rightbound"),
 	;
 	
 	private final String className;

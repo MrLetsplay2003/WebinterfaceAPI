@@ -4,10 +4,21 @@ import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 
 public abstract class AbstractWebinterfacePageElement implements WebinterfacePageElement {
 
+	private String width;
 	private WebinterfaceElementLayout layout;
 	
 	public AbstractWebinterfacePageElement() {
 		this.layout = WebinterfaceElementLayout.NONE;
+	}
+	
+	@Override
+	public void setWidth(String width) {
+		this.width = width;
+	}
+	
+	@Override
+	public String getWidth() {
+		return width;
 	}
 	
 	@Override
@@ -24,9 +35,15 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 	
 	@Override
 	public HtmlElement toHtml() {
+		HtmlElement elContainer = new HtmlElement("div");
+		elContainer.addClass("element-container");
 		HtmlElement el = createElement();
-		el.setAttribute("class", layout.getClassName());
-		return el;
+		if(width != null) el.setAttribute("style", "width:" + width + "");
+		el.addClass("element");
+		String cN = layout.getClassName();
+		if(cN != null) elContainer.addClass(cN);
+		elContainer.appendChild(el);
+		return elContainer;
 	}
 	
 	

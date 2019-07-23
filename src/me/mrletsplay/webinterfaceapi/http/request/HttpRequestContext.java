@@ -1,5 +1,8 @@
 package me.mrletsplay.webinterfaceapi.http.request;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import me.mrletsplay.webinterfaceapi.http.HttpConnection;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
 import me.mrletsplay.webinterfaceapi.http.header.HttpClientHeader;
@@ -12,11 +15,13 @@ public class HttpRequestContext {
 	private HttpConnection connection;
 	private HttpClientHeader clientHeader;
 	private HttpServerHeader serverHeader;
+	private Map<String, Object> properties;
 	
 	public HttpRequestContext(HttpConnection connection, HttpClientHeader clientHeader, HttpServerHeader serverHeader) {
 		this.connection = connection;
 		this.clientHeader = clientHeader;
 		this.serverHeader = serverHeader;
+		this.properties = new HashMap<>();
 	}
 	
 	public HttpConnection getConnection() {
@@ -37,6 +42,14 @@ public class HttpRequestContext {
 	
 	public HttpServerHeader getServerHeader() {
 		return serverHeader;
+	}
+	
+	public void setProperty(String name, Object value) {
+		properties.put(name, value);
+	}
+	
+	public Object getProperty(String name) {
+		return properties.get(name);
 	}
 	
 	public static void setCurrentContext(HttpRequestContext ctx) {

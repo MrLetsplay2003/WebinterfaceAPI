@@ -4,6 +4,10 @@ import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 
 public interface WebinterfacePageElement {
 	
+	public void setWidth(String width);
+	
+	public String getWidth();
+	
 	public void setLayout(WebinterfaceElementLayout layout);
 	
 	public WebinterfaceElementLayout getLayout();

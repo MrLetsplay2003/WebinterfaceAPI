@@ -118,6 +118,19 @@ public class HtmlElement {
 		return getAttribute("id");
 	}
 	
+	public void addClass(Supplier<String> htmlClass) {
+		Supplier<String> oldC = getAttribute("class");
+		if(oldC == null) {
+			setAttribute("class", htmlClass);
+			return;
+		}
+		setAttribute("class", () -> oldC.get() + " " + htmlClass.get());
+	}
+	
+	public void addClass(String htmlClass) {
+		addClass(() -> htmlClass);
+	}
+	
 	public HtmlElement copy() {
 		return copy(false);
 	}
@@ -172,12 +185,6 @@ public class HtmlElement {
 		return st;
 	}
 	
-	public static HtmlElement script(JavaScriptScript script) {
-		HtmlElement st = script();
-		st.setText(() -> script.toString());
-		return st;
-	}
-	
 	public static HtmlSelect select() {
 		return new HtmlSelect();
 	}
@@ -196,6 +203,12 @@ public class HtmlElement {
 	
 	public static HtmlScript script() {
 		return new HtmlScript();
+	}
+	
+	public static HtmlElement script(JavaScriptScript script) {
+		HtmlScript st = script();
+		st.setText(() -> script.toString());
+		return st;
 	}
 	
 	public static HtmlElement p() {
