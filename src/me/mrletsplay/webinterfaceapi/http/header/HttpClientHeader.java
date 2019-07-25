@@ -18,6 +18,7 @@ public class HttpClientHeader {
 		this.path = path;
 		this.protocolVersion = protocolVersion;
 		this.fields = fields;
+		this.postData = postData;
 	}
 	
 	public String getMethod() {
@@ -36,12 +37,15 @@ public class HttpClientHeader {
 		return fields;
 	}
 	
-	public byte[] getPostData() {
-		return postData;
+	public PostData getPostData() {
+		return new PostData(fields.getFieldValue("Content-Type"), postData);
 	}
 	
 	public static HttpClientHeader parse(byte[] data) {
-		List<String> lines = new ArrayList<>(Arrays.asList(new String(data, StandardCharsets.UTF_8).split("\r\n")));
+		if(data.length == 0) return null;
+		String dt = new String(data, StandardCharsets.UTF_8);
+		dt = dt.substring(0, dt.indexOf("\r\n\r\n"));
+		List<String> lines = new ArrayList<>(Arrays.asList(dt.split("\r\n")));
 		if(lines.isEmpty() || lines.stream().allMatch(String::isEmpty)) return null;
 		String[] fs = lines.remove(0).split(" ");
 		String method = fs[0];
@@ -54,7 +58,10 @@ public class HttpClientHeader {
 			String[] kv = l.split(": ", 2);
 			fields.addFieldValue(kv[0], kv[1]);
 		}
-		return new HttpClientHeader(method, path, protocolVersion, fields, null);
+		int prDtLen = dt.getBytes(StandardCharsets.UTF_8).length;
+		byte[] postData = new byte[data.length - prDtLen - 4]; // - 4 bytes because of the \r\n\r\n
+		System.arraycopy(data, prDtLen + 4, postData, 0, postData.length);
+		return new HttpClientHeader(method, path, protocolVersion, fields, postData);
 	}
 	
 }

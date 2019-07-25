@@ -8,12 +8,12 @@ import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfacePageAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 
 public class WebinterfaceButton extends AbstractWebinterfacePageElement {
 	
 	private Supplier<String> text;
-	private WebinterfacePageAction onClickAction;
+	private WebinterfaceAction onClickAction;
 	
 	public WebinterfaceButton(Supplier<String> text) {
 		this.text = text;
@@ -31,7 +31,7 @@ public class WebinterfaceButton extends AbstractWebinterfacePageElement {
 		setText(() -> text);
 	}
 	
-	public void setOnClickAction(WebinterfacePageAction onClickAction) {
+	public void setOnClickAction(WebinterfaceAction onClickAction) {
 		this.onClickAction = onClickAction;
 	}
 	

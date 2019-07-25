@@ -6,8 +6,9 @@ public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
 	
 	@Override
 	public HtmlElement createElement() {
-		HtmlElement b = HtmlElement.button();
-		b.setText("I'm a button");
+		HtmlElement b = new HtmlElement("input");
+		b.setAttribute("type", "text");
+		b.setAttribute("placeholder", "Text");
 		return b;
 	}
 

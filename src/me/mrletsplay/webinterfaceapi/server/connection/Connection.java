@@ -21,5 +21,9 @@ public interface Connection {
 			throw new ServerException("Error while closing the connection", e);
 		}
 	}
+	
+	public default boolean isSocketAlive() {
+		return !getSocket().isClosed() && getSocket().isConnected() && getSocket().isBound() && !getSocket().isInputShutdown() && !getSocket().isOutputShutdown();
+	}
 
 }

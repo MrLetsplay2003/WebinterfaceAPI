@@ -22,9 +22,9 @@ public class HttpConnection extends AbstractConnection {
 	@Override
 	public void startRecieving() {
 		getServer().getExecutor().submit(() -> {
-			while(!getServer().getExecutor().isShutdown()) {
+			while(isSocketAlive() && !getServer().getExecutor().isShutdown()) {
 				try {
-					receive();
+					if(!receive()) return;
 				}catch(Exception e) {
 					close();
 					e.printStackTrace(); // TODO: remove
@@ -39,10 +39,10 @@ public class HttpConnection extends AbstractConnection {
 		return (HttpServer) super.getServer();
 	}
 	
-	private void receive() throws IOException {
+	private boolean receive() throws IOException {
 		byte[] rec = IOUtils.readBytesUntilUnavailable(getSocket().getInputStream());
 		HttpClientHeader h = HttpClientHeader.parse(rec);
-		if(h == null) return;
+		if(h == null) return false;
 		
 		HttpServerHeader sh = new HttpServerHeader(getServer().getProtocolVersion(), HttpStatusCodes.OK_200, new HttpHeaderFields());
 		HttpRequestContext ctx = new HttpRequestContext(this, h, sh);
@@ -55,6 +55,7 @@ public class HttpConnection extends AbstractConnection {
 		
 		IOUtils.transfer(new ByteArrayInputStream(sh.toByteArray()), getSocket().getOutputStream());
 		getSocket().getOutputStream().flush();
+		return !h.getFields().getFieldValue("Connection").equals("close");
 	}
 
 }

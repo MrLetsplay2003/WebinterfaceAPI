@@ -18,6 +18,7 @@ public class HttpServerHeader {
 		this.protocolVersion = protocolVersion;
 		this.statusCode = statusCode;
 		this.fields = fields;
+		setContent(new byte[0]);
 	}
 	
 	public void setProtocolVersion(HttpProtocolVersion protocolVersion) {
@@ -45,8 +46,8 @@ public class HttpServerHeader {
 	}
 	
 	public void setContent(String type, byte[] content) {
-		fields.addFieldValue("Content-Type", type == null ? "application/unknown" : (type + "; charset=utf-8"));
-		fields.addFieldValue("Content-Length", String.valueOf(content.length));
+		fields.setFieldValue("Content-Type", type == null ? "application/unknown" : (type + "; charset=utf-8"));
+		fields.setFieldValue("Content-Length", String.valueOf(content.length));
 		this.content = content;
 	}
 	

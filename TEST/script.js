@@ -8,7 +8,8 @@ class Webinterface {
 			$.ajax({
 				url: "/_internal/call",
 				method:"POST",
-				data: data,
+				contentType: "application/json",
+				data: JSON.stringify({target: target, method: method, data: data}),
 				timeout: 10000,
 				cache: false,
 				success: function(response, status) {
@@ -24,6 +25,14 @@ class Webinterface {
 				}
 			});
 		});
+	}
+
+}
+
+class WebinterfaceUtils {
+
+	static getElementAttributeById(elementId, attributeName) {
+		return document.getElementById(elementId).getAttribute(attributeName);
 	}
 
 }
