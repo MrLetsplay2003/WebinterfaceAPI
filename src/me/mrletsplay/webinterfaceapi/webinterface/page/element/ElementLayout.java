@@ -1,18 +1,18 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
-public enum WebinterfaceElementLayout {
+public enum ElementLayout {
 
-	NONE(null),
 	FULL_WIDTH("el-full-width"),
-	FULL_WIDTH_LEFTBOUND("el-full-width el-leftbound"),
-	FULL_WIDTH_RIGHTBOUND("el-full-width el-rightbound"),
 	LEFTBOUND("el-leftbound"),
 	RIGHTBOUND("el-rightbound"),
+	CENTER_VERTICALLY("el-center-vertically"),
+	FULL_NOT_LAST_COLUMN("el-full-not-last-column"),
+//	REMAINING_SPACE("el-remainingspace"),
 	;
 	
 	private final String className;
 	
-	private WebinterfaceElementLayout(String className) {
+	private ElementLayout(String className) {
 		this.className = className;
 	}
 	

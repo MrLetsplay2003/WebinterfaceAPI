@@ -2,6 +2,7 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 
@@ -11,6 +12,17 @@ public class WebinterfaceElementGroup extends AbstractWebinterfacePageElement {
 	
 	public WebinterfaceElementGroup() {
 		this.elements = new ArrayList<>();
+	}
+	
+	public void addTitle(Supplier<String> title) {
+		WebinterfaceTitleText t = new WebinterfaceTitleText();
+		t.setText(title);
+		t.addLayouts(ElementLayout.FULL_WIDTH);
+		addElement(t);
+	}
+	
+	public void addTitle(String title) {
+		addTitle(() -> title);
 	}
 	
 	public void addElement(WebinterfacePageElement element) {

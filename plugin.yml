@@ -1,0 +1,11 @@
+main: me.mrletsplay.webinterfaceapi.bukkit.WebinterfacePlugin
+name: MrCore_Webinterface
+version: 1.0
+api-version: 1.13
+author: MrLetsplay2003
+
+commands:
+  mrcore:
+  mrcoreui:
+  mrcoreextensions:
+  mrcoredebug:

@@ -1,14 +1,19 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 
 public abstract class AbstractWebinterfacePageElement implements WebinterfacePageElement {
 
 	private String id, width, height;
-	private WebinterfaceElementLayout layout;
+	private List<ElementLayout> layouts;
 	
 	public AbstractWebinterfacePageElement() {
-		this.layout = WebinterfaceElementLayout.NONE;
+		this.layouts = new ArrayList<>();
 	}
 	
 	@Override
@@ -42,13 +47,13 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 	}
 	
 	@Override
-	public void setLayout(WebinterfaceElementLayout layout) {
-		this.layout = layout;
+	public void addLayouts(ElementLayout... layouts) {
+		this.layouts.addAll(Arrays.asList(layouts));
 	}
 	
 	@Override
-	public WebinterfaceElementLayout getLayout() {
-		return layout;
+	public List<ElementLayout> getLayouts() {
+		return layouts;
 	}
 	
 	public abstract HtmlElement createElement();
@@ -61,8 +66,8 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		if(id != null) el.setID(id);
 		if(width != null) el.setAttribute("style", "width:" + width + "");
 		el.addClass("element");
-		String cN = layout.getClassName();
-		if(cN != null) elContainer.addClass(cN);
+		String cN = layouts.stream().map(ElementLayout::getClassName).collect(Collectors.joining(" "));
+		if(!cN.isEmpty()) elContainer.addClass(cN);
 		elContainer.appendChild(el);
 		return elContainer;
 	}

@@ -1,5 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
+import java.util.List;
+
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 
 public interface WebinterfacePageElement {
@@ -16,9 +18,9 @@ public interface WebinterfacePageElement {
 	
 	public String getHeight();
 	
-	public void setLayout(WebinterfaceElementLayout layout);
+	public void addLayouts(ElementLayout... layouts);
 	
-	public WebinterfaceElementLayout getLayout();
+	public List<ElementLayout> getLayouts();
 	
 	public HtmlElement toHtml();
 	
