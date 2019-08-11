@@ -3,6 +3,8 @@ package me.mrletsplay.webinterfaceapi.http;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
@@ -17,6 +19,11 @@ public class HttpConnection extends AbstractConnection {
 
 	public HttpConnection(HttpServer server, Socket socket) {
 		super(server, socket);
+		try {
+			socket.setSoTimeout(1000);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -24,7 +31,11 @@ public class HttpConnection extends AbstractConnection {
 		getServer().getExecutor().submit(() -> {
 			while(isSocketAlive() && !getServer().getExecutor().isShutdown()) {
 				try {
-					if(!receive()) return;
+					if(!receive()) {
+						close();
+						return;
+					}
+				}catch(SocketTimeoutException ignored) {
 				}catch(Exception e) {
 					close();
 					e.printStackTrace(); // TODO: remove

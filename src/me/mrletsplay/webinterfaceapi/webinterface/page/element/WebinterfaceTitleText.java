@@ -8,6 +8,14 @@ public class WebinterfaceTitleText extends AbstractWebinterfacePageElement {
 	
 	private Supplier<String> text;
 	
+	public WebinterfaceTitleText(Supplier<String> text) {
+		this.text = text;
+	}
+	
+	public WebinterfaceTitleText(String text) {
+		this(() -> text);
+	}
+	
 	public void setText(Supplier<String> text) {
 		this.text = text;
 	}

@@ -13,12 +13,7 @@ class Webinterface {
 				timeout: 10000,
 				cache: false,
 				success: function(response, status) {
-					try {
-						let obj = JSON.parse(response);
-						resolve(new WebinterfaceResponse(true, obj, null));
-					}catch(e) {
-						resolve(new WebinterfaceResponse(false, null, "Exception: " + e));
-					}
+					resolve(new WebinterfaceResponse(true, response, null));
 				},
 				error: function(xhr, status, error) {
 					resolve(new WebinterfaceResponse(false, null, "Request error: " + error));

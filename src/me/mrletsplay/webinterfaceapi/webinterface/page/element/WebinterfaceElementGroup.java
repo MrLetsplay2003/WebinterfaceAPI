@@ -15,7 +15,7 @@ public class WebinterfaceElementGroup extends AbstractWebinterfacePageElement {
 	}
 	
 	public void addTitle(Supplier<String> title) {
-		WebinterfaceTitleText t = new WebinterfaceTitleText();
+		WebinterfaceTitleText t = new WebinterfaceTitleText(title);
 		t.setText(title);
 		t.addLayouts(ElementLayout.FULL_WIDTH);
 		addElement(t);

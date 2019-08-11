@@ -40,7 +40,7 @@ public class WebinterfaceButton extends AbstractWebinterfacePageElement {
 		HtmlButton b = HtmlElement.button();
 		b.setText(text);
 		if(onClickAction != null) {
-			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.PROPERTY_SCRIPT);
+			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
 			JavaScriptFunction f = onClickAction.toJavaScript();
 			sc.addFunction(f);
 			b.setOnClick(f.getSignature());

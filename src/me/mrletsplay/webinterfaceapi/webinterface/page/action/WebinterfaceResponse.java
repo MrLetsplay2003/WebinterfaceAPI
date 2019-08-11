@@ -37,6 +37,10 @@ public class WebinterfaceResponse {
 		return new WebinterfaceResponse(true, data, null);
 	}
 	
+	public static WebinterfaceResponse success() {
+		return success(null);
+	}
+	
 	public static WebinterfaceResponse error(String message) {
 		return new WebinterfaceResponse(false, null, message);
 	}

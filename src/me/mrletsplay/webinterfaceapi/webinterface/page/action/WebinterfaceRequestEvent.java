@@ -1,11 +1,13 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.action;
 
+import me.mrletsplay.mrcore.json.JSONObject;
+
 public class WebinterfaceRequestEvent {
 
 	private String target, method;
-	private Object data;
+	private JSONObject data;
 	
-	public WebinterfaceRequestEvent(String target, String method, Object data) {
+	public WebinterfaceRequestEvent(String target, String method, JSONObject data) {
 		this.target = target;
 		this.method = method;
 		this.data = data;
@@ -19,7 +21,7 @@ public class WebinterfaceRequestEvent {
 		return method;
 	}
 	
-	public Object getRequestData() {
+	public JSONObject getRequestData() {
 		return data;
 	}
 	

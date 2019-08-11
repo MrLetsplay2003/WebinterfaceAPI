@@ -1,5 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.action.value;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,12 +14,18 @@ public class ArrayValue implements WebinterfaceActionValue {
 	}
 	
 	public ArrayValue(WebinterfaceActionValue... values) {
-		this(Arrays.asList(values));
+		this(new ArrayList<>(Arrays.asList(values)));
+	}
+	
+	public void addValue(WebinterfaceActionValue value) {
+		values.add(value);
 	}
 	
 	@Override
 	public String toJavaScript() {
-		return "[" + values.stream().map(v -> v.toJavaScript()).collect(Collectors.joining(",")) + "]";
+		return "[" + values.stream()
+			.map(v -> v.toJavaScript())
+			.collect(Collectors.joining(",")) + "]";
 	}
 
 }

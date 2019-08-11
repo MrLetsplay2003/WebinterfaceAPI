@@ -1,7 +1,9 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlDocument;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
@@ -13,16 +15,16 @@ import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 public class WebinterfacePage implements HttpDocument {
 	
 	public static final String
-		PROPERTY_DOCUMENT = "webinterface-document",
-		PROPERTY_SCRIPT = "webinterface-script";
+		CONTEXT_PROPERTY_DOCUMENT = "webinterface-document",
+		CONTEXT_PROPERTY_SCRIPT = "webinterface-script";
 	
 	private String name, url;
-	private List<WebinterfacePageSection> sections;
+	private Supplier<List<WebinterfacePageSection>> sections;
 	
 	public WebinterfacePage(String name, String url) {
 		this.name = name;
 		this.url = url;
-		this.sections = new ArrayList<>();
+		this.sections = () -> new ArrayList<>();
 	}
 	
 	public String getName() {
@@ -33,11 +35,20 @@ public class WebinterfacePage implements HttpDocument {
 		return url;
 	}
 	
-	public void addSection(WebinterfacePageSection section) {
-		sections.add(section);
+	public void addDynamicSections(Supplier<List<WebinterfacePageSection>> sections) {
+		Supplier<List<WebinterfacePageSection>> oldS = this.sections;
+		this.sections = () -> {
+			List<WebinterfacePageSection> ss = new ArrayList<>(oldS.get());
+			ss.addAll(sections.get());
+			return ss;
+		};
 	}
 	
-	public List<WebinterfacePageSection> getSections() {
+	public void addSection(WebinterfacePageSection section) {
+		addDynamicSections(() -> Collections.singletonList(section));
+	}
+	
+	public Supplier<List<WebinterfacePageSection>> getSections() {
 		return sections;
 	}
 	
@@ -48,8 +59,8 @@ public class WebinterfacePage implements HttpDocument {
 		JavaScriptScript sc = new JavaScriptScript();
 		
 		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
-		ctx.setProperty(PROPERTY_DOCUMENT, d);
-		ctx.setProperty(PROPERTY_SCRIPT, sc);
+		ctx.setProperty(CONTEXT_PROPERTY_DOCUMENT, d);
+		ctx.setProperty(CONTEXT_PROPERTY_SCRIPT, sc);
 		
 		HtmlElement header = new HtmlElement("header");
 		header.addClass("header");
@@ -62,7 +73,7 @@ public class WebinterfacePage implements HttpDocument {
 		main.addClass("main");
 		
 		HtmlElement content = new HtmlElement("div");
-		for(WebinterfacePageSection s : sections) {
+		for(WebinterfacePageSection s : sections.get()) {
 			content.appendChild(s.toHtml());
 		}
 		content.addClass("content-container");

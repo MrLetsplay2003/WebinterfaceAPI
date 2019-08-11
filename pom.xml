@@ -16,7 +16,38 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+					<!-- put your configurations here -->
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>include</directory>
+				<includes>
+					<include>*.*</include>
+				</includes>
+				<targetPath>include</targetPath>
+			</resource>
+			<resource>
+				<directory>${project.basedir}</directory>
+				<includes>
+					<include>plugin.yml</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 
 	<repositories>
@@ -33,6 +64,12 @@
 
 	<dependencies>
 		<!--Spigot API -->
+	<dependency>
+	    <groupId>com.github.MrLetsplay2003</groupId>
+	    <artifactId>MrCore</artifactId>
+	    <version>master-SNAPSHOT</version>
+	    <scope>compile</scope>
+	</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
@@ -46,6 +83,7 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
 			<version>1.7</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

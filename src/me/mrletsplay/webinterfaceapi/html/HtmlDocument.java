@@ -21,8 +21,12 @@ public class HtmlDocument implements HttpDocument {
 		this.description = new HtmlElement("meta");
 		description.setAttribute("name", "description");
 		description.setAttribute("content", "WebinterfaceAPI html document!");
+		HtmlElement vp = new HtmlElement("meta");
+		vp.setAttribute("name", "viewport");
+		vp.setAttribute("content", "width=device-width, initial-scale=1");
 		head.appendChild(title);
 		head.appendChild(description);
+		head.appendChild(vp);
 		html.appendChild(head);
 		html.appendChild(body);
 	}

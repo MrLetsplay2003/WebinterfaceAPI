@@ -3,6 +3,7 @@ package me.mrletsplay.webinterfaceapi.server.impl;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -28,10 +29,12 @@ public abstract class AbstractServer implements Server {
 	public void start() {
 		try {
 			this.socket = new ServerSocket(port);
+			socket.setSoTimeout(1000);
 			executor.execute(() -> {
 				while(!executor.isShutdown()) {
 					try {
 						acceptConnection();
+					}catch(SocketTimeoutException ignored) {
 					}catch(Exception e) {
 						e.printStackTrace(); // TODO: ?
 					}
