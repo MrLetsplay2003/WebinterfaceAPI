@@ -64,9 +64,18 @@ public class WebinterfacePage implements HttpDocument {
 		
 		HtmlElement header = new HtmlElement("header");
 		header.addClass("header");
+
+		HtmlElement img2 = new HtmlElement("img");
+		img2.setAttribute("src", "/_internal/list.png");
+		img2.setAttribute("alt", "Dropdown");
+		img2.addClass("header-list-item");
+		img2.setAttribute("onclick", "toggleSidebar()");
+		header.appendChild(img2);
 		
 		HtmlElement img = new HtmlElement("img");
 		img.setAttribute("src", "/_internal/header.png");
+		img.setAttribute("alt", "WebinterfaceAPI");
+		img.addClass("header-image-item");
 		header.appendChild(img);
 		
 		HtmlElement main = new HtmlElement("main");
@@ -81,6 +90,13 @@ public class WebinterfacePage implements HttpDocument {
 		
 		HtmlElement sidenav = new HtmlElement("aside");
 		sidenav.addClass("sidenav");
+
+		HtmlElement img3 = new HtmlElement("img");
+		img3.setAttribute("src", "/_internal/close.png");
+		img3.setAttribute("alt", "Close");
+		img3.addClass("header-list-item");
+		img3.setAttribute("onclick", "toggleSidebar()");
+		sidenav.appendChild(img3);
 		
 		HtmlElement sideNavList = new HtmlElement("ul");
 		sideNavList.addClass("sidenav-list");

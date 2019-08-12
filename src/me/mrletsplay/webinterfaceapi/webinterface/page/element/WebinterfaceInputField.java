@@ -37,6 +37,7 @@ public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
 		HtmlElement b = new HtmlElement("input");
 		b.setAttribute("type", "text");
 		b.setAttribute("placeholder", placeholder);
+		b.setAttribute("aria-label", placeholder);
 		return b;
 	}
 

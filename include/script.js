@@ -60,3 +60,7 @@ class WebinterfaceResponse {
 	}
 
 }
+
+function toggleSidebar() {
+	$(".sidenav").toggle("active");
+}

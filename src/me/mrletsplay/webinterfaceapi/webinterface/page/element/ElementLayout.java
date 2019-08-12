@@ -7,6 +7,7 @@ public enum ElementLayout {
 	RIGHTBOUND("el-rightbound"),
 	CENTER_VERTICALLY("el-center-vertically"),
 	FULL_NOT_LAST_COLUMN("el-full-not-last-column"),
+	NEW_LINE("el-new-line"),
 //	REMAINING_SPACE("el-remainingspace"),
 	;
 	
