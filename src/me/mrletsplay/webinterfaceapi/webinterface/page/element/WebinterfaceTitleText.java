@@ -24,6 +24,10 @@ public class WebinterfaceTitleText extends AbstractWebinterfacePageElement {
 		setText(() -> text);
 	}
 	
+	public Supplier<String> getText() {
+		return text;
+	}
+	
 	@Override
 	public HtmlElement createElement() {
 		HtmlElement b = new HtmlElement("b");

@@ -30,8 +30,7 @@ public class TestingMainTen {
 		tt.addLayouts(ElementLayout.FULL_WIDTH, ElementLayout.LEFTBOUND, ElementLayout.CENTER_VERTICALLY);
 		g.addElement(tt);
 		
-		WebinterfaceText tx = new WebinterfaceText();
-		tx.setText("Lorem ipsum dolor sit amet etc etc etc text huiui wtf was tu ich hier");
+		WebinterfaceText tx = new WebinterfaceText("Lorem ipsum dolor sit amet etc etc etc text huiui wtf was tu ich hier");
 		tx.addLayouts(ElementLayout.FULL_WIDTH, ElementLayout.LEFTBOUND);
 		g.addElement(tx);
 		
