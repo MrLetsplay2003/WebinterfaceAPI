@@ -200,6 +200,10 @@ input:focus {
 	grid-column: 1 / 2;
 }
 
+.el-justify-text {
+	text-align: justify;
+}
+
 ::-webkit-scrollbar {
 	display: none;
 }

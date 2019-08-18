@@ -64,12 +64,12 @@
 
 	<dependencies>
 		<!--Spigot API -->
-	<dependency>
-	    <groupId>com.github.MrLetsplay2003</groupId>
-	    <artifactId>MrCore</artifactId>
-	    <version>master-SNAPSHOT</version>
-	    <scope>compile</scope>
-	</dependency>
+		<dependency>
+			<groupId>com.github.MrLetsplay2003</groupId>
+			<artifactId>MrCore</artifactId>
+			<version>master-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>

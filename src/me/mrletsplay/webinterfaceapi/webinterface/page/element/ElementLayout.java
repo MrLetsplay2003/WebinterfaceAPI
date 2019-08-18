@@ -5,6 +5,7 @@ public enum ElementLayout {
 	FULL_WIDTH("el-full-width"),
 	LEFTBOUND("el-leftbound"),
 	RIGHTBOUND("el-rightbound"),
+	JUSTIFY_TEXT("el-justify-text"),
 	CENTER_VERTICALLY("el-center-vertically"),
 	FULL_NOT_LAST_COLUMN("el-full-not-last-column"),
 	NEW_LINE("el-new-line"),

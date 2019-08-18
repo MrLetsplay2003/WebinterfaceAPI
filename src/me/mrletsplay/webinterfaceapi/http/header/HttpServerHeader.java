@@ -46,7 +46,7 @@ public class HttpServerHeader {
 	}
 	
 	public void setContent(String type, byte[] content) {
-		fields.setFieldValue("Content-Type", type == null ? "application/unknown" : (type + "; charset=utf-8"));
+		fields.setFieldValue("Content-Type", type == null ? "application/unknown" : (type + "; charset=utf-8")); // TODO: charset?
 		fields.setFieldValue("Content-Length", String.valueOf(content.length));
 		this.content = content;
 	}

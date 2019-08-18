@@ -20,6 +20,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitle
 public class TestingMainTen {
 
 	public static void main(String[] args) throws Exception {
+		System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 		WebinterfacePage p = new WebinterfacePage("Test page", "/test");
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		
