@@ -168,7 +168,7 @@ body {
 	cursor: pointer;
 }
 
-.profile-option > a:visited, .profile-options > a:hover, .profile-options > a:active {
+.profile-options > a:visited, .profile-options > a:hover, .profile-options > a:active {
 	color: white;
 	text-decoration: none;
 }
