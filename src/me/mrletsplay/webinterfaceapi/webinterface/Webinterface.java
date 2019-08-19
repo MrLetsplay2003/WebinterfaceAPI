@@ -44,11 +44,8 @@ public class Webinterface {
 		accountStorage = new FileAccountStorage(new File("data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File("data/sessions.yml"));
 		
-		server.getDocumentProvider().registerDocument("/_internal/include.js", new FileDocument(new File("include/script.js"), "application/javascript"));
-		server.getDocumentProvider().registerDocument("/_internal/include.css", new FileDocument(new File("include/style.css"), "text/css"));
-		server.getDocumentProvider().registerDocument("/_internal/list.png", new FileDocument(new File("include/list.png"), "image/png"));
-		server.getDocumentProvider().registerDocument("/_internal/close.png", new FileDocument(new File("include/close.png"), "image/png"));
-		server.getDocumentProvider().registerDocument("/_internal/header.png", new FileDocument(new File("include/webinterfaceapi.png"), "image/png"));
+		server.getDocumentProvider().registerFileDocument("/_internal", new File("include"), false);
+		
 		server.getDocumentProvider().registerDocument("/favicon.ico", new FileDocument(new File("include/favicon.ico")));
 		server.getDocumentProvider().registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
 		server.getDocumentProvider().registerDocument("/login", new WebinterfaceLoginDocument());

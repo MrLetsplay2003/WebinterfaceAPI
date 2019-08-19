@@ -17,6 +17,10 @@ body {
 	display: table;
 }
 
+.header-avatar:hover {
+	cursor: pointer;
+}
+
 .header-avatar > * {
 	display: table-cell;
 	vertical-align: middle;
@@ -164,7 +168,7 @@ body {
 	cursor: pointer;
 }
 
-.profile-optionsr > a:visited, .profile-options > a:hover, .profile-options > a:active {
+.profile-option > a:visited, .profile-options > a:hover, .profile-options > a:active {
 	color: white;
 	text-decoration: none;
 }

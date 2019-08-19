@@ -16,8 +16,8 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 	private static final String
 		AUTH_ENDPOINT = "https://discordapp.com/api/oauth2/authorize",
 		TOKEN_ENDPOINT = "https://discordapp.com/api/oauth2/token",
-		CLIENT_ID = "571369358258077707",
-		CLIENT_SECRET = "iI7snc-Xy_ByoO-pT87gq6QicrUU8pl6";
+		CLIENT_ID = "612694047479431244",
+		CLIENT_SECRET = "6vpu0c7oc6MXodJ_YVbLihdwinbYimWn";
 	
 	@Override
 	public String getID() {
