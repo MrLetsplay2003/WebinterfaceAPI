@@ -7,10 +7,12 @@ import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlDocument;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
+import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
+import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
 public class WebinterfacePage implements HttpDocument {
 	
@@ -126,6 +128,12 @@ public class WebinterfacePage implements HttpDocument {
 
 	@Override
 	public void createContent() {
+		if(WebinterfaceSession.getCurrentSession() == null) {
+			HttpRequestContext c = HttpRequestContext.getCurrentContext();
+			c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
+			c.getServerHeader().getFields().setFieldValue("Location", "/login");
+			return;
+		}
 		toHtml().createContent();
 	}
 

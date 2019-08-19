@@ -43,30 +43,34 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 	@Override
 	public WebinterfaceAccountData handleAuthResponse() throws AuthException {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
-		
 		String code = c.getClientHeader().getPath().getGetParameterValue("code");
-		HttpPost p = HttpRequest.createPost(TOKEN_ENDPOINT)
-				.setPostParameter("client_id", CLIENT_ID)
-				.setPostParameter("client_secret", CLIENT_SECRET)
-				.setPostParameter("grant_type", "authorization_code")
-				.setPostParameter("code", code)
-				.setPostParameter("redirect_uri", getAuthResponseUrl())
-				.setPostParameter("scope", "identify email");
-		JSONObject res = p.execute().asJSONObject();
-		String accToken = res.getString("access_token");
 		
-		HttpGet g = HttpRequest.createGet("https://discordapp.com/api/v6/users/@me")
-				.setHeaderParameter("Authorization", "Bearer " + accToken);
-		JSONObject usr = g.execute().asJSONObject();
-		
-		String
-			userID = usr.getString("id"),
-			userName = usr.getString("username"),
-			userEmail = usr.getString("email"),
-			userAvatar = usr.getString("avatar"),
-			userAvatarUrl = "https://cdn.discordapp.com/avatars/" + userID + "/" + userAvatar + (userAvatar.startsWith("a_") ? ".gif?size=64" : ".png?size=64");
-		
-		return new WebinterfaceAccountData(userID, userName, userEmail, userAvatarUrl);
+		try {
+			HttpPost p = HttpRequest.createPost(TOKEN_ENDPOINT)
+					.setPostParameter("client_id", CLIENT_ID)
+					.setPostParameter("client_secret", CLIENT_SECRET)
+					.setPostParameter("grant_type", "authorization_code")
+					.setPostParameter("code", code)
+					.setPostParameter("redirect_uri", getAuthResponseUrl())
+					.setPostParameter("scope", "identify email");
+			JSONObject res = p.execute().asJSONObject();
+			String accToken = res.getString("access_token");
+			
+			HttpGet g = HttpRequest.createGet("https://discordapp.com/api/v6/users/@me")
+					.setHeaderParameter("Authorization", "Bearer " + accToken);
+			JSONObject usr = g.execute().asJSONObject();
+			
+			String
+				userID = usr.getString("id"),
+				userName = usr.getString("username"),
+				userEmail = usr.getString("email"),
+				userAvatar = usr.getString("avatar"),
+				userAvatarUrl = "https://cdn.discordapp.com/avatars/" + userID + "/" + userAvatar + (userAvatar.startsWith("a_") ? ".gif?size=64" : ".png?size=64");
+			
+			return new WebinterfaceAccountData(getID(), userID, userName, userEmail, userAvatarUrl);
+		} catch (Exception e) {
+			throw new AuthException("Failed to verify Discord auth token", e);
+		}
 	}
 
 }
