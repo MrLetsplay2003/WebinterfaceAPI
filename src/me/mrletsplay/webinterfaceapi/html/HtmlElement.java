@@ -219,4 +219,16 @@ public class HtmlElement {
 		return new HtmlButton();
 	}
 	
+	public static HtmlElement img(Supplier<String> src, Supplier<String> alt) {
+		HtmlElement img = new HtmlElement("img");
+		img.setSelfClosing(true);
+		img.setAttribute("src", src);
+		img.setAttribute("alt", alt);
+		return img;
+	}
+	
+	public static HtmlElement img(String src, String alt) {
+		return img(() -> src, () -> alt);
+	}
+	
 }

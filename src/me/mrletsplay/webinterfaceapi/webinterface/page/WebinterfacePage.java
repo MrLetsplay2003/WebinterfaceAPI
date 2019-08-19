@@ -67,18 +67,28 @@ public class WebinterfacePage implements HttpDocument {
 		HtmlElement header = new HtmlElement("header");
 		header.addClass("header");
 
-		HtmlElement img2 = new HtmlElement("img");
-		img2.setAttribute("src", "/_internal/list.png");
-		img2.setAttribute("alt", "Dropdown");
+		HtmlElement img2 = HtmlElement.img("/_internal/list.png", "Dropdown");
 		img2.addClass("header-list-item");
 		img2.setAttribute("onclick", "toggleSidebar()");
 		header.appendChild(img2);
 		
-		HtmlElement img = new HtmlElement("img");
-		img.setAttribute("src", "/_internal/header.png");
-		img.setAttribute("alt", "WebinterfaceAPI");
+		HtmlElement img = HtmlElement.img("/_internal/header.png", "WebinterfaceAPI");
 		img.addClass("header-image-item");
+		img.setSelfClosing(true);
 		header.appendChild(img);
+		
+		HtmlElement ac = new HtmlElement("div");
+		ac.addClass("header-avatar");
+		ac.setAttribute("onclick", "toggleProfileOptions()");
+		header.appendChild(ac);
+		
+		HtmlElement av = HtmlElement.img(WebinterfaceSession.getCurrentSession().getAccount().getAvatarUrl(), "User Avatar");
+		av.setSelfClosing(true);
+		ac.appendChild(av);
+		
+		HtmlElement usrn = new HtmlElement("a");
+		usrn.setText(WebinterfaceSession.getCurrentSession().getAccount().getName());
+		ac.appendChild(usrn);
 		
 		HtmlElement main = new HtmlElement("main");
 		main.addClass("main");
@@ -90,12 +100,32 @@ public class WebinterfacePage implements HttpDocument {
 		content.addClass("content-container");
 		main.appendChild(content);
 		
+		HtmlElement po = new HtmlElement("div");
+		po.addClass("profile-options");
+		main.appendChild(po);
+		
+		HtmlElement loc2 = new HtmlElement("div");
+		loc2.addClass("profile-option");
+		po.appendChild(loc2);
+		
+		HtmlElement lo2 = new HtmlElement("a");
+		lo2.setAttribute("href", "/login");
+		lo2.setText("Add another account");
+		loc2.appendChild(lo2);
+		
+		HtmlElement loc = new HtmlElement("div");
+		loc.addClass("profile-option");
+		po.appendChild(loc);
+		
+		HtmlElement lo = new HtmlElement("a");
+		lo.setAttribute("href", "/logout");
+		lo.setText("Log Out");
+		loc.appendChild(lo);
+		
 		HtmlElement sidenav = new HtmlElement("aside");
 		sidenav.addClass("sidenav");
 
-		HtmlElement img3 = new HtmlElement("img");
-		img3.setAttribute("src", "/_internal/close.png");
-		img3.setAttribute("alt", "Close");
+		HtmlElement img3 = HtmlElement.img("/_internal/close.png", "Close");
 		img3.addClass("header-list-item");
 		img3.setAttribute("onclick", "toggleSidebar()");
 		sidenav.appendChild(img3);

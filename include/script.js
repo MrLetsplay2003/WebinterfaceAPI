@@ -62,5 +62,9 @@ class WebinterfaceResponse {
 }
 
 function toggleSidebar() {
-	$(".sidenav").toggle("active");
+	$(".sidenav").toggle();
+}
+
+function toggleProfileOptions() {
+	$(".profile-options").toggle();
 }
