@@ -19,6 +19,10 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	
 	public FileAccountStorage(File file) {
 		this.file = file;
+	}
+	
+	@Override
+	public void initialize() {
 		this.config = ConfigLoader.loadFileConfig(file);
 	}
 

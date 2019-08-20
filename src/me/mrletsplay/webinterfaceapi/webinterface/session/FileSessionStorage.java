@@ -15,6 +15,10 @@ public class FileSessionStorage implements WebinterfaceSessionStorage {
 	
 	public FileSessionStorage(File file) {
 		this.file = file;
+	}
+	
+	@Override
+	public void initialize() {
 		this.config = ConfigLoader.loadFileConfig(file);
 	}
 

@@ -1,7 +1,5 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
-import java.util.function.Supplier;
-
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
@@ -9,34 +7,9 @@ import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 
-public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
+public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 	
-	private Supplier<String> placeholder;
 	private WebinterfaceAction onChangeAction;
-	
-	public WebinterfaceInputField() {
-		this(() -> "Text");
-	}
-	
-	public WebinterfaceInputField(Supplier<String> placeholder) {
-		this.placeholder = placeholder;
-	}
-	
-	public WebinterfaceInputField(String placeholder) {
-		this(() -> placeholder);
-	}
-	
-	public void setPlaceholder(Supplier<String> placeholder) {
-		this.placeholder = placeholder;
-	}
-	
-	public void setPlaceholder(String placeholder) {
-		setPlaceholder(() -> placeholder);
-	}
-	
-	public Supplier<String> getPlaceholder() {
-		return placeholder;
-	}
 	
 	public void setOnChangeAction(WebinterfaceAction onChangeAction) {
 		this.onChangeAction = onChangeAction;
@@ -44,10 +17,31 @@ public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
 	
 	@Override
 	public HtmlElement createElement() {
+//		HtmlElement w = new HtmlElement("div");
+//		w.addClass("checkbox-wrapper");
+//		w.setID(getOrGenerateID() + "-w");
+//		
+//		HtmlElement b = new HtmlElement("input");
+//		b.setID(getOrGenerateID());
+//		b.setAttribute("type", "checkbox");
+//		b.setAttribute("aria-label", "Yes/No"); // TODO aria-label
+//		if(onChangeAction != null) {
+//			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
+//			JavaScriptFunction f = onChangeAction.toJavaScript();
+//			sc.addFunction(f);
+//			b.setAttribute("onchange", f.getSignature());
+//		}
+//		w.appendChild(b);
+//		
+//		HtmlElement lbl = new HtmlElement("label");
+//		lbl.addClass("checkbox-label");
+//		lbl.setAttribute("for", getOrGenerateID());
+//		w.appendChild(lbl);
+//		return w;
+		
 		HtmlElement b = new HtmlElement("input");
-		b.setAttribute("type", "text");
-		b.setAttribute("placeholder", placeholder);
-		b.setAttribute("aria-label", placeholder);
+		b.setAttribute("type", "checkbox");
+		b.setAttribute("aria-label", "Yes/No"); // TODO aria-label
 		if(onChangeAction != null) {
 			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
 			JavaScriptFunction f = onChangeAction.toJavaScript();

@@ -63,7 +63,7 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		HtmlElement elContainer = new HtmlElement("div");
 		elContainer.addClass("element-container");
 		HtmlElement el = createElement();
-		if(id != null) el.setID(id);
+		if(id != null && el.getID() == null) el.setID(id);
 		if(width != null) el.setAttribute("style", "width:" + width + "");
 		el.addClass("element");
 		String cN = layouts.stream().map(ElementLayout::getClassName).collect(Collectors.joining(" "));

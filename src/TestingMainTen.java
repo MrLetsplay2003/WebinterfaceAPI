@@ -7,11 +7,13 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ArrayValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementAttributeValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.ElementLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceCheckBox;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceElementGroup;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
@@ -37,12 +39,22 @@ public class TestingMainTen {
 		
 		WebinterfaceInputField ip = new WebinterfaceInputField();
 		ip.addLayouts(ElementLayout.FULL_NOT_LAST_COLUMN);
+		ip.setOnChangeAction(new SendJSAction("webinterface", "lol", new ElementValue(ip)));
 		g.addElement(ip);
 		
 		g.addElement(new WebinterfaceButton("Button #1"));
 		
 		WebinterfaceButton b = new WebinterfaceButton("Button #2");
 		g.addElement(b);
+		
+		WebinterfaceText txt = new WebinterfaceText("Enable some stuff?");
+		txt.addLayouts(ElementLayout.CENTER_VERTICALLY, ElementLayout.NEW_LINE);
+		g.addElement(txt);
+		
+		WebinterfaceCheckBox ip2 = new WebinterfaceCheckBox();
+		ip2.setOnChangeAction(new SendJSAction("webinterface", "lol", new CheckboxValue(ip2)));
+		ip2.addLayouts(ElementLayout.CENTER_VERTICALLY);
+		g.addElement(ip2);
 		
 		WebinterfaceButton b2 = new WebinterfaceButton("Save");
 		
@@ -57,7 +69,6 @@ public class TestingMainTen {
 
 		sc.addElement(g);
 		
-		p.addSection(sc);
 		p.addSection(sc);
 		
 		Webinterface.registerPage(p);
@@ -79,8 +90,6 @@ public class TestingMainTen {
 		MrCoreServiceRegistry.awaitServiceRegistration("WebinterfaceAPI").thenRun(() -> {
 			System.out.println("WIAPI is online");
 		});
-		
-//		Webinterface.start();
 	}
 
 }

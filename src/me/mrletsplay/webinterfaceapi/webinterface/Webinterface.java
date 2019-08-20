@@ -1,9 +1,18 @@
 package me.mrletsplay.webinterfaceapi.webinterface;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
+import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
@@ -34,6 +43,9 @@ public class Webinterface {
 	private static List<WebinterfacePage> pages;
 	private static List<WebinterfaceActionHandler> handlers;
 	private static List<WebinterfaceAuthMethod> authMethods;
+	
+	private static boolean initialized = false;
+	private static File rootDirectory;
 	private static WebinterfaceAccountStorage accountStorage;
 	private static WebinterfaceSessionStorage sessionStorage;
 	
@@ -41,19 +53,7 @@ public class Webinterface {
 		pages = new ArrayList<>();
 		handlers = new ArrayList<>();
 		authMethods = new ArrayList<>();
-		accountStorage = new FileAccountStorage(new File("data/accounts.yml"));
-		sessionStorage = new FileSessionStorage(new File("data/sessions.yml"));
-		
-		server.getDocumentProvider().registerFileDocument("/_internal", new File("include"), false);
-		
-		server.getDocumentProvider().registerDocument("/favicon.ico", new FileDocument(new File("include/favicon.ico")));
-		server.getDocumentProvider().registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
-		server.getDocumentProvider().registerDocument("/login", new WebinterfaceLoginDocument());
-		server.getDocumentProvider().registerDocument("/logout", new WebinterfaceLogoutDocument());
-		
-		registerAuthMethod(new DiscordAuth());
-		registerAuthMethod(new GoogleAuth());
-		registerAuthMethod(new GitHubAuth());
+		rootDirectory = new File(".");
 		
 		WebinterfacePage homePage = new WebinterfacePage("Home", "/");
 		WebinterfacePageSection sc = new WebinterfacePageSection();
@@ -70,11 +70,68 @@ public class Webinterface {
 	}
 	
 	public static void start() {
+		extractFiles();
+		initialize();
+		
+		accountStorage.initialize();
+		sessionStorage.initialize();
 		server.start();
+	}
+	
+	public static void initialize() {
+		if(initialized) return;
+		initialized = true;
+		
+		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
+		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
+		
+		server.getDocumentProvider().registerFileDocument("/_internal", new File(rootDirectory, "include"), false);
+		server.getDocumentProvider().registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/favicon.ico")));
+		server.getDocumentProvider().registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
+		server.getDocumentProvider().registerDocument("/login", new WebinterfaceLoginDocument());
+		server.getDocumentProvider().registerDocument("/logout", new WebinterfaceLogoutDocument());
+		
+		registerAuthMethod(new DiscordAuth());
+		registerAuthMethod(new GoogleAuth());
+		registerAuthMethod(new GitHubAuth());
+	}
+	
+	private static void extractFiles() {
+		try {
+			URL jarLoc = Webinterface.class.getProtectionDomain().getCodeSource().getLocation();
+			File jarFl = new File(jarLoc.toURI().getPath());
+			if(!jarFl.isFile()) return;
+			try (JarFile fl = new JarFile(jarFl)) {
+				Enumeration<JarEntry> en = fl.entries();
+				while(en.hasMoreElements()) {
+					JarEntry e = en.nextElement();
+					if(!e.isDirectory() && e.getName().startsWith("include/")) {
+						File ofl = new File(getRootDirectory(), e.getName());
+						IOUtils.createFile(ofl);
+						try (InputStream in = fl.getInputStream(e);
+								OutputStream out = new FileOutputStream(ofl)) {
+							IOUtils.transfer(in, out);
+						}
+					}
+				}
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static HttpServer getServer() {
 		return server;
+	}
+	
+	public static void setRootDirectory(File rootDirectory) {
+		Webinterface.rootDirectory = rootDirectory;
+	}
+	
+	public static File getRootDirectory() {
+		return rootDirectory;
 	}
 	
 	public static void registerPage(WebinterfacePage page) {

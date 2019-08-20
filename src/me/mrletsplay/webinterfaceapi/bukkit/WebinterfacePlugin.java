@@ -8,6 +8,8 @@ public class WebinterfacePlugin extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		MrCoreBukkitImpl.loadMrCore(this);
+		Webinterface.setRootDirectory(getDataFolder());
 		Webinterface.start();
 		getLogger().info("WebinterfaceAPI loaded");
 	}
