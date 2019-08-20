@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
@@ -153,9 +155,20 @@ public class Webinterface {
 	
 	public static void registerAuthMethod(WebinterfaceAuthMethod method) {
 		authMethods.add(method);
-		server.getDocumentProvider().registerDocument("/auth/" + method.getID(), method::handleAuthRequest);
+		server.getDocumentProvider().registerDocument("/auth/" + method.getID(), () -> {
+			if(!method.isAvailable()) {
+				HttpRequestContext c = HttpRequestContext.getCurrentContext();
+				c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
+				return;
+			}
+			method.handleAuthRequest();
+		});
 		server.getDocumentProvider().registerDocument("/auth/" + method.getID() + "/response", () -> {
 			HttpRequestContext c = HttpRequestContext.getCurrentContext();
+			if(!method.isAvailable()) {
+				c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
+				return;
+			}
 			try {
 				WebinterfaceAccountData acc = method.handleAuthResponse();
 				WebinterfaceSession.stopSession();
@@ -164,15 +177,19 @@ public class Webinterface {
 				c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 				c.getServerHeader().getFields().setFieldValue("Location", "/");
 			} catch(AuthException e) {
-				c.getServerHeader().setContent("text/plain", "Auth failed".getBytes()); // TODO: handle exc msg
+				c.getServerHeader().setContent("text/plain", "Auth failed".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 			}catch(Exception e) {
-				c.getServerHeader().setContent("text/plain", "Auth failed".getBytes()); // TODO: handle exc msg
+				c.getServerHeader().setContent("text/plain", "Auth failed".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 			}
 		});
 	}
 	
 	public static List<WebinterfaceAuthMethod> getAuthMethods() {
 		return authMethods;
+	}
+	
+	public static List<WebinterfaceAuthMethod> getAvailableAuthMethods() {
+		return authMethods.stream().filter(WebinterfaceAuthMethod::isAvailable).collect(Collectors.toList());
 	}
 	
 	public static void setAccountStorage(WebinterfaceAccountStorage accountStorage) {

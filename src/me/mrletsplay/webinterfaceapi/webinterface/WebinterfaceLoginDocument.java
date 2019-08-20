@@ -26,7 +26,7 @@ public class WebinterfaceLoginDocument implements HttpDocument {
 		ul.addClass("login-list");
 		cont.appendChild(ul);
 		
-		for(WebinterfaceAuthMethod m : Webinterface.getAuthMethods()) {
+		for(WebinterfaceAuthMethod m : Webinterface.getAvailableAuthMethods()) {
 			HtmlElement lo = new HtmlElement("div");
 			lo.addClass("login-list-item");
 			ul.appendChild(lo);
@@ -37,8 +37,18 @@ public class WebinterfaceLoginDocument implements HttpDocument {
 			lo.appendChild(a);
 		}
 		
+		if(Webinterface.getAvailableAuthMethods().isEmpty()) {
+			HtmlElement lo = new HtmlElement("div");
+			lo.addClass("login-list-item");
+			ul.appendChild(lo);
+			
+			HtmlElement a = new HtmlElement("a");
+			a.setText("No login method is available at the moment");
+			a.setAttribute("href", "#");
+			lo.appendChild(a);
+		}
+		
 		d.getBodyNode().appendChild(cont);
-//		d.includeScript("/_internal/login-include.js", true);
 		d.addStyleSheet("/_internal/login-include.css");
 		d.createContent();
 	}

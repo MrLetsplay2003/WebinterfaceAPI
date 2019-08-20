@@ -17,5 +17,9 @@ public interface WebinterfaceAuthMethod {
 		String host = c.getClientHeader().getFields().getFieldValue("Host");
 		return "http://" + host + "/auth/" + getID() + "/response";
 	}
+	
+	public default boolean isAvailable() {
+		return true;
+	}
 
 }

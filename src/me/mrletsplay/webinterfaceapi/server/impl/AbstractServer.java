@@ -93,7 +93,7 @@ public abstract class AbstractServer implements Server {
 				throw new ServerException("Error while stopping executor", e);
 			}
 			acceptor.closeAllConnections();
-			socket.close();
+			if(socket != null) socket.close();
 		} catch (IOException e) {
 			throw new ServerException("Error while stopping server", e);
 		}

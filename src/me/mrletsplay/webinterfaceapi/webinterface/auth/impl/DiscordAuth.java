@@ -1,5 +1,9 @@
 package me.mrletsplay.webinterfaceapi.webinterface.auth.impl;
 
+import java.io.File;
+
+import me.mrletsplay.mrcore.config.ConfigLoader;
+import me.mrletsplay.mrcore.config.FileCustomConfig;
 import me.mrletsplay.mrcore.http.HttpGet;
 import me.mrletsplay.mrcore.http.HttpPost;
 import me.mrletsplay.mrcore.http.HttpRequest;
@@ -7,6 +11,7 @@ import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountData;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
@@ -15,9 +20,24 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 
 	private static final String
 		AUTH_ENDPOINT = "https://discordapp.com/api/oauth2/authorize",
-		TOKEN_ENDPOINT = "https://discordapp.com/api/oauth2/token",
-		CLIENT_ID = "612694047479431244",
-		CLIENT_SECRET = "6vpu0c7oc6MXodJ_YVbLihdwinbYimWn";
+		TOKEN_ENDPOINT = "https://discordapp.com/api/oauth2/token";
+	
+	private boolean available;
+	private String clientID, clientSecret;
+	
+	public DiscordAuth() {
+		File cfgFile = new File(Webinterface.getRootDirectory(), "cfg/auth/discord/credentials.yml");
+		FileCustomConfig cfg = ConfigLoader.loadFileConfig(cfgFile);
+		try {
+			clientID = cfg.getString("client-id", null, true);
+			clientSecret = cfg.getString("client-secret", null, true);
+			cfg.saveToFile();
+			if(clientID != null && clientSecret != null) available = true;
+		} catch (Exception e) {
+			available = false;
+		}
+		if(!available) System.out.println("[WIAPI] Discord auth needs to be configured");
+	}
 	
 	@Override
 	public String getID() {
@@ -34,7 +54,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 		c.getServerHeader().getFields().setFieldValue("Location", AUTH_ENDPOINT
-				+ "?client_id=" + HttpUtils.urlEncode(CLIENT_ID) // TODO: auth client id
+				+ "?client_id=" + HttpUtils.urlEncode(clientID)
 				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl()) // TODO: protocol
 				+ "&response_type=code"
 				+ "&scope=identify email");
@@ -47,8 +67,8 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 		
 		try {
 			HttpPost p = HttpRequest.createPost(TOKEN_ENDPOINT)
-					.setPostParameter("client_id", CLIENT_ID)
-					.setPostParameter("client_secret", CLIENT_SECRET)
+					.setPostParameter("client_id", clientID)
+					.setPostParameter("client_secret", clientSecret)
 					.setPostParameter("grant_type", "authorization_code")
 					.setPostParameter("code", code)
 					.setPostParameter("redirect_uri", getAuthResponseUrl())
@@ -72,5 +92,10 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 			throw new AuthException("Failed to verify Discord auth token", e);
 		}
 	}
-
+	
+	@Override
+	public boolean isAvailable() {
+		return available;
+	}
+	
 }
