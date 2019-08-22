@@ -100,12 +100,13 @@ public class PHPFileDocument implements HttpDocument {
 					});
 					continue;
 				}
+				if(spl[0].equalsIgnoreCase("Content-Type")) {
+					c.getServerHeader().getFields().setFieldValue(spl[0], spl[1]); // Always *override* content type
+					continue;
+				}
 				c.getServerHeader().getFields().addFieldValue(spl[0], spl[1]);
 			}
 			c.getServerHeader().setContent("text/html", postData, false);
-			if(c.getServerHeader().getFields().getFieldValues("Content-Type").contains("application/unknown")) {
-				c.getServerHeader().getFields().setFieldValue("Content-Type", "text/html");
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

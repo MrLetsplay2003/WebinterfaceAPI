@@ -15,8 +15,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import me.mrletsplay.mrcore.config.ConfigLoader;
-import me.mrletsplay.mrcore.config.FileCustomConfig;
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
@@ -33,6 +31,13 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.DiscordAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GitHubAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GoogleAuth;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
+import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
+import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceFileConfig;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceCallbackDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentProvider;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
@@ -45,7 +50,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSessionSto
 
 public class Webinterface {
 	
-	private static HttpServer server = new HttpServer(8080);
+	private static HttpServer server;
 	private static List<WebinterfacePage> pages;
 	private static List<WebinterfaceActionHandler> handlers;
 	private static List<WebinterfaceAuthMethod> authMethods;
@@ -54,7 +59,7 @@ public class Webinterface {
 	private static File rootDirectory;
 	private static WebinterfaceAccountStorage accountStorage;
 	private static WebinterfaceSessionStorage sessionStorage;
-	private static FileCustomConfig configuration;
+	private static WebinterfaceConfig configuration;
 	
 	static {
 		pages = new ArrayList<>();
@@ -92,14 +97,18 @@ public class Webinterface {
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
 		
-		configuration = ConfigLoader.loadFileConfig(new File(getConfigurationDirectory(), "config.yml"));
+		configuration = new WebinterfaceFileConfig(new File(getConfigurationDirectory(), "config.yml"));
+		configuration.initializeSettings(new DefaultSettings());
 		
-		server.getDocumentProvider().registerFileDocument("/_internal", new File(rootDirectory, "include"), false);
+		server = new HttpServer(configuration.getIntSetting(DefaultSettings.PORT));
+		server.setDocumentProvider(new WebinterfaceDocumentProvider());
+		server.getDocumentProvider().registerFileDocument("/_internal", new File(rootDirectory, "include"));
 		server.getDocumentProvider().registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/favicon.ico")));
 		server.getDocumentProvider().registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
 		server.getDocumentProvider().registerDocument("/login", new WebinterfaceLoginDocument());
 		server.getDocumentProvider().registerDocument("/logout", new WebinterfaceLogoutDocument());
 		server.getDocumentProvider().registerDocument("/test/test.php", new PHPFileDocument(new File("include/test.php")));
+		pages.forEach(page -> server.getDocumentProvider().registerDocument(page.getUrl(), page));
 		
 		registerAuthMethod(new DiscordAuth());
 		registerAuthMethod(new GoogleAuth());
@@ -148,13 +157,12 @@ public class Webinterface {
 		return new File(rootDirectory, "cfg/");
 	}
 	
-	public static FileCustomConfig getConfiguration() {
+	public static WebinterfaceConfig getConfiguration() {
 		return configuration;
 	}
 	
 	public static void registerPage(WebinterfacePage page) {
 		pages.add(page);
-		server.getDocumentProvider().registerDocument(page.getUrl(), page);
 	}
 	
 	public static List<WebinterfacePage> getPages() {
@@ -225,7 +233,7 @@ public class Webinterface {
 	}
 	
 	public static void shutdown() {
-		server.shutdown();
+		if(server != null) server.shutdown();
 	}
 
 }

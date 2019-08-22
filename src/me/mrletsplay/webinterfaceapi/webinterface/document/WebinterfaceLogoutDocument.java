@@ -1,4 +1,4 @@
-package me.mrletsplay.webinterfaceapi.webinterface;
+package me.mrletsplay.webinterfaceapi.webinterface.document;
 
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;

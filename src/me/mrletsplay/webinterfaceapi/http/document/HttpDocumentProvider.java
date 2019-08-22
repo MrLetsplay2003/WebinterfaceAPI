@@ -8,26 +8,30 @@ public interface HttpDocumentProvider {
 	
 	public void registerDocument(String path, HttpDocument document);
 	
-	public default void registerFileDocument(String path, File file, boolean includeFolderName) {
+	public default void registerFileDocument(String parentPath, File file, boolean includeFileName) {
 		if(file.isDirectory()) {
 			for(File fl : file.listFiles()) {
-				registerFileDocument(includeFolderName ? (path + "/" + file.getName()) : path, fl, true);
+				registerFileDocument(includeFileName ? (parentPath + "/" + file.getName()) : parentPath, fl, true);
 			}
 			return;
 		}
-		if(file.getName().endsWith(".php")) { // TODO: php is weird, außerdem index files etc
-			if(file.getName().equalsIgnoreCase("index.php")) {
-				registerDocument(path + "/", new PHPFileDocument(file));
-			}
-			registerDocument(path + "/" + file.getName(), new PHPFileDocument(file));
-			return;
+		registerDocument(parentPath + "/" + (includeFileName ? file.getName() : ""), createFileDocument(file));
+	}
+	
+	public default HttpDocument createFileDocument(File file) {
+		if(file.getName().endsWith(".php")) {
+			return new PHPFileDocument(file);
 		}
 		try {
 			String mimeType = Files.probeContentType(file.toPath());
-			registerDocument(path + "/" + file.getName(), new FileDocument(file, mimeType));
+			return new FileDocument(file, mimeType);
 		} catch (IOException e) {
-			registerDocument(path + "/" + file.getName(), new FileDocument(file));
+			return new FileDocument(file);
 		}
+	}
+	
+	public default void registerFileDocument(String path, File file) {
+		registerFileDocument(path, file, false);
 	}
 	
 	public HttpDocument getDocument(String path);

@@ -1,4 +1,4 @@
-package me.mrletsplay.webinterfaceapi.webinterface;
+package me.mrletsplay.webinterfaceapi.webinterface.document;
 
 import java.nio.charset.StandardCharsets;
 
@@ -7,6 +7,7 @@ import me.mrletsplay.mrcore.json.JSONType;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.header.HttpClientContentTypes;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;

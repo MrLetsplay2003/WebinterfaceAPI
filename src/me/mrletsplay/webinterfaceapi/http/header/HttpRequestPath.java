@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import me.mrletsplay.mrcore.http.HttpUtils;
 
@@ -52,6 +53,19 @@ public class HttpRequestPath {
 			getParameters.put(key, vs);
 		}
 		return getParameters;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof HttpRequestPath)) return false;
+		HttpRequestPath o = (HttpRequestPath) obj;
+		return path.equals(o.path)
+				&& getParameters.equals(o.getParameters);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(path, getParameters);
 	}
 	
 }

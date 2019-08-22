@@ -58,4 +58,16 @@ public class HttpHeaderFields {
 		return fields;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof HttpHeaderFields)) return false;
+		HttpHeaderFields o = (HttpHeaderFields) obj;
+		return fields.equals(o.fields);
+	}
+	
+	@Override
+	public int hashCode() {
+		return fields.hashCode();
+	}
+	
 }

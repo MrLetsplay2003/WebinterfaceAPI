@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class HttpClientHeader {
 
@@ -62,6 +63,22 @@ public class HttpClientHeader {
 		byte[] postData = new byte[data.length - prDtLen - 4]; // - 4 bytes because of the \r\n\r\n
 		System.arraycopy(data, prDtLen + 4, postData, 0, postData.length);
 		return new HttpClientHeader(method, path, protocolVersion, fields, postData);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof HttpClientHeader)) return false;
+		HttpClientHeader o = (HttpClientHeader) obj;
+		return method.equals(o.method)
+				&& path.equals(o.path)
+				&& protocolVersion.equals(o.protocolVersion)
+				&& fields.equals(o.fields)
+				&& Arrays.equals(postData, o.postData);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(method, path, protocolVersion, fields, Arrays.hashCode(postData));
 	}
 	
 }

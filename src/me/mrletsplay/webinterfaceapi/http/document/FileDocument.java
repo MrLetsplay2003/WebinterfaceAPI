@@ -13,16 +13,24 @@ public class FileDocument implements HttpDocument {
 	private File file;
 	private String mimeType;
 	
-	public FileDocument(File file) {
-		this.file = file;
-	}
-	
 	public FileDocument(File file, String mimeType) {
 		this.file = file;
 		this.mimeType = mimeType;
 	}
 	
-	private byte[] loadContent() {
+	public FileDocument(File file) {
+		this(file, null);
+	}
+	
+	public File getFile() {
+		return file;
+	}
+	
+	public String getMimeType() {
+		return mimeType;
+	}
+	
+	protected byte[] loadContent() {
 		try(FileInputStream fI = new FileInputStream(file)) {
 			return IOUtils.readAllBytes(fI);
 		} catch (IOException e) {

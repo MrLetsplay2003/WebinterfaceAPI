@@ -1,8 +1,9 @@
-package me.mrletsplay.webinterfaceapi.webinterface;
+package me.mrletsplay.webinterfaceapi.webinterface.document;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlDocument;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 
 public class WebinterfaceLoginDocument implements HttpDocument {
