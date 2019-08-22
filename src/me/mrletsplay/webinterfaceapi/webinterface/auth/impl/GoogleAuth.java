@@ -11,7 +11,6 @@ import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountData;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
@@ -27,7 +26,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 	private String clientID, clientSecret;
 	
 	public GoogleAuth() {
-		File cfgFile = new File(Webinterface.getRootDirectory(), "cfg/auth/google/credentials.json");
+		File cfgFile = new File(getConfigurationDirectory(), "credentials.json");
 		try {
 			IOUtils.createFile(cfgFile);
 			String cont = new String(Files.readAllBytes(cfgFile.toPath()));

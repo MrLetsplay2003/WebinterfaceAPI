@@ -15,6 +15,13 @@ public interface HttpDocumentProvider {
 			}
 			return;
 		}
+		if(file.getName().endsWith(".php")) { // TODO: php is weird, außerdem index files etc
+			if(file.getName().equalsIgnoreCase("index.php")) {
+				registerDocument(path + "/", new PHPFileDocument(file));
+			}
+			registerDocument(path + "/" + file.getName(), new PHPFileDocument(file));
+			return;
+		}
 		try {
 			String mimeType = Files.probeContentType(file.toPath());
 			registerDocument(path + "/" + file.getName(), new FileDocument(file, mimeType));

@@ -38,7 +38,7 @@ public class HttpConnection extends AbstractConnection {
 				}catch(SocketTimeoutException ignored) {
 				}catch(Exception e) {
 					close();
-//					e.printStackTrace(); // TODO: remove
+					e.printStackTrace(); // TODO: remove
 					throw new ServerException("Error in client receive loop", e);
 				}
 			}

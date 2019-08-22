@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -14,11 +15,14 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import me.mrletsplay.mrcore.config.ConfigLoader;
+import me.mrletsplay.mrcore.config.FileCustomConfig;
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.document.FileDocument;
+import me.mrletsplay.webinterfaceapi.http.document.PHPFileDocument;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
@@ -50,12 +54,13 @@ public class Webinterface {
 	private static File rootDirectory;
 	private static WebinterfaceAccountStorage accountStorage;
 	private static WebinterfaceSessionStorage sessionStorage;
+	private static FileCustomConfig configuration;
 	
 	static {
 		pages = new ArrayList<>();
 		handlers = new ArrayList<>();
 		authMethods = new ArrayList<>();
-		rootDirectory = new File(".");
+		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
 		
 		WebinterfacePage homePage = new WebinterfacePage("Home", "/");
 		WebinterfacePageSection sc = new WebinterfacePageSection();
@@ -87,11 +92,14 @@ public class Webinterface {
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
 		
+		configuration = ConfigLoader.loadFileConfig(new File(getConfigurationDirectory(), "config.yml"));
+		
 		server.getDocumentProvider().registerFileDocument("/_internal", new File(rootDirectory, "include"), false);
 		server.getDocumentProvider().registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/favicon.ico")));
 		server.getDocumentProvider().registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
 		server.getDocumentProvider().registerDocument("/login", new WebinterfaceLoginDocument());
 		server.getDocumentProvider().registerDocument("/logout", new WebinterfaceLogoutDocument());
+		server.getDocumentProvider().registerDocument("/test/test.php", new PHPFileDocument(new File("include/test.php")));
 		
 		registerAuthMethod(new DiscordAuth());
 		registerAuthMethod(new GoogleAuth());
@@ -134,6 +142,14 @@ public class Webinterface {
 	
 	public static File getRootDirectory() {
 		return rootDirectory;
+	}
+	
+	public static File getConfigurationDirectory() {
+		return new File(rootDirectory, "cfg/");
+	}
+	
+	public static FileCustomConfig getConfiguration() {
+		return configuration;
 	}
 	
 	public static void registerPage(WebinterfacePage page) {

@@ -42,11 +42,17 @@ public class HttpServerHeader {
 	}
 	
 	public void setContent(byte[] content) {
-		setContent(null, content);
+		setContent(null, content, false);
 	}
 	
 	public void setContent(String type, byte[] content) {
-		fields.setFieldValue("Content-Type", type == null ? "application/unknown" : (type + "; charset=utf-8")); // TODO: charset?
+		setContent(type, content, true);
+	}
+	
+	public void setContent(String type, byte[] content, boolean forceContentType) {
+		if(fields.getFieldValues("Content-Type").isEmpty() || forceContentType) {
+			fields.setFieldValue("Content-Type", type == null ? "application/unknown" : (type + "; charset=utf-8")); // TODO: charset?
+		}
 		fields.setFieldValue("Content-Length", String.valueOf(content.length));
 		this.content = content;
 	}

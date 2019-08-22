@@ -1,11 +1,11 @@
 package me.mrletsplay.webinterfaceapi.http.header;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import me.mrletsplay.mrcore.http.HttpUtils;
 
 public class HttpRequestPath {
 
@@ -46,12 +46,10 @@ public class HttpRequestPath {
 		Map<String, List<String>> getParameters = new HashMap<>();
 		for(String st : getParams.split("&")) {
 			String[] kv = st.split("=", 2);
-			try {
-				String key = URLDecoder.decode(kv[0], "UTF-8");
-				List<String> vs = getParameters.getOrDefault(key, new ArrayList<>());
-				vs.add(URLDecoder.decode(kv[1], "UTF-8"));
-				getParameters.put(key, (vs));
-			} catch (UnsupportedEncodingException ignored) {}
+			String key = HttpUtils.urlDecode(kv[0]);
+			List<String> vs = getParameters.getOrDefault(key, new ArrayList<>());
+			vs.add(kv.length == 2 ? HttpUtils.urlDecode(kv[1]) : "");
+			getParameters.put(key, vs);
 		}
 		return getParameters;
 	}

@@ -11,7 +11,6 @@ import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountData;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
@@ -26,7 +25,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 	private String clientID, clientSecret;
 	
 	public DiscordAuth() {
-		File cfgFile = new File(Webinterface.getRootDirectory(), "cfg/auth/discord/credentials.yml");
+		File cfgFile = new File(getConfigurationDirectory(), "credentials.yml");
 		FileCustomConfig cfg = ConfigLoader.loadFileConfig(cfgFile);
 		try {
 			clientID = cfg.getString("client-id", null, true);
