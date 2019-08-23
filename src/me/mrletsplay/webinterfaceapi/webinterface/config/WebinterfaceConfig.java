@@ -26,18 +26,20 @@ public interface WebinterfaceConfig {
 	
 	public <T> void setSetting(WebinterfaceSetting<T> setting, T value);
 	
-	public void initializeSetting(WebinterfaceSetting<?> setting);
+	public void registerSetting(WebinterfaceSetting<?> setting);
 	
-	public default void initializeSettings(List<WebinterfaceSetting<?>> settings) {
-		settings.forEach(this::initializeSetting);
+	public default void registerSettings(List<WebinterfaceSetting<?>> settings) {
+		settings.forEach(this::registerSetting);
 	}
 	
-	public default void initializeSettings(WebinterfaceSetting<?>... settings) {
-		initializeSettings(Arrays.asList(settings));
+	public default void registerSettings(WebinterfaceSetting<?>... settings) {
+		registerSettings(Arrays.asList(settings));
 	}
 	
-	public default void initializeSettings(AutoSettings settings) {
-		initializeSettings(settings.getSettings());
+	public default void registerSettings(AutoSettings settings) {
+		registerSettings(settings.getSettings());
 	}
+	
+	public List<WebinterfaceSetting<?>> getSettings();
 	
 }

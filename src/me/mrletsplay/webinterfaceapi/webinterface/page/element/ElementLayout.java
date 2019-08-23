@@ -8,6 +8,8 @@ public enum ElementLayout {
 	JUSTIFY_TEXT("el-justify-text"),
 	CENTER_VERTICALLY("el-center-vertically"),
 	FULL_NOT_LAST_COLUMN("el-full-not-last-column"),
+	SECOND_TO_LAST_COLUMN("el-second-to-last-column"),
+	SECOND_NOT_LAST_COLUMN("el-second-not-last-column"),
 	NEW_LINE("el-new-line"),
 //	REMAINING_SPACE("el-remainingspace"),
 	;

@@ -1,0 +1,15 @@
+body {
+	--theme-color-primary: rgb(187, 187, 187);
+	--theme-color-secondary: #7c7c7c;
+	--theme-color-tertiary: #e7e7e7;
+
+	--theme-color-page-bg: white;
+	--theme-color-page-text: white;
+	--theme-color-page-text-secondary: rgb(65, 65, 65);
+	--theme-color-page-shadow: hsl(0, 0%, 83%);
+
+	--theme-color-content-bg: white;
+	--theme-color-content-shadow: lightgray;
+	--theme-color-content-border: lightgray;
+	--theme-color-content-text: black;
+}

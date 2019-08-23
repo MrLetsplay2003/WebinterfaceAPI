@@ -1,6 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.config;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import me.mrletsplay.mrcore.config.ConfigLoader;
@@ -11,10 +12,12 @@ public class WebinterfaceFileConfig implements WebinterfaceConfig {
 	
 	private File file;
 	private FileCustomConfig config;
+	private List<WebinterfaceSetting<?>> settings;
 	
 	public WebinterfaceFileConfig(File file) {
 		this.file = file;
 		this.config = ConfigLoader.loadFileConfig(file);
+		this.settings = new ArrayList<>();
 	}
 	
 	public File getFile() {
@@ -84,11 +87,17 @@ public class WebinterfaceFileConfig implements WebinterfaceConfig {
 	}
 	
 	@Override
-	public void initializeSetting(WebinterfaceSetting<?> setting) {
+	public void registerSetting(WebinterfaceSetting<?> setting) {
+		settings.add(setting);
 		if(!config.isSet(setting.getKey())) {
 			config.set(setting.getKey(), setting.getDefaultValue());
 			config.saveToFile();
 		}
+	}
+	
+	@Override
+	public List<WebinterfaceSetting<?>> getSettings() {
+		return settings;
 	}
 
 }

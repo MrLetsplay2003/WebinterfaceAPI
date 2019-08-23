@@ -12,6 +12,7 @@ import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
 public class WebinterfacePage implements HttpDocument {
@@ -153,6 +154,7 @@ public class WebinterfacePage implements HttpDocument {
 		d.includeScript("/_internal/include.js", true);
 		d.includeScript("https://code.jquery.com/jquery-3.4.1.min.js", true);
 		d.addStyleSheet("/_internal/include.css");
+		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfiguration().getStringSetting(DefaultSettings.THEME) + ".css");
 		return d;
 	}
 

@@ -9,9 +9,14 @@ import me.mrletsplay.webinterfaceapi.webinterface.config.setting.SimpleSetting;
 
 public class DefaultSettings implements AutoSettings {
 	
+	@AutoSetting
 	public static final SimpleSetting<Boolean>
 		ENABLE_FILE_CACHING = new SimpleSetting<>("enable-file-caching", true);
 
+	@AutoSetting
+	public static final SimpleSetting<String>
+		THEME = new SimpleSetting<>("theme", "blue");
+	
 	@AutoSetting
 	public static final SimpleSetting<Integer>
 		PORT = new SimpleSetting<>("port", 8880);

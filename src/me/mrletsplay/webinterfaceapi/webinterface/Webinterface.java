@@ -34,6 +34,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GoogleAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceFileConfig;
+import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceCallbackDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
@@ -42,8 +43,9 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.ElementLayout;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
 import me.mrletsplay.webinterfaceapi.webinterface.session.FileSessionStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSessionStorage;
@@ -69,13 +71,30 @@ public class Webinterface {
 		
 		WebinterfacePage homePage = new WebinterfacePage("Home", "/");
 		WebinterfacePageSection sc = new WebinterfacePageSection();
-		WebinterfaceTitleText tt = new WebinterfaceTitleText(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());
-		tt.addLayouts(ElementLayout.FULL_WIDTH, ElementLayout.CENTER_VERTICALLY);
-		sc.addElement(tt);
+		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());
 		WebinterfaceText tx = new WebinterfaceText("Hello World!");
 		tx.addLayouts(ElementLayout.FULL_WIDTH, ElementLayout.CENTER_VERTICALLY);
 		sc.addElement(tx);
 		homePage.addSection(sc);
+		
+		WebinterfacePageSection sc2 = new WebinterfacePageSection();
+		sc2.addTitle("Settings");
+		sc2.addDynamicElements(() -> {
+			List<WebinterfacePageElement> els = new ArrayList<>();
+			for(WebinterfaceSetting<?> set : configuration.getSettings()) {
+				WebinterfaceText t = new WebinterfaceText(set.getKey());
+				t.addLayouts(ElementLayout.CENTER_VERTICALLY);
+				els.add(t);
+				
+				WebinterfaceInputField in = new WebinterfaceInputField(configuration.get); // Restrict # of classes
+				in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
+				els.add(in);
+			}
+			return els;
+		});
+		
+		homePage.addSection(sc2);
+		
 		registerPage(homePage);
 		
 		MrCoreServiceRegistry.registerService("WebinterfaceAPI", null);
@@ -98,7 +117,7 @@ public class Webinterface {
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
 		
 		configuration = new WebinterfaceFileConfig(new File(getConfigurationDirectory(), "config.yml"));
-		configuration.initializeSettings(new DefaultSettings());
+		configuration.registerSettings(new DefaultSettings());
 		
 		server = new HttpServer(configuration.getIntSetting(DefaultSettings.PORT));
 		server.setDocumentProvider(new WebinterfaceDocumentProvider());
