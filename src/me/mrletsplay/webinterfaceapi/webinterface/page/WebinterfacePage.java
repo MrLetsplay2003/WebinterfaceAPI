@@ -154,7 +154,7 @@ public class WebinterfacePage implements HttpDocument {
 		d.includeScript("/_internal/include.js", true);
 		d.includeScript("https://code.jquery.com/jquery-3.4.1.min.js", true);
 		d.addStyleSheet("/_internal/include.css");
-		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfiguration().getStringSetting(DefaultSettings.THEME) + ".css");
+		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
 		return d;
 	}
 

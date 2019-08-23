@@ -10,17 +10,27 @@ import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class WebinterfaceDocumentProvider extends DefaultDocumentProvider {
+	
+	@Override
+	public HttpDocument getDocument(String path) {
+		HttpDocument doc = super.getDocument(path);
+		if(doc == null) {
+			Webinterface.loadIncludedFiles(); // Try refreshing included files TODO: better method?
+			return super.getDocument(path);
+		}
+		return doc;
+	}
 
 	@Override
-	public void registerFileDocument(String parentPath, File file, boolean includeFileName) {
-		if(includeFileName
+	public void registerFileDocument(String path, File file, boolean appendFileName) {
+		if(appendFileName
 				&& file.isFile()
-				&& Webinterface.getConfiguration()
-				.getStringListSetting(DefaultSettings.INDEX_FILES)
+				&& Webinterface.getConfig()
+				.getSetting(DefaultSettings.INDEX_FILES)
 				.contains(file.getName().toLowerCase())) {
-			super.registerFileDocument(parentPath, file, false);
+			super.registerFileDocument(path, file, false);
 		}
-		super.registerFileDocument(parentPath, file, includeFileName);
+		super.registerFileDocument(path, file, appendFileName);
 	}
 	
 	@Override

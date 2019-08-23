@@ -4,18 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import me.mrletsplay.webinterfaceapi.php.PHPFileDocument;
+
 public interface HttpDocumentProvider {
 	
 	public void registerDocument(String path, HttpDocument document);
 	
-	public default void registerFileDocument(String parentPath, File file, boolean includeFileName) {
+	public default void registerFileDocument(String path, File file, boolean appendFileName) {
 		if(file.isDirectory()) {
 			for(File fl : file.listFiles()) {
-				registerFileDocument(includeFileName ? (parentPath + "/" + file.getName()) : parentPath, fl, true);
+				registerFileDocument(appendFileName ? (path + "/" + file.getName()) : path, fl, true);
 			}
 			return;
 		}
-		registerDocument(parentPath + "/" + (includeFileName ? file.getName() : ""), createFileDocument(file));
+		registerDocument(path + "/" + (appendFileName ? file.getName() : ""), createFileDocument(file));
 	}
 	
 	public default HttpDocument createFileDocument(File file) {

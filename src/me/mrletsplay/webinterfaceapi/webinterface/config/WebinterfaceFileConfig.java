@@ -25,64 +25,15 @@ public class WebinterfaceFileConfig implements WebinterfaceConfig {
 	}
 
 	@Override
-	public boolean getBooleanSetting(WebinterfaceSetting<Boolean> setting) {
-		boolean v = config.getBoolean(setting.getKey(), setting.getDefaultValue(), true);
+	public <T> T getSetting(WebinterfaceSetting<T> setting) {
+		T val = config.getComplex(setting.getKey(), setting.getType(), setting.getDefaultValue(), true);
 		config.saveToFile();
-		return v;
-	}
-
-	@Override
-	public String getStringSetting(WebinterfaceSetting<String> setting) {
-		String v = config.getString(setting.getKey(), setting.getDefaultValue(), true);
-		config.saveToFile();
-		return v;
-	}
-
-	@Override
-	public int getIntSetting(WebinterfaceSetting<Integer> setting) {
-		int v = config.getInt(setting.getKey(), setting.getDefaultValue(), true);
-		config.saveToFile();
-		return v;
-	}
-
-	@Override
-	public double getDoubleSetting(WebinterfaceSetting<Double> setting) {
-		double v = config.getDouble(setting.getKey(), setting.getDefaultValue(), true);
-		config.saveToFile();
-		return v;
-	}
-
-	@Override
-	public List<String> getStringListSetting(WebinterfaceSetting<List<String>> setting) {
-		List<String> v = config.getStringList(setting.getKey(), setting.getDefaultValue(), true);
-		config.saveToFile();
-		return v;
-	}
-
-	@Override
-	public List<Boolean> getBooleanListSetting(WebinterfaceSetting<List<Boolean>> setting) {
-		List<Boolean> v = config.getBooleanList(setting.getKey(), setting.getDefaultValue(), true);
-		config.saveToFile();
-		return v;
-	}
-
-	@Override
-	public List<Integer> getIntListSetting(WebinterfaceSetting<List<Integer>> setting) {
-		List<Integer> v = config.getIntegerList(setting.getKey(), setting.getDefaultValue(), true);
-		config.saveToFile();
-		return v;
-	}
-
-	@Override
-	public List<Double> getDoubleListSetting(WebinterfaceSetting<List<Double>> setting) {
-		List<Double> v = config.getDoubleList(setting.getKey(), setting.getDefaultValue(), true);
-		config.saveToFile();
-		return v;
+		return val;
 	}
 
 	@Override
 	public <T> void setSetting(WebinterfaceSetting<T> setting, T value) {
-		config.set(setting.getKey(), setting.getDefaultValue());
+		config.set(setting.getKey(), value);
 		config.saveToFile();
 	}
 	

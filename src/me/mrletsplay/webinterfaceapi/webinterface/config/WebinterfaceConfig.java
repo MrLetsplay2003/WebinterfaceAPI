@@ -8,21 +8,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSet
 
 public interface WebinterfaceConfig {
 	
-	public String getStringSetting(WebinterfaceSetting<String> setting);
-	
-	public boolean getBooleanSetting(WebinterfaceSetting<Boolean> setting);
-
-	public int getIntSetting(WebinterfaceSetting<Integer> setting);
-
-	public double getDoubleSetting(WebinterfaceSetting<Double> setting);
-	
-	public List<String> getStringListSetting(WebinterfaceSetting<List<String>> setting);
-	
-	public List<Boolean> getBooleanListSetting(WebinterfaceSetting<List<Boolean>> setting);
-
-	public List<Integer> getIntListSetting(WebinterfaceSetting<List<Integer>> setting);
-
-	public List<Double> getDoubleListSetting(WebinterfaceSetting<List<Double>> setting);
+	public <T> T getSetting(WebinterfaceSetting<T> setting);
 	
 	public <T> void setSetting(WebinterfaceSetting<T> setting, T value);
 	
@@ -41,5 +27,9 @@ public interface WebinterfaceConfig {
 	}
 	
 	public List<WebinterfaceSetting<?>> getSettings();
+	
+	public default WebinterfaceSetting<?> getSetting(String key) {
+		return getSettings().stream().filter(s -> s.getKey().equals(key)).findFirst().orElse(null);
+	}
 	
 }

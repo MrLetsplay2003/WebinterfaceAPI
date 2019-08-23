@@ -21,7 +21,7 @@ public class CachingFileDocument extends FileDocument {
 	
 	@Override
 	protected byte[] loadContent() {
-		if(!Webinterface.getConfiguration().getBooleanSetting(DefaultSettings.ENABLE_FILE_CACHING))
+		if(!Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_FILE_CACHING))
 			return super.loadContent();
 		// TODO: use lastmodified instead
 		if(content != null && getFile().length() == lastFileSize) return content;

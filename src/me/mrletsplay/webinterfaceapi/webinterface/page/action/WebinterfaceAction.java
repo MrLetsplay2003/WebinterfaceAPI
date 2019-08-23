@@ -7,7 +7,7 @@ public interface WebinterfaceAction {
 	public JavaScriptFunction toJavaScript();
 	
 	public default String randomFunctionName() {
-		return "f_" + System.currentTimeMillis() + (int) (100*Math.random());
+		return "f_" + Long.toHexString(System.currentTimeMillis()) + Integer.toHexString((int) (256*Math.random()));
 	}
 	
 }

@@ -1,4 +1,4 @@
-package me.mrletsplay.webinterfaceapi.http.document;
+package me.mrletsplay.webinterfaceapi.php;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCode;
+import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 
 public class PHPFileDocument implements HttpDocument {
@@ -31,9 +32,13 @@ public class PHPFileDocument implements HttpDocument {
 	@Override
 	public void createContent() {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
+		if(!PHP.isEnabled()) {
+			c.getServerHeader().setContent("text/plain", "PHP is disabled".getBytes(StandardCharsets.UTF_8));
+			return;
+		}
 		
 		List<String> cmd = new ArrayList<>();
-		cmd.add("php-cgi");
+		cmd.add(PHP.getCGIPath());
 		
 		ProcessBuilder b = new ProcessBuilder(cmd);
 		b.redirectError(Redirect.INHERIT);

@@ -20,7 +20,7 @@ public class HttpConnection extends AbstractConnection {
 	public HttpConnection(HttpServer server, Socket socket) {
 		super(server, socket);
 		try {
-			socket.setSoTimeout(1000);
+			socket.setSoTimeout(10000);
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
@@ -51,8 +51,7 @@ public class HttpConnection extends AbstractConnection {
 	}
 	
 	private boolean receive() throws IOException {
-		byte[] rec = IOUtils.readBytesUntilUnavailable(getSocket().getInputStream());
-		HttpClientHeader h = HttpClientHeader.parse(rec);
+		HttpClientHeader h = HttpClientHeader.parse(getSocket().getInputStream());
 		if(h == null) return false;
 		
 		HttpServerHeader sh = new HttpServerHeader(getServer().getProtocolVersion(), HttpStatusCodes.OK_200, new HttpHeaderFields());

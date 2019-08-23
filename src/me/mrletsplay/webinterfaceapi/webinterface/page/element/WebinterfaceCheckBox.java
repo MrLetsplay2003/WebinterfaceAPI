@@ -1,5 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
+import java.util.function.Supplier;
+
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
@@ -10,9 +12,26 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction
 public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 	
 	private WebinterfaceAction onChangeAction;
+	private Supplier<Boolean> initialState;
+	
+	public WebinterfaceCheckBox(Supplier<Boolean> initialState) {
+		this.initialState = initialState;
+	}
+	
+	public WebinterfaceCheckBox(boolean initialState) {
+		this(() -> initialState);
+	}
+
+	public WebinterfaceCheckBox() {
+		this(() -> false);
+	}
 	
 	public void setOnChangeAction(WebinterfaceAction onChangeAction) {
 		this.onChangeAction = onChangeAction;
+	}
+	
+	public Supplier<Boolean> getInitialState() {
+		return initialState;
 	}
 	
 	@Override
@@ -42,6 +61,7 @@ public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 		HtmlElement b = new HtmlElement("input");
 		b.setAttribute("type", "checkbox");
 		b.setAttribute("aria-label", "Yes/No"); // TODO aria-label
+		if(initialState.get()) b.setAttribute("checked");
 		if(onChangeAction != null) {
 			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
 			JavaScriptFunction f = onChangeAction.toJavaScript();

@@ -1,9 +1,8 @@
 package me.mrletsplay.webinterfaceapi.http.header;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class HttpClientHeader {
@@ -42,27 +41,55 @@ public class HttpClientHeader {
 		return new PostData(fields.getFieldValue("Content-Type"), postData);
 	}
 	
-	public static HttpClientHeader parse(byte[] data) {
-		if(data.length == 0) return null;
-		String dt = new String(data, StandardCharsets.UTF_8);
-		dt = dt.substring(0, dt.indexOf("\r\n\r\n"));
-		List<String> lines = new ArrayList<>(Arrays.asList(dt.split("\r\n")));
-		if(lines.isEmpty() || lines.stream().allMatch(String::isEmpty)) return null;
-		String[] fs = lines.remove(0).split(" ");
-		String method = fs[0];
-		HttpRequestPath path = HttpRequestPath.parse(fs[1]);
-		String protocolVersion = fs[2];
-		HttpHeaderFields fields = new HttpHeaderFields();
-		String l;
-		while(!lines.isEmpty() && (l = lines.remove(0)) != null) {
-			if(l.isEmpty()) break;
-			String[] kv = l.split(": ", 2);
-			fields.addFieldValue(kv[0], kv[1]);
+	public static HttpClientHeader parse(InputStream data) {
+		try {
+			String reqLine = readLine(data);
+			String[] fs = reqLine.split(" ");
+			String method = fs[0];
+			HttpRequestPath path = HttpRequestPath.parse(fs[1]);
+			String protocolVersion = fs[2];
+			HttpHeaderFields fields = new HttpHeaderFields();
+			String l;
+			while((l = readLine(data)) != null && !l.isEmpty()) {
+				if(l.isEmpty()) break;
+				String[] kv = l.split(": ", 2);
+				fields.addFieldValue(kv[0], kv[1]);
+			}
+			if(l == null) {
+				return null;
+			}
+			String cL = fields.getFieldValue("Content-Length");
+			byte[] postData = new byte[0];
+			if(cL != null) {
+				int contLength;
+				try {
+					contLength = Integer.parseInt(fields.getFieldValue("Content-Length"));
+				}catch(Exception e) {
+					return null;
+				}
+				postData = new byte[contLength];
+				int actualLen = data.read(postData);
+				int tries = 0;
+				while(actualLen != contLength) {
+					if(tries++ >= 10) return null; // Give up after 10 tries
+					actualLen += data.read(postData, actualLen, contLength - actualLen); // Retry reading remaining bytes until socket times out
+				}
+			}
+			return new HttpClientHeader(method, path, protocolVersion, fields, postData);
+		}catch(IOException e) {
+			return null;
 		}
-		int prDtLen = dt.getBytes(StandardCharsets.UTF_8).length;
-		byte[] postData = new byte[data.length - prDtLen - 4]; // - 4 bytes because of the \r\n\r\n
-		System.arraycopy(data, prDtLen + 4, postData, 0, postData.length);
-		return new HttpClientHeader(method, path, protocolVersion, fields, postData);
+	}
+	
+	private static String readLine(InputStream in) throws IOException {
+		StringBuilder b = new StringBuilder();
+		int c;
+		while((c = in.read()) != '\r' && c != -1) {
+			b.appendCodePoint(c);
+		}
+		if(c == -1) return null;
+		in.read();
+		return b.toString();
 	}
 	
 	@Override

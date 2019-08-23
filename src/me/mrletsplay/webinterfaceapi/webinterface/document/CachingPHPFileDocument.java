@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import me.mrletsplay.webinterfaceapi.http.document.PHPFileDocument;
 import me.mrletsplay.webinterfaceapi.http.header.HttpClientHeader;
 import me.mrletsplay.webinterfaceapi.http.header.HttpServerHeader;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.php.PHPFileDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
@@ -27,7 +27,7 @@ public class CachingPHPFileDocument extends PHPFileDocument {
 	
 	@Override
 	public void createContent() {
-		if(!Webinterface.getConfiguration().getBooleanSetting(DefaultSettings.ENABLE_FILE_CACHING)) {
+		if(!Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_FILE_CACHING)) {
 			super.createContent();
 			return;
 		}

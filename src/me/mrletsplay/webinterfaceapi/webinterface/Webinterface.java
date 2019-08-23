@@ -10,18 +10,22 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
+import me.mrletsplay.mrcore.misc.Complex;
+import me.mrletsplay.mrcore.misc.MiscUtils;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.document.FileDocument;
-import me.mrletsplay.webinterfaceapi.http.document.PHPFileDocument;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.php.PHP;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileAccountStorage;
@@ -41,8 +45,17 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocu
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ArrayValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WrapperValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.ElementLayout;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceCheckBox;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
@@ -56,18 +69,22 @@ public class Webinterface {
 	private static List<WebinterfacePage> pages;
 	private static List<WebinterfaceActionHandler> handlers;
 	private static List<WebinterfaceAuthMethod> authMethods;
+	private static Map<String, Map.Entry<File, Boolean>> includedFiles;
 	
 	private static boolean initialized = false;
 	private static File rootDirectory;
 	private static WebinterfaceAccountStorage accountStorage;
 	private static WebinterfaceSessionStorage sessionStorage;
-	private static WebinterfaceConfig configuration;
+	private static WebinterfaceConfig config;
 	
 	static {
 		pages = new ArrayList<>();
 		handlers = new ArrayList<>();
 		authMethods = new ArrayList<>();
+		includedFiles = new HashMap<>();
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
+		
+		includeFile("/_internal", new File(rootDirectory, "include"));
 		
 		WebinterfacePage homePage = new WebinterfacePage("Home", "/");
 		WebinterfacePageSection sc = new WebinterfacePageSection();
@@ -81,14 +98,50 @@ public class Webinterface {
 		sc2.addTitle("Settings");
 		sc2.addDynamicElements(() -> {
 			List<WebinterfacePageElement> els = new ArrayList<>();
-			for(WebinterfaceSetting<?> set : configuration.getSettings()) {
+			for(WebinterfaceSetting<?> set : DefaultSettings.INSTANCE.getSettings()) {
 				WebinterfaceText t = new WebinterfaceText(set.getKey());
 				t.addLayouts(ElementLayout.CENTER_VERTICALLY);
 				els.add(t);
 				
-				WebinterfaceInputField in = new WebinterfaceInputField(configuration.get); // Restrict # of classes
-				in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
-				els.add(in);
+				if(set.getType().equals(Complex.value(String.class))) {
+					WebinterfaceInputField in = new WebinterfaceInputField(config.getSetting(set).toString()); // Restrict # of classes
+					in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
+					in.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
+								new StringValue(set.getKey()),
+								new ElementValue(in)
+							)),
+							new ReloadPageAction()));
+					els.add(in);
+				}else if(set.getType().equals(Complex.value(Integer.class)) || set.getType().equals(Complex.value(Double.class))) {
+					WebinterfaceInputField in = new WebinterfaceInputField(config.getSetting(set).toString()); // Restrict # of classes
+					in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
+					in.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
+								new StringValue(set.getKey()),
+								new WrapperValue(new ElementValue(in), set.getType().equals(Complex.value(Integer.class)) ? "parseInt(%s)" : "parseFloat(%s)")
+							)),
+							new ReloadPageAction()));
+					els.add(in);
+				}else if(set.getType().equals(Complex.value(Boolean.class))) {
+					WebinterfaceCheckBox in = new WebinterfaceCheckBox((boolean) config.getSetting(set)); // Restrict # of classes
+					in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
+					in.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
+								new StringValue(set.getKey()),
+								new CheckboxValue(in)
+							)),
+							new ReloadPageAction()));
+					els.add(in);
+				}else if(set.getType().equals(Complex.list(String.class))) {
+					WebinterfaceInputField in = new WebinterfaceInputField(((List<?>) config.getSetting(set)).stream().map(Object::toString).collect(Collectors.joining(", "))); // Restrict # of classes
+					in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
+					in.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
+								new StringValue(set.getKey()),
+								new WrapperValue(new ElementValue(in), "%s.split(\",\")")
+							)),
+							new ReloadPageAction()));
+					els.add(in);
+				}else {
+					els.remove(els.size()-1);
+				}
 			}
 			return els;
 		});
@@ -116,17 +169,21 @@ public class Webinterface {
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
 		
-		configuration = new WebinterfaceFileConfig(new File(getConfigurationDirectory(), "config.yml"));
-		configuration.registerSettings(new DefaultSettings());
+		config = new WebinterfaceFileConfig(new File(getConfigurationDirectory(), "config.yml"));
+		config.registerSettings(DefaultSettings.INSTANCE);
 		
-		server = new HttpServer(configuration.getIntSetting(DefaultSettings.PORT));
+		PHP.setEnabled(config.getSetting(DefaultSettings.ENABLE_PHP));
+		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
+		
+		server = new HttpServer(config.getSetting(DefaultSettings.PORT));
 		server.setDocumentProvider(new WebinterfaceDocumentProvider());
-		server.getDocumentProvider().registerFileDocument("/_internal", new File(rootDirectory, "include"));
+		
+		loadIncludedFiles();
+		
 		server.getDocumentProvider().registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/favicon.ico")));
 		server.getDocumentProvider().registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
 		server.getDocumentProvider().registerDocument("/login", new WebinterfaceLoginDocument());
 		server.getDocumentProvider().registerDocument("/logout", new WebinterfaceLogoutDocument());
-		server.getDocumentProvider().registerDocument("/test/test.php", new PHPFileDocument(new File("include/test.php")));
 		pages.forEach(page -> server.getDocumentProvider().registerDocument(page.getUrl(), page));
 		
 		registerAuthMethod(new DiscordAuth());
@@ -176,8 +233,8 @@ public class Webinterface {
 		return new File(rootDirectory, "cfg/");
 	}
 	
-	public static WebinterfaceConfig getConfiguration() {
-		return configuration;
+	public static WebinterfaceConfig getConfig() {
+		return config;
 	}
 	
 	public static void registerPage(WebinterfacePage page) {
@@ -249,6 +306,24 @@ public class Webinterface {
 	
 	public static WebinterfaceSessionStorage getSessionStorage() {
 		return sessionStorage;
+	}
+	
+	public static void includeFile(String path, File file, boolean includeFileName) {
+		includedFiles.put(path, MiscUtils.newMapEntry(file, includeFileName));
+	}
+	
+	public static void includeFile(String path, File file) {
+		includeFile(path, file, false);
+	}
+	
+	public static void loadIncludedFiles() {
+		for(Map.Entry<String, Map.Entry<File, Boolean>> v : includedFiles.entrySet()) {
+			server.getDocumentProvider().registerFileDocument(v.getKey(), v.getValue().getKey(), v.getValue().getValue());
+		}
+	}
+	
+	public static Map<String, Map.Entry<File, Boolean>> getIncludedFiles() {
+		return includedFiles;
 	}
 	
 	public static void shutdown() {

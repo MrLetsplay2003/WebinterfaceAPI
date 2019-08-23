@@ -1,7 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
 import java.util.List;
-import java.util.UUID;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 
@@ -12,7 +11,8 @@ public interface WebinterfacePageElement {
 	public String getID();
 	
 	public default String getOrGenerateID() {
-		if(getID() == null) setID(UUID.randomUUID().toString().replace("-", "")); // TODO: better ids?
+		if(getID() == null) setID(Long.toHexString(System.currentTimeMillis()) + Integer.toHexString((int) (256*Math.random()))); // TODO: better ids?
+//		if(getID() == null) setID(UUID.randomUUID().toString().replace("-", "")); // TODO: better ids?
 		return getID();
 	}
 	
