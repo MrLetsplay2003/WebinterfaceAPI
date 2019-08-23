@@ -1,13 +1,18 @@
 package me.mrletsplay.webinterfaceapi.php;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PHP {
 
 	private static boolean enabled;
 	private static String cgiPath;
+	private static List<String> fileExtensions;
 	
 	static {
 		enabled = false;
 		cgiPath = "php-cgi";
+		fileExtensions = Arrays.asList(".php");
 	}
 	
 	public static boolean isEnabled() {
@@ -24,6 +29,14 @@ public class PHP {
 	
 	public static void setCGIPath(String cgiPath) {
 		PHP.cgiPath = cgiPath;
+	}
+	
+	public static void setFileExtensions(List<String> fileExtensions) {
+		PHP.fileExtensions = fileExtensions;
+	}
+	
+	public static List<String> getFileExtensions() {
+		return fileExtensions;
 	}
 	
 }

@@ -9,6 +9,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -98,7 +100,9 @@ public class Webinterface {
 		sc2.addTitle("Settings");
 		sc2.addDynamicElements(() -> {
 			List<WebinterfacePageElement> els = new ArrayList<>();
-			for(WebinterfaceSetting<?> set : DefaultSettings.INSTANCE.getSettings()) {
+			List<WebinterfaceSetting<?>> sets = new ArrayList<>(DefaultSettings.INSTANCE.getSettings());
+			Collections.sort(sets, Comparator.comparing(WebinterfaceSetting::getKey));
+			for(WebinterfaceSetting<?> set : sets) {
 				WebinterfaceText t = new WebinterfaceText(set.getKey());
 				t.addLayouts(ElementLayout.CENTER_VERTICALLY);
 				els.add(t);
@@ -174,6 +178,7 @@ public class Webinterface {
 		
 		PHP.setEnabled(config.getSetting(DefaultSettings.ENABLE_PHP));
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
+		PHP.setFileExtensions(config.getSetting(DefaultSettings.PHP_FILE_EXTENSIONS));
 		
 		server = new HttpServer(config.getSetting(DefaultSettings.PORT));
 		server.setDocumentProvider(new WebinterfaceDocumentProvider());

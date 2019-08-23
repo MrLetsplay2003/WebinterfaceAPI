@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import me.mrletsplay.webinterfaceapi.php.PHP;
 import me.mrletsplay.webinterfaceapi.php.PHPFileDocument;
 
 public interface HttpDocumentProvider {
@@ -21,7 +22,7 @@ public interface HttpDocumentProvider {
 	}
 	
 	public default HttpDocument createFileDocument(File file) {
-		if(file.getName().endsWith(".php")) {
+		if(PHP.getFileExtensions().stream().anyMatch(file.getName()::endsWith)) {
 			return new PHPFileDocument(file);
 		}
 		try {

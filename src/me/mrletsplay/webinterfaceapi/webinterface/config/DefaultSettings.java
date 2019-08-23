@@ -31,6 +31,7 @@ public class DefaultSettings implements AutoSettings {
 
 	@AutoSetting
 	public static final StringListSetting
-		INDEX_FILES = new StringListSetting("index-files", Arrays.asList("index.php", "index.html"));
+		INDEX_FILES = new StringListSetting("index-files", Arrays.asList("index.php", "index.html")),
+		PHP_FILE_EXTENSIONS = new StringListSetting("php.file-extensions", Arrays.asList(".php"));
 	
 }
