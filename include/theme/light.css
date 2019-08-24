@@ -12,4 +12,5 @@ body {
 	--theme-color-content-shadow: lightgray;
 	--theme-color-content-border: lightgray;
 	--theme-color-content-text: black;
+	--theme-color-content-hover-bg: #efefef;
 }

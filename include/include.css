@@ -185,7 +185,7 @@ button {
 }
 
 button:hover {
-	background-color: #efefef;
+	background-color: var(--theme-color-content-hover-bg);
 	cursor: pointer;
 }
 
@@ -207,11 +207,28 @@ input:focus {
 input[type="text"] {
 	min-height: 30px;
 	padding: 0px 0px 0px 5px;
+	font-family: 'Open Sans', sans-serif;
 }
 
 input[type="checkbox"] {
 	width: 16px;
 	height: 16px;
+}
+
+select {
+	position: relative;
+	background-color: var(--theme-color-content-bg);
+	border: 1px solid var(--theme-color-content-border);
+	box-sizing: border-box;
+	outline: 0;
+	min-height: 30px;
+	cursor: pointer;
+	font-family: 'Open Sans', sans-serif;
+}
+
+select > option {
+	outline: 0;
+	font-family: 'Open Sans', sans-serif;
 }
 
 /*input[type="checkbox"] {

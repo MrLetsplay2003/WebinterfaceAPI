@@ -12,4 +12,5 @@ body {
 	--theme-color-content-shadow: rgb(49, 50, 61);
 	--theme-color-content-border: rgb(37, 37, 37);
 	--theme-color-content-text: rgb(255, 255, 255);
+	--theme-color-content-hover-bg: #39404d;
 }

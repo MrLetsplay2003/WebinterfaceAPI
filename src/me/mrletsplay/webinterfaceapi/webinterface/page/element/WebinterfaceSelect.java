@@ -1,5 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
@@ -11,31 +13,20 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction
 
 public class WebinterfaceSelect extends AbstractWebinterfacePageElement {
 	
-	private Supplier<String> placeholder;
+	private Supplier<Map<String, String>> options;
 	private WebinterfaceAction onChangeAction;
 	
 	public WebinterfaceSelect() {
-		this(() -> "Text");
+		this.options = LinkedHashMap::new;
 	}
 	
-	public WebinterfaceSelect(Supplier<String> placeholder) {
-		this.placeholder = placeholder;
-	}
-	
-	public WebinterfaceSelect(String placeholder) {
-		this(() -> placeholder);
-	}
-	
-	public void setPlaceholder(Supplier<String> placeholder) {
-		this.placeholder = placeholder;
-	}
-	
-	public void setPlaceholder(String placeholder) {
-		setPlaceholder(() -> placeholder);
-	}
-	
-	public Supplier<String> getPlaceholder() {
-		return placeholder;
+	public void addOption(String name, String value) {
+		Supplier<Map<String, String>> o = this.options;
+		this.options = () -> {
+			Map<String, String> ops = o.get();
+			ops.put(name, value);
+			return ops;
+		};
 	}
 	
 	public void setOnChangeAction(WebinterfaceAction onChangeAction) {
@@ -44,10 +35,15 @@ public class WebinterfaceSelect extends AbstractWebinterfacePageElement {
 	
 	@Override
 	public HtmlElement createElement() {
-		HtmlElement b = new HtmlElement("input");
-		b.setAttribute("type", "text");
-		b.setAttribute("placeholder", placeholder);
-		b.setAttribute("aria-label", placeholder);
+		HtmlElement b = new HtmlElement("select");
+//		b.setAttribute("placeholder", placeholder);
+//		b.setAttribute("aria-label", placeholder);
+		for(Map.Entry<String, String> op : options.get().entrySet()) {
+			HtmlElement oe = new HtmlElement("option");
+			oe.setText(op.getKey());
+			oe.setAttribute("value", op.getValue());
+			b.appendChild(oe);
+		}
 		if(onChangeAction != null) {
 			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
 			JavaScriptFunction f = onChangeAction.toJavaScript();

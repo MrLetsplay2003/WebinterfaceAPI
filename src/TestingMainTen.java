@@ -16,6 +16,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButto
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceCheckBox;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceElementGroup;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceSelect;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
 
@@ -55,6 +56,14 @@ public class TestingMainTen {
 		ip2.setOnChangeAction(new SendJSAction("webinterface", "lol", new CheckboxValue(ip2)));
 		ip2.addLayouts(ElementLayout.CENTER_VERTICALLY);
 		g.addElement(ip2);
+		
+		WebinterfaceSelect sel = new WebinterfaceSelect();
+		sel.addLayouts(ElementLayout.NEW_LINE);
+		sel.addOption("This is an option", "option-1");
+		sel.addOption("This is also an option", "option-2");
+		sel.addOption("This is another option", "option-3");
+		sel.addOption("This is the last option", "option-4");
+		g.addElement(sel);
 		
 		WebinterfaceButton b2 = new WebinterfaceButton("Save");
 		
