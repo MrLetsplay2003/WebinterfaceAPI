@@ -82,7 +82,6 @@ public class WebinterfacePage implements HttpDocument {
 		ac.addClass("header-avatar");
 		ac.setAttribute("onclick", "toggleProfileOptions()");
 		header.appendChild(ac);
-		
 		HtmlElement av = HtmlElement.img(WebinterfaceSession.getCurrentSession().getAccount().getAvatarUrl(), "User Avatar");
 		av.setSelfClosing(true);
 		ac.appendChild(av);

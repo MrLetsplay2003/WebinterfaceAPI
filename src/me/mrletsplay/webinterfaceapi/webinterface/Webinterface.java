@@ -164,6 +164,19 @@ public class Webinterface {
 		accountStorage.initialize();
 		sessionStorage.initialize();
 		server.start();
+		
+		server.getExecutor().submit(() -> {
+			while(server.isRunning()) {
+				for(WebinterfaceSession sess : getSessionStorage().getSessions()) {
+					if(sess.hasExpired()) getSessionStorage().deleteSession(sess.getSessionID());
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public static void initialize() {

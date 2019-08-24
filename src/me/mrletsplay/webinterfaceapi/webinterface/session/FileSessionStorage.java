@@ -2,6 +2,8 @@ package me.mrletsplay.webinterfaceapi.webinterface.session;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import me.mrletsplay.mrcore.config.ConfigLoader;
 import me.mrletsplay.mrcore.config.FileCustomConfig;
@@ -57,6 +59,15 @@ public class FileSessionStorage implements WebinterfaceSessionStorage {
 				Instant.ofEpochMilli(config.getLong(sessionID + ".expires-at")),
 				Complex.castMap(new JSONObject(config.getString(sessionID + ".properties")), String.class, String.class).get()
 			);
+	}
+	
+	@Override
+	public List<WebinterfaceSession> getSessions() {
+		List<WebinterfaceSession> ss = new ArrayList<>();
+		for(String sessID : config.getKeys()) {
+			ss.add(getSession(sessID));
+		}
+		return ss;
 	}
 
 }

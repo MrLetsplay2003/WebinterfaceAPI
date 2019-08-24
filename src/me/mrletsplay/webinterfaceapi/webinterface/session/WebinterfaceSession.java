@@ -42,6 +42,10 @@ public class WebinterfaceSession {
 		return expiresAt;
 	}
 	
+	public boolean hasExpired() {
+		return Instant.now().isAfter(getExpiresAt());
+	}
+	
 	public void setProperty(String name, String value) {
 		properties.put(name, value);
 	}
@@ -56,7 +60,7 @@ public class WebinterfaceSession {
 	
 	public static WebinterfaceSession startSession(WebinterfaceAccountData accountData) {
 		String sID = UUID.randomUUID().toString();
-		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
+		Instant expiresAt = Instant.now().plus(30, ChronoUnit.SECONDS);
 		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByEmail(accountData.getUserEmail());
 		if(acc == null) {
 			acc = Webinterface.getAccountStorage().createAccount(accountData.getUserEmail());
