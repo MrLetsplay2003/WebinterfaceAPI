@@ -12,7 +12,6 @@ public interface WebinterfacePageElement {
 	
 	public default String getOrGenerateID() {
 		if(getID() == null) setID(Long.toHexString(System.currentTimeMillis()) + Integer.toHexString((int) (256*Math.random()))); // TODO: better ids?
-//		if(getID() == null) setID(UUID.randomUUID().toString().replace("-", "")); // TODO: better ids?
 		return getID();
 	}
 	
