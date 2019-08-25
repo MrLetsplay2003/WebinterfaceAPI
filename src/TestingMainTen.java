@@ -93,7 +93,6 @@ public class TestingMainTen {
 		});
 		Webinterface.registerPage(p2);
 		
-		Webinterface.registerActionHandler(new TestHandler());
 		Webinterface.start();
 		
 		MrCoreServiceRegistry.awaitServiceRegistration("WebinterfaceAPI").thenRun(() -> {

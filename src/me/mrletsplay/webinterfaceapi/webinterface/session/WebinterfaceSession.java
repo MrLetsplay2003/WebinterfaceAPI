@@ -9,7 +9,7 @@ import java.util.UUID;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountData;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 
 public class WebinterfaceSession {
 	
@@ -58,9 +58,9 @@ public class WebinterfaceSession {
 		return properties;
 	}
 	
-	public static WebinterfaceSession startSession(WebinterfaceAccountData accountData) {
+	public static WebinterfaceSession startSession(WebinterfaceAccountConnection accountData) {
 		String sID = UUID.randomUUID().toString();
-		Instant expiresAt = Instant.now().plus(30, ChronoUnit.SECONDS);
+		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
 		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByEmail(accountData.getUserEmail());
 		if(acc == null) {
 			acc = Webinterface.getAccountStorage().createAccount(accountData.getUserEmail());

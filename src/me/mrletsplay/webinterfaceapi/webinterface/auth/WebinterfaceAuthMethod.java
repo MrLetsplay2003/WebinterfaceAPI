@@ -13,7 +13,7 @@ public interface WebinterfaceAuthMethod {
 	
 	public void handleAuthRequest();
 	
-	public WebinterfaceAccountData handleAuthResponse() throws AuthException;
+	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException;
 	
 	public default String getAuthResponseUrl() {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();

@@ -13,7 +13,7 @@ import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountData;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 
 public class GitHubAuth implements WebinterfaceAuthMethod {
@@ -63,7 +63,7 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 	}
 
 	@Override
-	public WebinterfaceAccountData handleAuthResponse() throws AuthException {
+	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		String code = c.getClientHeader().getPath().getGetParameterValue("code");
 		try {
@@ -97,7 +97,7 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 			JSONObject primEml = emls.stream().map(o -> (JSONObject) o).filter(e -> e.getBoolean("primary")).findFirst().orElse(null);
 			userEmail = primEml.getString("email");
 			
-			return new WebinterfaceAccountData(getID(), userID, userName, userEmail, userAvatarUrl);
+			return new WebinterfaceAccountConnection(getID(), userID, userName, userEmail, userAvatarUrl);
 		} catch (Exception e) {
 			throw new AuthException("Failed to verify GitHub auth token", e);
 		}

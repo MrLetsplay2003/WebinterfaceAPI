@@ -301,6 +301,7 @@ input[type="checkbox"]:checked + .checkbox-label::after {
 .grid-layout {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+	grid-template-rows: min-content;
 	grid-auto-flow: row;
 }
 

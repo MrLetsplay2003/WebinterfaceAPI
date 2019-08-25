@@ -40,7 +40,7 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	@Override
 	public void storeAccount(WebinterfaceAccount account) {
 		JSONArray arr = new JSONArray();
-		for(WebinterfaceAccountData d : account.getData()) {
+		for(WebinterfaceAccountConnection d : account.getData()) {
 			JSONObject accD = new JSONObject();
 			accD.set("method", d.getAuthMethod());
 			accD.set("id", d.getUserID());
@@ -50,16 +50,16 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 			arr.add(accD);
 		}
 		config.set(account.getID() + ".email", account.getEmail());
-		config.set(account.getID() + ".data", arr);
+		config.set(account.getID() + ".connections", arr);
 		config.saveToFile();
 	}
 
 	@Override
 	public WebinterfaceAccount getAccountByID(String id) {
 		if(!config.isSet(id)) return null;
-		List<WebinterfaceAccountData> data = new ArrayList<>();
-		for(ConfigSection s : config.getComplex(id + ".data", Complex.list(ConfigSection.class), new ArrayList<>(), false)) {
-			data.add(new WebinterfaceAccountData(
+		List<WebinterfaceAccountConnection> data = new ArrayList<>();
+		for(ConfigSection s : config.getComplex(id + ".connections", Complex.list(ConfigSection.class), new ArrayList<>(), false)) {
+			data.add(new WebinterfaceAccountConnection(
 					s.getString("method"),
 					s.getString("id"),
 					s.getString("name"),

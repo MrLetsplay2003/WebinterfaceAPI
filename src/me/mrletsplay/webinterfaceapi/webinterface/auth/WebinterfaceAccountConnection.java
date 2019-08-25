@@ -1,10 +1,10 @@
 package me.mrletsplay.webinterfaceapi.webinterface.auth;
 
-public class WebinterfaceAccountData {
+public class WebinterfaceAccountConnection {
 
 	private String authMethod, userID, userName, userEmail, userAvatar;
 
-	public WebinterfaceAccountData(String authMethod, String userID, String userName, String userEmail, String userAvatar) {
+	public WebinterfaceAccountConnection(String authMethod, String userID, String userName, String userEmail, String userAvatar) {
 		this.authMethod = authMethod;
 		this.userID = userID;
 		this.userName = userName;

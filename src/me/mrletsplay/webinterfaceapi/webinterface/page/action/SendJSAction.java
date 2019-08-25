@@ -21,7 +21,7 @@ public class SendJSAction implements WebinterfaceAction {
 		JavaScriptFunction f = new JavaScriptFunction(randomFunctionName() + "()");
 		f.setCode("Webinterface.call(\"" + StringEscapeUtils.escapeEcmaScript(target) + "\",\""
 				+ StringEscapeUtils.escapeEcmaScript(method) + "\", {\"value\":"
-				+ value.toJavaScript() + "});");
+				+ (value == null ? "null" : value.toJavaScript()) + "});");
 		return f;
 	}
 

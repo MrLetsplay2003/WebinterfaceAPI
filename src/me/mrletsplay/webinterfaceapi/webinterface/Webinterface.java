@@ -15,6 +15,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ import me.mrletsplay.webinterfaceapi.php.PHP;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileAccountStorage;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountData;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.DiscordAuth;
@@ -49,6 +50,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ArrayValue;
@@ -57,6 +59,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WrapperValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.ElementLayout;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceCheckBox;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
@@ -85,8 +88,6 @@ public class Webinterface {
 		authMethods = new ArrayList<>();
 		includedFiles = new HashMap<>();
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
-		
-		includeFile("/_internal", new File(rootDirectory, "include"));
 		
 		WebinterfacePage homePage = new WebinterfacePage("Home", "/");
 		WebinterfacePageSection sc = new WebinterfacePageSection();
@@ -126,7 +127,7 @@ public class Webinterface {
 							new ReloadPageAction()));
 					els.add(in);
 				}else if(set.getType().equals(Complex.value(Boolean.class))) {
-					WebinterfaceCheckBox in = new WebinterfaceCheckBox((boolean) config.getSetting(set)); // Restrict # of classes
+					WebinterfaceCheckBox in = new WebinterfaceCheckBox((Boolean) config.getSetting(set)); // Restrict # of classes
 					in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
 					in.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
 								new StringValue(set.getKey()),
@@ -150,39 +151,29 @@ public class Webinterface {
 			return els;
 		});
 		
+		WebinterfaceButton btn = new WebinterfaceButton("Restart");
+		btn.addLayouts(ElementLayout.FULL_WIDTH);
+		btn.setOnClickAction(new MultiAction(
+				new SendJSAction("webinterface", "restart", null),
+				new ReloadPageAfterAction(1000)));
+		sc2.addElement(btn);
+		
 		homePage.addSection(sc2);
 		
 		registerPage(homePage);
 		
+		registerAuthMethod(new DiscordAuth());
+		registerAuthMethod(new GoogleAuth());
+		registerAuthMethod(new GitHubAuth());
+		
 		MrCoreServiceRegistry.registerService("WebinterfaceAPI", null);
-	}
-	
-	public static void start() {
-		extractFiles();
-		initialize();
-		
-		accountStorage.initialize();
-		sessionStorage.initialize();
-		server.start();
-		
-		server.getExecutor().submit(() -> {
-			while(server.isRunning()) {
-				for(WebinterfaceSession sess : getSessionStorage().getSessions()) {
-					if(sess.hasExpired()) getSessionStorage().deleteSession(sess.getSessionID());
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 	
 	public static void initialize() {
 		if(initialized) return;
 		initialized = true;
 		
+		includeFile("/_internal", new File(rootDirectory, "include"));
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
 		
@@ -204,9 +195,61 @@ public class Webinterface {
 		server.getDocumentProvider().registerDocument("/logout", new WebinterfaceLogoutDocument());
 		pages.forEach(page -> server.getDocumentProvider().registerDocument(page.getUrl(), page));
 		
-		registerAuthMethod(new DiscordAuth());
-		registerAuthMethod(new GoogleAuth());
-		registerAuthMethod(new GitHubAuth());
+		authMethods.forEach(method -> {
+			server.getDocumentProvider().registerDocument("/auth/" + method.getID(), () -> {
+				if(!method.isAvailable()) {
+					HttpRequestContext c = HttpRequestContext.getCurrentContext();
+					c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
+					return;
+				}
+				method.handleAuthRequest();
+			});
+			server.getDocumentProvider().registerDocument("/auth/" + method.getID() + "/response", () -> {
+				HttpRequestContext c = HttpRequestContext.getCurrentContext();
+				if(!method.isAvailable()) {
+					c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
+					return;
+				}
+				try {
+					WebinterfaceAccountConnection acc = method.handleAuthResponse();
+					WebinterfaceSession.stopSession();
+					WebinterfaceSession s = WebinterfaceSession.startSession(acc);
+					c.getServerHeader().getFields().setCookie(WebinterfaceSession.COOKIE_NAME, s.getSessionID(), "Path=/", "Expires=" + WebinterfaceUtils.httpTimeStamp(s.getExpiresAt()));
+					c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
+					c.getServerHeader().getFields().setFieldValue("Location", "/");
+				} catch(AuthException e) {
+					c.getServerHeader().setContent("text/plain", "Auth failed".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
+				}catch(Exception e) {
+					c.getServerHeader().setContent("text/plain", "Auth failed".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
+				}
+			});
+		});
+		
+		registerActionHandler(new DefaultHandler());
+	}
+	
+	public static void start() {
+		extractFiles();
+		initialize();
+		
+		accountStorage.initialize();
+		sessionStorage.initialize();
+		server.start();
+		
+		server.getExecutor().execute(() -> {
+			Supplier<Boolean> keepRunning = () -> server.isRunning() && !server.getExecutor().isShutdown() && !Thread.interrupted();
+			while(keepRunning.get()) {
+				for(WebinterfaceSession sess : getSessionStorage().getSessions()) {
+					if(sess.hasExpired()) getSessionStorage().deleteSession(sess.getSessionID());
+				}
+				for(int i = 0; i < 10; i++) {
+					if(!keepRunning.get()) return;
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException ignored) {}
+				}
+			}
+		});
 	}
 	
 	private static void extractFiles() {
@@ -220,6 +263,8 @@ public class Webinterface {
 					JarEntry e = en.nextElement();
 					if(!e.isDirectory() && e.getName().startsWith("include/")) {
 						File ofl = new File(getRootDirectory(), e.getName());
+						if(ofl.exists()) continue;
+						System.out.println("[WIAPI] Extracting " + e.getName() + "...");
 						IOUtils.createFile(ofl);
 						try (InputStream in = fl.getInputStream(e);
 								OutputStream out = new FileOutputStream(ofl)) {
@@ -273,33 +318,6 @@ public class Webinterface {
 	
 	public static void registerAuthMethod(WebinterfaceAuthMethod method) {
 		authMethods.add(method);
-		server.getDocumentProvider().registerDocument("/auth/" + method.getID(), () -> {
-			if(!method.isAvailable()) {
-				HttpRequestContext c = HttpRequestContext.getCurrentContext();
-				c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
-				return;
-			}
-			method.handleAuthRequest();
-		});
-		server.getDocumentProvider().registerDocument("/auth/" + method.getID() + "/response", () -> {
-			HttpRequestContext c = HttpRequestContext.getCurrentContext();
-			if(!method.isAvailable()) {
-				c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
-				return;
-			}
-			try {
-				WebinterfaceAccountData acc = method.handleAuthResponse();
-				WebinterfaceSession.stopSession();
-				WebinterfaceSession s = WebinterfaceSession.startSession(acc);
-				c.getServerHeader().getFields().setCookie(WebinterfaceSession.COOKIE_NAME, s.getSessionID(), "Path=/", "Expires=" + WebinterfaceUtils.httpTimeStamp(s.getExpiresAt()));
-				c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
-				c.getServerHeader().getFields().setFieldValue("Location", "/");
-			} catch(AuthException e) {
-				c.getServerHeader().setContent("text/plain", "Auth failed".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
-			}catch(Exception e) {
-				c.getServerHeader().setContent("text/plain", "Auth failed".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
-			}
-		});
 	}
 	
 	public static List<WebinterfaceAuthMethod> getAuthMethods() {
@@ -345,6 +363,7 @@ public class Webinterface {
 	}
 	
 	public static void shutdown() {
+		initialized = false;
 		if(server != null) server.shutdown();
 	}
 

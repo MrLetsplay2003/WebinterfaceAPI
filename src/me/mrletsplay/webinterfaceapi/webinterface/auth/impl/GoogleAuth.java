@@ -12,7 +12,7 @@ import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountData;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 
 public class GoogleAuth implements WebinterfaceAuthMethod {
@@ -64,7 +64,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 	}
 
 	@Override
-	public WebinterfaceAccountData handleAuthResponse() throws AuthException {
+	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		String code = c.getClientHeader().getPath().getGetParameterValue("code");
 		
@@ -88,7 +88,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 				userEmail = usr.getString("email"),
 				userAvatarUrl = usr.getString("picture");
 			
-			return new WebinterfaceAccountData(getID(), userID, userName, userEmail, userAvatarUrl);
+			return new WebinterfaceAccountConnection(getID(), userID, userName, userEmail, userAvatarUrl);
 		} catch (Exception e) {
 			throw new AuthException("Failed to verify Google auth token", e);
 		}

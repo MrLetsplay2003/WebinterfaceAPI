@@ -1,8 +1,7 @@
+package me.mrletsplay.webinterfaceapi.webinterface;
 import me.mrletsplay.mrcore.json.JSONArray;
-import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.misc.NullableOptional;
-import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
@@ -10,14 +9,15 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceHandle
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
 
-public class TestHandler implements WebinterfaceActionHandler {
+public class DefaultHandler implements WebinterfaceActionHandler {
 	
-	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "lol")
+	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "restart")
 	public WebinterfaceResponse lol(WebinterfaceRequestEvent event) {
-		System.out.println(event.getRequestData());
-		JSONObject res = new JSONObject();
-		res.put("yourvalue", event.getRequestData());
-		return WebinterfaceResponse.success(res);
+		new Thread(() -> {
+			Webinterface.shutdown();
+			Webinterface.start();
+		}, "Webinterface-Restart-Thread").start();
+		return WebinterfaceResponse.success();
 	}
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "setSetting")

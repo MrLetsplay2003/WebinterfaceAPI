@@ -47,6 +47,7 @@ public abstract class AbstractServer implements Server {
 	
 	private void acceptConnection() throws IOException {
 		Socket s = socket.accept();
+		if(executor.isShutdown()) return;
 		Connection con = acceptor.createConnection(this, s);
 		acceptor.accept(con);
 	}
