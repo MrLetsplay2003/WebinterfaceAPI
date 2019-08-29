@@ -86,7 +86,7 @@ public class TestingMainTen {
 		p2.addSection(sc);
 		p2.addDynamicSections(() -> {
 			List<WebinterfacePageSection> ss = new ArrayList<>();
-			for(int i = 0; i < Math.random() * 20; i++) {
+			for(int i = 0; i < /*Math.random() **/ 20; i++) {
 				ss.add(sc);
 			}
 			return ss;

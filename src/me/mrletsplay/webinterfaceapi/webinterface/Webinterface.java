@@ -9,8 +9,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +20,6 @@ import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
-import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.misc.MiscUtils;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
@@ -41,7 +38,6 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GoogleAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceFileConfig;
-import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceCallbackDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
@@ -49,20 +45,12 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDoc
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ArrayValue;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WrapperValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.ElementLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceCheckBox;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceSettingsPane;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.session.FileSessionStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
@@ -99,57 +87,7 @@ public class Webinterface {
 		
 		WebinterfacePageSection sc2 = new WebinterfacePageSection();
 		sc2.addTitle("Settings");
-		sc2.addDynamicElements(() -> {
-			List<WebinterfacePageElement> els = new ArrayList<>();
-			List<WebinterfaceSetting<?>> sets = new ArrayList<>(DefaultSettings.INSTANCE.getSettings());
-			Collections.sort(sets, Comparator.comparing(WebinterfaceSetting::getKey));
-			for(WebinterfaceSetting<?> set : sets) {
-				WebinterfaceText t = new WebinterfaceText(set.getKey());
-				t.addLayouts(ElementLayout.CENTER_VERTICALLY);
-				els.add(t);
-				
-				if(set.getType().equals(Complex.value(String.class))) {
-					WebinterfaceInputField in = new WebinterfaceInputField(config.getSetting(set).toString()); // Restrict # of classes
-					in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
-					in.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
-								new StringValue(set.getKey()),
-								new ElementValue(in)
-							)),
-							new ReloadPageAction()));
-					els.add(in);
-				}else if(set.getType().equals(Complex.value(Integer.class)) || set.getType().equals(Complex.value(Double.class))) {
-					WebinterfaceInputField in = new WebinterfaceInputField(config.getSetting(set).toString()); // Restrict # of classes
-					in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
-					in.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
-								new StringValue(set.getKey()),
-								new WrapperValue(new ElementValue(in), set.getType().equals(Complex.value(Integer.class)) ? "parseInt(%s)" : "parseFloat(%s)")
-							)),
-							new ReloadPageAction()));
-					els.add(in);
-				}else if(set.getType().equals(Complex.value(Boolean.class))) {
-					WebinterfaceCheckBox in = new WebinterfaceCheckBox((Boolean) config.getSetting(set)); // Restrict # of classes
-					in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
-					in.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
-								new StringValue(set.getKey()),
-								new CheckboxValue(in)
-							)),
-							new ReloadPageAction()));
-					els.add(in);
-				}else if(set.getType().equals(Complex.list(String.class))) {
-					WebinterfaceInputField in = new WebinterfaceInputField(((List<?>) config.getSetting(set)).stream().map(Object::toString).collect(Collectors.joining(", "))); // Restrict # of classes
-					in.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
-					in.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
-								new StringValue(set.getKey()),
-								new WrapperValue(new ElementValue(in), "%s.split(\",\")")
-							)),
-							new ReloadPageAction()));
-					els.add(in);
-				}else {
-					els.remove(els.size()-1);
-				}
-			}
-			return els;
-		});
+		sc2.addElement(new WebinterfaceSettingsPane(DefaultSettings.INSTANCE.getSettings()));
 		
 		WebinterfaceButton btn = new WebinterfaceButton("Restart");
 		btn.addLayouts(ElementLayout.FULL_WIDTH);
@@ -257,6 +195,7 @@ public class Webinterface {
 			URL jarLoc = Webinterface.class.getProtectionDomain().getCodeSource().getLocation();
 			File jarFl = new File(jarLoc.toURI().getPath());
 			if(!jarFl.isFile()) return;
+			System.out.println("[WIAPI] Extracting files from \"" + jarLoc + "\"...");
 			try (JarFile fl = new JarFile(jarFl)) {
 				Enumeration<JarEntry> en = fl.entries();
 				while(en.hasMoreElements()) {

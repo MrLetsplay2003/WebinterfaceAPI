@@ -2,14 +2,20 @@ package me.mrletsplay.webinterfaceapi.webinterface.page;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlDocument;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
@@ -144,6 +150,52 @@ public class WebinterfacePage implements HttpDocument {
 			sideNavListItem.appendChild(a);
 			
 			sideNavList.appendChild(sideNavListItem);
+		}
+		
+
+		
+		if(Webinterface.getConfig().getSetting(DefaultSettings.MINIFY_SCRIPTS)) {
+			Map<JavaScriptFunction, String> code = new HashMap<>();
+			Map<String, JavaScriptFunction> qFs = new HashMap<>();
+			int idx = 0;
+			for(JavaScriptFunction f : sc.getFunctions()) {
+				String cd = f.getCode().get();
+				Map.Entry<JavaScriptFunction, String> fo = code.entrySet().stream().filter(e -> e.getValue().equals(cd)).findFirst().orElse(null);
+				if(fo != null) {
+					f.setCode("return " + fo.getKey().getSignature() + ";");
+				}
+				
+				Pattern ebip = Pattern.compile("(?<method>(?:document|window|WebinterfaceUtils)\\.[^()\\[\\]]+)\\((?<params>[^\\)]*)\\)");
+				
+				String rest = cd;
+				Matcher m = ebip.matcher(rest);
+				StringBuilder nCode = new StringBuilder();
+				while(m.find()) {
+					
+					JavaScriptFunction of = qFs.get(m.group("method"));
+					if(of == null) {
+						String sig = "q" + (idx++);
+						List<String> args = new ArrayList<>();
+						for(int i = 0; i < m.group("params").split(",").length; i++) {
+							args.add("arg" + i);
+						}
+						String aStr = args.stream().collect(Collectors.joining(",", "(", ")"));
+						sig += aStr;
+						of = new JavaScriptFunction(sig);
+						of.setCode("return " + m.group("method") + aStr + ";");
+						qFs.put(m.group("method"), of);
+					}
+					
+					nCode.append(rest.substring(0, m.start())); // Append preceding code
+					nCode.append(of.getSignature().get().replaceAll("\\([^)]+\\)", "(" + m.group("params") + ")"));
+					rest = rest.substring(m.end(), rest.length());
+					m = ebip.matcher(rest);
+				}
+				nCode.append(rest);
+				f.setCode(nCode.toString());
+			}
+			
+			qFs.values().forEach(sc::addFunction);
 		}
 		
 		d.getBodyNode().appendChild(header);

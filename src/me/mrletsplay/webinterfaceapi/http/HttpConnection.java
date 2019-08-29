@@ -60,7 +60,12 @@ public class HttpConnection extends AbstractConnection {
 		
 		HttpDocument d = getServer().getDocumentProvider().getDocument(h.getPath().getDocumentPath());
 		if(d == null) d = getServer().getDocumentProvider().get404Document();
-		d.createContent();
+		try {
+			d.createContent();
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 		sh = ctx.getServerHeader();
 		
 		IOUtils.transfer(new ByteArrayInputStream(sh.toByteArray()), getSocket().getOutputStream());

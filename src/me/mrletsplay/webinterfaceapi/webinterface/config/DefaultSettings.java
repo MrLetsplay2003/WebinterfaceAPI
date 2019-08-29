@@ -18,7 +18,9 @@ public class DefaultSettings implements AutoSettings {
 	@AutoSetting
 	public static final BooleanSetting
 		ENABLE_FILE_CACHING = new BooleanSetting("enable-file-caching", true),
-		ENABLE_PHP = new BooleanSetting("php.enable", false);
+		ENABLE_PHP = new BooleanSetting("php.enable", false),
+		MINIFY_SCRIPTS = new BooleanSetting("minify-scripts", true),
+		ALLOW_REGISTRATION = new BooleanSetting("allow-registration", false);
 	
 	@AutoSetting
 	public static final StringSetting
