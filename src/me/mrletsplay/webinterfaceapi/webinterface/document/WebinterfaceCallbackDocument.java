@@ -35,7 +35,9 @@ public class WebinterfaceCallbackDocument implements HttpDocument {
 						return;
 					}
 				}catch(Exception ex) {
+					ex.printStackTrace(); // TODO: remove
 					setResponse(WebinterfaceResponse.error("Failed to handle request, error at handler"));
+					return;
 				}
 			}
 			setResponse(WebinterfaceResponse.error("No handler available"));

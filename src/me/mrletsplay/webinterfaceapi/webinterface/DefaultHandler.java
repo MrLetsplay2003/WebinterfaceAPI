@@ -8,20 +8,27 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
+import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
 public class DefaultHandler implements WebinterfaceActionHandler {
 	
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "restart")
 	public WebinterfaceResponse lol(WebinterfaceRequestEvent event) {
+		if(!WebinterfaceSession.getCurrentSession().getAccount().hasPermission("webinterface.restart"))
+			return WebinterfaceResponse.error("No permission");
 		new Thread(() -> {
+			System.out.println("[WIAPI] Restarting...");
 			Webinterface.shutdown();
 			Webinterface.start();
+			System.out.println("[WIAPI] Done!");
 		}, "Webinterface-Restart-Thread").start();
 		return WebinterfaceResponse.success();
 	}
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "setSetting")
 	public WebinterfaceResponse setSetting(WebinterfaceRequestEvent event) {
+		if(!WebinterfaceSession.getCurrentSession().getAccount().hasPermission("webinterface.settings"))
+			return WebinterfaceResponse.error("No permission");
 		JSONArray keyAndValue = event.getRequestData().getJSONArray("value");
 		WebinterfaceConfig cfg = Webinterface.getConfig();
 		WebinterfaceSetting<?> set = cfg.getSetting(keyAndValue.getString(0));

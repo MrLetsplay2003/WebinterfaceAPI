@@ -56,15 +56,15 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			el = in;
 		}else if(setting.getType().equals(Complex.list(String.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> ((List<?>) Webinterface.getConfig().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
-			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x => x.trim())")));
+			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x=>x.trim())")));
 			el = in;
 		}else if(setting.getType().equals(Complex.list(Integer.class)) || setting.getType().equals(Complex.list(Double.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> ((List<?>) Webinterface.getConfig().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
-			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x => x.trim()).map(" + (setting.getType().equals(Complex.list(Integer.class)) ? "x => parseInt(x)" : "x => parseFloat(x)") + ")")));
+			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x=>x.trim()).map(" + (setting.getType().equals(Complex.list(Integer.class)) ? "x=>parseInt(x)" : "x=>parseFloat(x)") + ")")));
 			el = in;
 		}else if(setting.getType().equals(Complex.list(Boolean.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> ((List<?>) Webinterface.getConfig().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
-			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x => x.trim()).map(x => x == \"true\")")));
+			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x=>x.trim()).map(x=>x==\"true\")")));
 			el = in;
 		}
 		

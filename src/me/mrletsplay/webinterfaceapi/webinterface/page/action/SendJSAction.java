@@ -20,7 +20,7 @@ public class SendJSAction implements WebinterfaceAction {
 	public JavaScriptFunction toJavaScript() {
 		JavaScriptFunction f = new JavaScriptFunction(randomFunctionName() + "()");
 		f.setCode("Webinterface.call(\"" + StringEscapeUtils.escapeEcmaScript(target) + "\",\""
-				+ StringEscapeUtils.escapeEcmaScript(method) + "\", {\"value\":"
+				+ StringEscapeUtils.escapeEcmaScript(method) + "\",{\"value\":"
 				+ (value == null ? "null" : value.toJavaScript()) + "});");
 		return f;
 	}

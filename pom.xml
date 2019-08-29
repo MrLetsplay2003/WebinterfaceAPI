@@ -92,7 +92,7 @@
 			<groupId>com.github.MrLetsplay2003</groupId>
 			<artifactId>MrCore</artifactId>
 			<version>master-SNAPSHOT</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>

@@ -2,17 +2,21 @@ package me.mrletsplay.webinterfaceapi.webinterface.auth;
 
 import java.util.List;
 
+import me.mrletsplay.mrcore.permission.Permissible;
+import me.mrletsplay.mrcore.permission.Permission;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
-public class WebinterfaceAccount {
+public class WebinterfaceAccount implements Permissible {
 
 	private String id, email;
-	private List<WebinterfaceAccountConnection> data;
+	private List<WebinterfaceAccountConnection> connections;
+	private List<Permission> permissions;
 	
-	public WebinterfaceAccount(String id, String email, List<WebinterfaceAccountConnection> data) {
+	public WebinterfaceAccount(String id, String email, List<WebinterfaceAccountConnection> connections, List<Permission> permissions) {
 		this.id = id;
 		this.email = email;
-		this.data = data;
+		this.connections = connections;
+		this.permissions = permissions;
 	}
 	
 	public String getID() {
@@ -24,24 +28,44 @@ public class WebinterfaceAccount {
 	}
 	
 	public String getAvatarUrl() {
-		return data.isEmpty() ? null : data.get(0).getUserAvatar();
+		return connections.isEmpty() ? null : connections.get(0).getUserAvatar();
 	}
 	
 	public String getName() {
-		return data.isEmpty() ? null : data.get(0).getUserName();
+		return connections.isEmpty() ? null : connections.get(0).getUserName();
 	}
 	
-	public void addData(WebinterfaceAccountConnection data) {
-		this.data.add(data);
+	public void addConnection(WebinterfaceAccountConnection connection) {
+		this.connections.add(connection);
 		Webinterface.getAccountStorage().storeAccount(this);
 	}
 	
-	public List<WebinterfaceAccountConnection> getData() {
-		return data;
+	public List<WebinterfaceAccountConnection> getConnections() {
+		return connections;
 	}
 	
-	public WebinterfaceAccountConnection getData(String authMethod) {
-		return data.stream().filter(d -> d.getAuthMethod().equals(authMethod)).findFirst().orElse(null);
+	public WebinterfaceAccountConnection getConnection(String authMethod) {
+		return connections.stream().filter(c -> c.getAuthMethod().equals(authMethod)).findFirst().orElse(null);
+	}
+
+	@Override
+	public void addPermission(Permission permission) {
+		permissions.add(permission);
+	}
+
+	@Override
+	public void removePermission(Permission permission) {
+		permissions.remove(permission);
+	}
+
+	@Override
+	public void setPermissions(List<Permission> permissions) {
+		this.permissions = permissions;
+	}
+
+	@Override
+	public List<Permission> getPermissions() {
+		return permissions;
 	}
 	
 }

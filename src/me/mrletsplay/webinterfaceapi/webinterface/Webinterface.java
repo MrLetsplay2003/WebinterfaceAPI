@@ -100,9 +100,7 @@ public class Webinterface {
 		
 		registerPage(homePage);
 		
-		registerAuthMethod(new DiscordAuth());
-		registerAuthMethod(new GoogleAuth());
-		registerAuthMethod(new GitHubAuth());
+		registerActionHandler(new DefaultHandler());
 		
 		MrCoreServiceRegistry.registerService("WebinterfaceAPI", null);
 	}
@@ -110,6 +108,10 @@ public class Webinterface {
 	public static void initialize() {
 		if(initialized) return;
 		initialized = true;
+		
+		registerAuthMethod(new DiscordAuth());
+		registerAuthMethod(new GoogleAuth());
+		registerAuthMethod(new GitHubAuth());
 		
 		includeFile("/_internal", new File(rootDirectory, "include"));
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
@@ -156,14 +158,13 @@ public class Webinterface {
 					c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 					c.getServerHeader().getFields().setFieldValue("Location", "/");
 				} catch(AuthException e) {
-					c.getServerHeader().setContent("text/plain", "Auth failed".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
+					c.getServerHeader().setContent("text/plain", ("Auth failed: " + e.getMessage()).getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 				}catch(Exception e) {
-					c.getServerHeader().setContent("text/plain", "Auth failed".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
+					e.printStackTrace();
+					c.getServerHeader().setContent("text/plain", "Auth error".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 				}
 			});
 		});
-		
-		registerActionHandler(new DefaultHandler());
 	}
 	
 	public static void start() {
@@ -195,7 +196,7 @@ public class Webinterface {
 			URL jarLoc = Webinterface.class.getProtectionDomain().getCodeSource().getLocation();
 			File jarFl = new File(jarLoc.toURI().getPath());
 			if(!jarFl.isFile()) return;
-			System.out.println("[WIAPI] Extracting files from \"" + jarLoc + "\"...");
+			System.out.println("[WIAPI] Extracting files from \"" + jarFl.getAbsolutePath() + "\"...");
 			try (JarFile fl = new JarFile(jarFl)) {
 				Enumeration<JarEntry> en = fl.entries();
 				while(en.hasMoreElements()) {
@@ -256,6 +257,7 @@ public class Webinterface {
 	}
 	
 	public static void registerAuthMethod(WebinterfaceAuthMethod method) {
+		if(authMethods.stream().anyMatch(a -> a.getID().equals(method.getID()))) return;
 		authMethods.add(method);
 	}
 	

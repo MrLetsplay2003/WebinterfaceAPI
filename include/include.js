@@ -13,9 +13,12 @@ class Webinterface {
 				timeout: 10000,
 				cache: false,
 				success: function(response, status) {
-					resolve(new WebinterfaceResponse(true, response, null));
+					let r = new WebinterfaceResponse(true, response, null);
+					if(!r.isSuccess()) WebinterfaceUtils.notify("Error: " + r.getErrorMessage());
+					resolve(r);
 				},
 				error: function(xhr, status, error) {
+					WebinterfaceUtils.notify(error);
 					resolve(new WebinterfaceResponse(false, null, "Request error: " + error));
 				}
 			});
@@ -28,6 +31,10 @@ class WebinterfaceUtils {
 
 	static getElementAttributeById(elementId, attributeName) {
 		return document.getElementById(elementId).getAttribute(attributeName);
+	}
+
+	static notify(message) {
+		alert(message);
 	}
 
 }
@@ -56,7 +63,7 @@ class WebinterfaceResponse {
 
 	getErrorMessage() {
 		if(this.isSuccess()) throw "Not an error";
-		return this.errorMessage || this.response.errorMessage;
+		return this.errorMessage || this.response.message;
 	}
 
 }

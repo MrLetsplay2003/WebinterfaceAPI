@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.config.ConfigLoader;
 import me.mrletsplay.mrcore.config.ConfigSection;
@@ -11,6 +12,7 @@ import me.mrletsplay.mrcore.config.FileCustomConfig;
 import me.mrletsplay.mrcore.json.JSONArray;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.misc.Complex;
+import me.mrletsplay.mrcore.permission.Permission;
 
 public class FileAccountStorage implements WebinterfaceAccountStorage {
 	
@@ -32,7 +34,7 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	
 	@Override
 	public WebinterfaceAccount createAccount(String email) {
-		WebinterfaceAccount acc = new WebinterfaceAccount(UUID.randomUUID().toString(), email, new ArrayList<>());
+		WebinterfaceAccount acc = new WebinterfaceAccount(UUID.randomUUID().toString(), email, new ArrayList<>(), new ArrayList<>());
 		storeAccount(acc);
 		return acc;
 	}
@@ -40,26 +42,27 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	@Override
 	public void storeAccount(WebinterfaceAccount account) {
 		JSONArray arr = new JSONArray();
-		for(WebinterfaceAccountConnection d : account.getData()) {
-			JSONObject accD = new JSONObject();
-			accD.set("method", d.getAuthMethod());
-			accD.set("id", d.getUserID());
-			accD.set("name", d.getUserName());
-			accD.set("email", d.getUserEmail());
-			accD.set("avatar", d.getUserAvatar());
-			arr.add(accD);
+		for(WebinterfaceAccountConnection c : account.getConnections()) {
+			JSONObject accCon = new JSONObject();
+			accCon.set("method", c.getAuthMethod());
+			accCon.set("id", c.getUserID());
+			accCon.set("name", c.getUserName());
+			accCon.set("email", c.getUserEmail());
+			accCon.set("avatar", c.getUserAvatar());
+			arr.add(accCon);
 		}
 		config.set(account.getID() + ".email", account.getEmail());
 		config.set(account.getID() + ".connections", arr);
+		config.set(account.getID() + ".permissions", account.getPermissions().stream().map(Permission::getPermission).collect(Collectors.toList()));
 		config.saveToFile();
 	}
 
 	@Override
 	public WebinterfaceAccount getAccountByID(String id) {
 		if(!config.isSet(id)) return null;
-		List<WebinterfaceAccountConnection> data = new ArrayList<>();
+		List<WebinterfaceAccountConnection> connections = new ArrayList<>();
 		for(ConfigSection s : config.getComplex(id + ".connections", Complex.list(ConfigSection.class), new ArrayList<>(), false)) {
-			data.add(new WebinterfaceAccountConnection(
+			connections.add(new WebinterfaceAccountConnection(
 					s.getString("method"),
 					s.getString("id"),
 					s.getString("name"),
@@ -67,7 +70,11 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 					s.getString("avatar"))
 				);
 		}
-		return new WebinterfaceAccount(id, config.getString(id + ".email"), data);
+		List<Permission> perms = config.getStringList(id + ".permissions").stream()
+				.map(Permission::new)
+				.collect(Collectors.toList());
+		String email = config.getString(id + ".email");
+		return new WebinterfaceAccount(id, email, connections, perms);
 	}
 
 	@Override

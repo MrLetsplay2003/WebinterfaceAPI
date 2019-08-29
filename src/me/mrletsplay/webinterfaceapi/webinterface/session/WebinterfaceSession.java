@@ -8,8 +8,10 @@ import java.util.UUID;
 
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class WebinterfaceSession {
 	
@@ -63,10 +65,14 @@ public class WebinterfaceSession {
 		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
 		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByEmail(accountData.getUserEmail());
 		if(acc == null) {
+			if(!Webinterface.getConfig().getSetting(DefaultSettings.ALLOW_REGISTRATION)) {
+				throw new AuthException("Registration not allowed");
+			}
+			
 			acc = Webinterface.getAccountStorage().createAccount(accountData.getUserEmail());
-			acc.addData(accountData);
+			acc.addConnection(accountData);
 		}
-		if(acc.getData(accountData.getAuthMethod()) == null) acc.addData(accountData);
+		if(acc.getConnection(accountData.getAuthMethod()) == null) acc.addConnection(accountData);
 		WebinterfaceSession s = new WebinterfaceSession(sID, acc.getID(), expiresAt, new HashMap<>());
 		Webinterface.getSessionStorage().deleteSessionsByAccountID(acc.getID());
 		Webinterface.getSessionStorage().storeSession(s);
