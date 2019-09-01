@@ -85,5 +85,10 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 		}
 		return null;
 	}
+	
+	@Override
+	public List<WebinterfaceAccount> getAccounts() {
+		return config.getKeys().stream().map(this::getAccountByID).collect(Collectors.toList());
+	}
 
 }

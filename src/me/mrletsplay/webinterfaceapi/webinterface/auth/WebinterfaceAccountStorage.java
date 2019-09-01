@@ -1,5 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.auth;
 
+import java.util.List;
+
 public interface WebinterfaceAccountStorage {
 	
 	public void initialize();
@@ -11,5 +13,7 @@ public interface WebinterfaceAccountStorage {
 	public WebinterfaceAccount getAccountByID(String id);
 	
 	public WebinterfaceAccount getAccountByEmail(String email);
+	
+	public List<WebinterfaceAccount> getAccounts();
 	
 }

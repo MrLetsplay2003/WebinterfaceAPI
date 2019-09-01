@@ -27,9 +27,9 @@ public class BukkitHandler implements WebinterfaceActionHandler {
 				
 				@Override
 				public BaseComponent[] getLayout(UIBuildEvent e) {
-					System.out.println(e.getUIInstance().getProperties());
+					WebinterfaceAccount acc = (WebinterfaceAccount) e.getUIInstance().getProperty(WebinterfacePlugin.pl, "account");
 					return new ComponentBuilder("Connect to "
-							+ ((WebinterfaceAccount) e.getUIInstance().getProperty(WebinterfacePlugin.pl, "account")).getEmail()
+							+ acc.getEmail()
 							+ "?").create();
 				}
 			})
@@ -45,21 +45,33 @@ public class BukkitHandler implements WebinterfaceActionHandler {
 								null);
 						if(acc.getConnection(WebinterfacePlugin.MINECRAFT_ACCOUNT_CONNECTION_NAME) != null) {
 							p.sendMessage("§cAlready connected");
+							uie.getUIInstance().destroy();
 							return;
 						}
 						acc.addConnection(con);
 						p.sendMessage("§aConnected!");
+						uie.getUIInstance().destroy();
 					})
 					.setHoverText("Connect to WIAPI"))
 			.addElement("decline", new StaticUIElement("§c[No]")
-					.setAction(uie -> {})
+					.setAction(uie -> {
+						Player p = uie.getPlayer();
+						p.sendMessage("§cDeclined");
+						uie.getUIInstance().destroy();
+					})
 					.setHoverText("§cDon't connect to WIAPI"))
-			.setLayout(new UILayout()
-					.addElement("connect_text")
-					.newLine()
-					.addElement("accept")
-					.addText(" §8| ")
-					.addElement("decline")).build();
+//			.setLayout(new UILayout()
+//					.addElement("connect_text")
+//					.newLine()
+//					.addElement("accept")
+//					.addText(" §8| ")
+//					.addElement("decline")).build();
+			.setLayout(UILayout.of(
+					  "§8[§7+§8]----------------------[§7+§8]\n"
+					+ " §r{connect_text}\n"
+					+ " {accept} §8- {decline}\n"
+					+ "§8[§7+§8]----------------------[§7+§8]"
+					)).build();
 
 	@WebinterfaceHandler(requestTarget = "bukkit", requestTypes = "connectMCAccount")
 	public static WebinterfaceResponse connectMCAccount(WebinterfaceRequestEvent event) {

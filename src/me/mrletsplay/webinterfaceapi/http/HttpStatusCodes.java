@@ -3,11 +3,12 @@ package me.mrletsplay.webinterfaceapi.http;
 public enum HttpStatusCodes implements HttpStatusCode {
 	
 	OK_200(200, "OK"),
-	NOT_FOUND_404(404, "Not Found"),
 	MOVED_PERMANENTLY_301(301, "Moved Permanently"),
 	FOUND_302(302, "Found"),
 	SEE_OTHER_303(303, "See Other"),
 	TEMPORARY_REDIRECT_307(307, "Temporary Redirect"),
+	ACCESS_DENIED_403(403, "Access Denied"),
+	NOT_FOUND_404(404, "Not Found"),
 	;
 	
 	private final int code;

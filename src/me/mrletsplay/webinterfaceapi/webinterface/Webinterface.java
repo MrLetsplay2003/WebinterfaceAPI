@@ -85,6 +85,10 @@ public class Webinterface {
 		sc.addElement(tx);
 		homePage.addSection(sc);
 		
+		registerPage(homePage);
+		
+		WebinterfacePage settings = new WebinterfacePage("Settings", "/settings", "webinterface.settings");
+		
 		WebinterfacePageSection sc2 = new WebinterfacePageSection();
 		sc2.addTitle("Settings");
 		sc2.addElement(new WebinterfaceSettingsPane(DefaultSettings.INSTANCE.getSettings()));
@@ -96,9 +100,9 @@ public class Webinterface {
 				new ReloadPageAfterAction(1000)));
 		sc2.addElement(btn);
 		
-		homePage.addSection(sc2);
+		settings.addSection(sc2);
 		
-		registerPage(homePage);
+		registerPage(settings);
 		
 		registerActionHandler(new DefaultHandler());
 		

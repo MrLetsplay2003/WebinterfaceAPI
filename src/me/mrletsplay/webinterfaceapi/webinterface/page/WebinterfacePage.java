@@ -18,6 +18,7 @@ import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
@@ -27,13 +28,18 @@ public class WebinterfacePage implements HttpDocument {
 		CONTEXT_PROPERTY_DOCUMENT = "webinterface-document",
 		CONTEXT_PROPERTY_SCRIPT = "webinterface-script";
 	
-	private String name, url;
+	private String name, url, permission;
 	private Supplier<List<WebinterfacePageSection>> sections;
 	
-	public WebinterfacePage(String name, String url) {
+	public WebinterfacePage(String name, String url, String permission) {
 		this.name = name;
 		this.url = url;
+		this.permission = permission;
 		this.sections = () -> new ArrayList<>();
+	}
+	
+	public WebinterfacePage(String name, String url) {
+		this(name, url, null);
 	}
 	
 	public String getName() {
@@ -42,6 +48,10 @@ public class WebinterfacePage implements HttpDocument {
 	
 	public String getUrl() {
 		return url;
+	}
+	
+	public String getPermission() {
+		return permission;
 	}
 	
 	public void addDynamicSections(Supplier<List<WebinterfacePageSection>> sections) {
@@ -62,6 +72,14 @@ public class WebinterfacePage implements HttpDocument {
 	}
 	
 	public HtmlDocument toHtml() {
+		WebinterfaceAccount account = WebinterfaceSession.getCurrentSession().getAccount();
+		if(permission != null && !account.hasPermission(permission)) {
+			HtmlDocument doc = new HtmlDocument();
+			doc.getBodyNode().setText("403 Access denied");
+			HttpRequestContext.getCurrentContext().getServerHeader().setStatusCode(HttpStatusCodes.ACCESS_DENIED_403);
+			return doc;
+		}
+		
 		HtmlDocument d = new HtmlDocument();
 		d.setTitle(name);
 		d.setLanguage("en");
@@ -88,12 +106,12 @@ public class WebinterfacePage implements HttpDocument {
 		ac.addClass("header-avatar");
 		ac.setAttribute("onclick", "toggleProfileOptions()");
 		header.appendChild(ac);
-		HtmlElement av = HtmlElement.img(WebinterfaceSession.getCurrentSession().getAccount().getAvatarUrl(), "User Avatar");
+		HtmlElement av = HtmlElement.img(account.getAvatarUrl(), "User Avatar");
 		av.setSelfClosing(true);
 		ac.appendChild(av);
 		
 		HtmlElement usrn = new HtmlElement("a");
-		usrn.setText(WebinterfaceSession.getCurrentSession().getAccount().getName());
+		usrn.setText(account.getName());
 		ac.appendChild(usrn);
 		
 		HtmlElement main = new HtmlElement("main");
@@ -141,19 +159,20 @@ public class WebinterfacePage implements HttpDocument {
 		sidenav.appendChild(sideNavList);
 		
 		for(WebinterfacePage pg : Webinterface.getPages()) {
-			HtmlElement sideNavListItem = new HtmlElement("li");
-			sideNavListItem.addClass("sidenav-list-item");
-			
-			HtmlElement a = new HtmlElement("a");
-			a.setText(pg.getName());
-			a.setAttribute("href", pg.getUrl());
-			sideNavListItem.appendChild(a);
-			
-			sideNavList.appendChild(sideNavListItem);
+			if(pg.getPermission() == null || account.hasPermission(pg.getPermission())) {
+				HtmlElement sideNavListItem = new HtmlElement("li");
+				sideNavListItem.addClass("sidenav-list-item");
+				
+				HtmlElement a = new HtmlElement("a");
+				a.setText(pg.getName());
+				a.setAttribute("href", pg.getUrl());
+				sideNavListItem.appendChild(a);
+				
+				sideNavList.appendChild(sideNavListItem);
+			}
 		}
 		
-
-		
+		// Script minify
 		if(Webinterface.getConfig().getSetting(DefaultSettings.MINIFY_SCRIPTS)) {
 			Map<JavaScriptFunction, String> code = new HashMap<>();
 			Map<String, JavaScriptFunction> qFs = new HashMap<>();
