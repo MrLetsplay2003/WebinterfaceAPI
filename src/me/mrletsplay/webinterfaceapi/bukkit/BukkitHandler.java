@@ -60,12 +60,6 @@ public class BukkitHandler implements WebinterfaceActionHandler {
 						uie.getUIInstance().destroy();
 					})
 					.setHoverText("§cDon't connect to WIAPI"))
-//			.setLayout(new UILayout()
-//					.addElement("connect_text")
-//					.newLine()
-//					.addElement("accept")
-//					.addText(" §8| ")
-//					.addElement("decline")).build();
 			.setLayout(UILayout.of(
 					  "§8[§7+§8]----------------------[§7+§8]\n"
 					+ " §r{connect_text}\n"
