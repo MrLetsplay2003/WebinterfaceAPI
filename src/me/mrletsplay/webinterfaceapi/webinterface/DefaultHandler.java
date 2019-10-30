@@ -14,7 +14,7 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 	
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "restart")
 	public WebinterfaceResponse lol(WebinterfaceRequestEvent event) {
-		if(!WebinterfaceSession.getCurrentSession().getAccount().hasPermission("webinterface.restart"))
+		if(!WebinterfaceSession.getCurrentSession().getAccount().hasPermission(DefaultPermission.RESTART))
 			return WebinterfaceResponse.error("No permission");
 		new Thread(() -> {
 			System.out.println("[WIAPI] Restarting...");
@@ -27,7 +27,7 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "setSetting")
 	public WebinterfaceResponse setSetting(WebinterfaceRequestEvent event) {
-		if(!WebinterfaceSession.getCurrentSession().getAccount().hasPermission("webinterface.settings"))
+		if(!WebinterfaceSession.getCurrentSession().getAccount().hasPermission(DefaultPermission.SETTINGS))
 			return WebinterfaceResponse.error("No permission");
 		JSONArray keyAndValue = event.getRequestData().getJSONArray("value");
 		WebinterfaceConfig cfg = Webinterface.getConfig();

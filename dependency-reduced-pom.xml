@@ -76,12 +76,20 @@
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
+    <repository>
+      <releases />
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>graphite-official</id>
+      <url>http://graphite-official.com/repo</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>com.github.MrLetsplay2003</groupId>
+      <groupId>MrCore</groupId>
       <artifactId>MrCore</artifactId>
-      <version>master-SNAPSHOT</version>
+      <version>2.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

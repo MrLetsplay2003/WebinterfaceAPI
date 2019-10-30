@@ -87,7 +87,7 @@ public class Webinterface {
 		
 		registerPage(homePage);
 		
-		WebinterfacePage settings = new WebinterfacePage("Settings", "/settings", "webinterface.settings");
+		WebinterfacePage settings = new WebinterfacePage("Settings", "/settings", DefaultPermission.SETTINGS);
 		
 		WebinterfacePageSection sc2 = new WebinterfacePageSection();
 		sc2.addTitle("Settings");
