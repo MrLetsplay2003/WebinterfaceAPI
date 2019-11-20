@@ -33,8 +33,8 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	}
 	
 	@Override
-	public WebinterfaceAccount createAccount(String email) {
-		WebinterfaceAccount acc = new WebinterfaceAccount(UUID.randomUUID().toString(), email, new ArrayList<>(), new ArrayList<>());
+	public WebinterfaceAccount createAccount() {
+		WebinterfaceAccount acc = new WebinterfaceAccount(UUID.randomUUID().toString(), new ArrayList<>(), new ArrayList<>());
 		storeAccount(acc);
 		return acc;
 	}
@@ -51,7 +51,6 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 			accCon.set("avatar", c.getUserAvatar());
 			arr.add(accCon);
 		}
-		config.set(account.getID() + ".email", account.getEmail());
 		config.set(account.getID() + ".connections", arr);
 		config.set(account.getID() + ".permissions", account.getPermissions().stream().map(Permission::getPermission).collect(Collectors.toList()));
 		config.saveToFile();
@@ -73,15 +72,14 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 		List<Permission> perms = config.getStringList(id + ".permissions").stream()
 				.map(Permission::new)
 				.collect(Collectors.toList());
-		String email = config.getString(id + ".email");
-		return new WebinterfaceAccount(id, email, connections, perms);
+		return new WebinterfaceAccount(id, connections, perms);
 	}
 
 	@Override
-	public WebinterfaceAccount getAccountByEmail(String email) {
+	public WebinterfaceAccount getAccountByPrimaryEmail(String email) {
 		for(String id : config.getKeys()) {
 			WebinterfaceAccount acc = getAccountByID(id);
-			if(acc.getEmail().equals(email)) return acc;
+			if(acc.getPrimaryEmail().equals(email)) return acc;
 		}
 		return null;
 	}

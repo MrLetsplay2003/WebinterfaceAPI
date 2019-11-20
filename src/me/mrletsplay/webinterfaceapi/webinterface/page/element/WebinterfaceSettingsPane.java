@@ -10,7 +10,7 @@ import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ArrayValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
@@ -79,7 +79,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 				new StringValue(setting.getKey()),
 				value
 			)),
-			new ReloadPageAction());
+			new ReloadPageAfterAction(100));
 	}
 	
 	public List<WebinterfaceSetting<?>> getSettings() {

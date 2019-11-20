@@ -17,10 +17,10 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 		if(!WebinterfaceSession.getCurrentSession().getAccount().hasPermission(DefaultPermission.RESTART))
 			return WebinterfaceResponse.error("No permission");
 		new Thread(() -> {
-			System.out.println("[WIAPI] Restarting...");
+			System.out.println("[WebinterfaceAPI] Restarting...");
 			Webinterface.shutdown();
 			Webinterface.start();
-			System.out.println("[WIAPI] Done!");
+			System.out.println("[WebinterfaceAPI] Done!");
 		}, "Webinterface-Restart-Thread").start();
 		return WebinterfaceResponse.success();
 	}

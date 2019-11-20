@@ -6,13 +6,13 @@ public interface WebinterfaceAccountStorage {
 	
 	public void initialize();
 	
-	public WebinterfaceAccount createAccount(String email);
+	public WebinterfaceAccount createAccount();
 
 	public void storeAccount(WebinterfaceAccount account);
 	
 	public WebinterfaceAccount getAccountByID(String id);
 	
-	public WebinterfaceAccount getAccountByEmail(String email);
+	public WebinterfaceAccount getAccountByPrimaryEmail(String email);
 	
 	public List<WebinterfaceAccount> getAccounts();
 	

@@ -63,13 +63,16 @@ public class WebinterfaceSession {
 	public static WebinterfaceSession startSession(WebinterfaceAccountConnection accountData) {
 		String sID = UUID.randomUUID().toString();
 		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
-		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByEmail(accountData.getUserEmail());
+		if(accountData.getUserEmail() == null) {
+			throw new AuthException("Login is only supported via Email");
+		}
+		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByPrimaryEmail(accountData.getUserEmail());
 		if(acc == null) {
 			if(!Webinterface.getConfig().getSetting(DefaultSettings.ALLOW_REGISTRATION)) {
 				throw new AuthException("Registration not allowed");
 			}
 			
-			acc = Webinterface.getAccountStorage().createAccount(accountData.getUserEmail());
+			acc = Webinterface.getAccountStorage().createAccount();
 			acc.addConnection(accountData);
 		}
 		if(acc.getConnection(accountData.getAuthMethod()) == null) acc.addConnection(accountData);

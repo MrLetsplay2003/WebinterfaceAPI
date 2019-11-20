@@ -8,7 +8,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class CachingFileDocument extends FileDocument {
 	
-	private long lastFileSize;
+	private long prevLastModified;
 	private byte[] content;
 
 	public CachingFileDocument(File file, String mimeType) {
@@ -23,8 +23,8 @@ public class CachingFileDocument extends FileDocument {
 	protected byte[] loadContent() {
 		if(!Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_FILE_CACHING))
 			return super.loadContent();
-		// TODO: use lastmodified instead
-		if(content != null && getFile().length() == lastFileSize) return content;
+		if(content != null && prevLastModified == getFile().lastModified()) return content;
+		prevLastModified = getFile().lastModified();
 		return content = super.loadContent();
 	}
 	

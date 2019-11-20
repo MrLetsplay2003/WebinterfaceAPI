@@ -1,6 +1,8 @@
 package me.mrletsplay.webinterfaceapi.webinterface.auth;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.permission.Permissible;
 import me.mrletsplay.mrcore.permission.Permission;
@@ -8,13 +10,12 @@ import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
 public class WebinterfaceAccount implements Permissible {
 
-	private String id, email;
+	private String id;
 	private List<WebinterfaceAccountConnection> connections;
 	private List<Permission> permissions;
 	
-	public WebinterfaceAccount(String id, String email, List<WebinterfaceAccountConnection> connections, List<Permission> permissions) {
+	public WebinterfaceAccount(String id, List<WebinterfaceAccountConnection> connections, List<Permission> permissions) {
 		this.id = id;
-		this.email = email;
 		this.connections = connections;
 		this.permissions = permissions;
 	}
@@ -23,16 +24,29 @@ public class WebinterfaceAccount implements Permissible {
 		return id;
 	}
 	
-	public String getEmail() {
-		return email;
+	public List<String> getEmails() {
+		return connections.stream()
+				.map(c -> c.getUserEmail())
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
+	}
+	
+	public String getPrimaryEmail() {
+		return getEmails().get(0);
 	}
 	
 	public String getAvatarUrl() {
-		return connections.isEmpty() ? null : connections.get(0).getUserAvatar();
+		return connections.stream()
+					.map(c -> c.getUserAvatar())
+					.filter(Objects::nonNull)
+					.findFirst().orElse(null);
 	}
 	
 	public String getName() {
-		return connections.isEmpty() ? null : connections.get(0).getUserName();
+		return connections.stream()
+				.map(c -> c.getUserName())
+				.filter(Objects::nonNull)
+				.findFirst().orElse(null);
 	}
 	
 	public void addConnection(WebinterfaceAccountConnection connection) {

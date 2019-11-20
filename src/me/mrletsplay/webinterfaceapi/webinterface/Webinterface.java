@@ -200,7 +200,7 @@ public class Webinterface {
 			URL jarLoc = Webinterface.class.getProtectionDomain().getCodeSource().getLocation();
 			File jarFl = new File(jarLoc.toURI().getPath());
 			if(!jarFl.isFile()) return;
-			System.out.println("[WIAPI] Extracting files from \"" + jarFl.getAbsolutePath() + "\"...");
+			System.out.println("[WebinterfaceAPI] Extracting files from \"" + jarFl.getAbsolutePath() + "\"...");
 			try (JarFile fl = new JarFile(jarFl)) {
 				Enumeration<JarEntry> en = fl.entries();
 				while(en.hasMoreElements()) {
@@ -208,7 +208,7 @@ public class Webinterface {
 					if(!e.isDirectory() && e.getName().startsWith("include/")) {
 						File ofl = new File(getRootDirectory(), e.getName());
 						if(ofl.exists()) continue;
-						System.out.println("[WIAPI] Extracting " + e.getName() + "...");
+						System.out.println("[WebinterfaceAPI] Extracting " + e.getName() + "...");
 						IOUtils.createFile(ofl);
 						try (InputStream in = fl.getInputStream(e);
 								OutputStream out = new FileOutputStream(ofl)) {

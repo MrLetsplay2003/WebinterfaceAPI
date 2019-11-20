@@ -69,27 +69,19 @@
   </build>
   <repositories>
     <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-    <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
     <repository>
-      <releases />
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
       <id>graphite-official</id>
-      <url>http://graphite-official.com/repo</url>
+      <url>http://graphite-official.com/repo-snapshot/</url>
     </repository>
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>MrCore</groupId>
+      <groupId>me.mrletsplay</groupId>
       <artifactId>MrCore</artifactId>
-      <version>2.1</version>
+      <version>2.2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

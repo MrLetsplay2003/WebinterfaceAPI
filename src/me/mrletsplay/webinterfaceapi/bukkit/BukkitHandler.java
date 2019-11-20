@@ -29,7 +29,7 @@ public class BukkitHandler implements WebinterfaceActionHandler {
 				public BaseComponent[] getLayout(UIBuildEvent e) {
 					WebinterfaceAccount acc = (WebinterfaceAccount) e.getUIInstance().getProperty(WebinterfacePlugin.pl, "account");
 					return new ComponentBuilder("Connect to "
-							+ acc.getEmail()
+							+ acc.getPrimaryEmail()
 							+ "?").create();
 				}
 			})
