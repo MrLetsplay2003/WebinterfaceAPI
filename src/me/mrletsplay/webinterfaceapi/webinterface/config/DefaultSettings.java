@@ -21,7 +21,10 @@ public class DefaultSettings implements AutoSettings {
 		ENABLE_PHP = new BooleanSetting("php.enable", false),
 		MINIFY_SCRIPTS = new BooleanSetting("minify-scripts", true),
 		ALLOW_REGISTRATION = new BooleanSetting("allow-registration", true),
-		ALLOW_ANONYMOUS = new BooleanSetting("allow-anonymous", true);
+		ALLOW_ANONYMOUS = new BooleanSetting("allow-anonymous", true),
+		ENABLE_DISCORD_AUTH = new BooleanSetting("use-auth.discord", true),
+		ENABLE_GITHUB_AUTH = new BooleanSetting("use-auth.github", true),
+		ENABLE_GOOGLE_AUTH = new BooleanSetting("use-auth.google", true);
 	
 	@AutoSetting
 	public static final StringSetting

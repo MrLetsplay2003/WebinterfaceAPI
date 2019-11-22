@@ -114,10 +114,6 @@ public class Webinterface {
 		if(initialized) return;
 		initialized = true;
 		
-		registerAuthMethod(new DiscordAuth());
-		registerAuthMethod(new GoogleAuth());
-		registerAuthMethod(new GitHubAuth());
-		
 		includeFile("/_internal", new File(rootDirectory, "include"));
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
@@ -126,6 +122,9 @@ public class Webinterface {
 		config.registerSettings(DefaultSettings.INSTANCE);
 		
 		if(config.getSetting(DefaultSettings.ALLOW_ANONYMOUS)) registerAuthMethod(new NoAuth());
+		if(config.getSetting(DefaultSettings.ENABLE_DISCORD_AUTH)) registerAuthMethod(new DiscordAuth());
+		if(config.getSetting(DefaultSettings.ENABLE_GOOGLE_AUTH)) registerAuthMethod(new GoogleAuth());
+		if(config.getSetting(DefaultSettings.ENABLE_GITHUB_AUTH)) registerAuthMethod(new GitHubAuth());
 		
 		PHP.setEnabled(config.getSetting(DefaultSettings.ENABLE_PHP));
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
