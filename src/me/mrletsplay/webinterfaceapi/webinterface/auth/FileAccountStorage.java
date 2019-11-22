@@ -77,9 +77,11 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 
 	@Override
 	public WebinterfaceAccount getAccountByPrimaryEmail(String email) {
+		if(email == null) return null;
 		for(String id : config.getKeys()) {
 			WebinterfaceAccount acc = getAccountByID(id);
-			if(acc.getPrimaryEmail().equals(email)) return acc;
+			String pEmail = acc.getPrimaryEmail();
+			if(pEmail != null && pEmail.equals(email)) return acc;
 		}
 		return null;
 	}

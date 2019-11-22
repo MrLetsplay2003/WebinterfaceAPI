@@ -25,7 +25,7 @@ public class WebinterfaceAccountConnection {
 		return userID;
 	}
 	
-	@Nullable
+	@NotNull
 	public String getUserName() {
 		return userName;
 	}

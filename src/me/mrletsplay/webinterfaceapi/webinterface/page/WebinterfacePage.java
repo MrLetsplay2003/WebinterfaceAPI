@@ -106,9 +106,12 @@ public class WebinterfacePage implements HttpDocument {
 		ac.addClass("header-avatar");
 		ac.setAttribute("onclick", "toggleProfileOptions()");
 		header.appendChild(ac);
-		HtmlElement av = HtmlElement.img(account.getAvatarUrl(), "User Avatar");
-		av.setSelfClosing(true);
-		ac.appendChild(av);
+		
+		if(account.getAvatarUrl() != null) {
+			HtmlElement av = HtmlElement.img(account.getAvatarUrl(), "User Avatar");
+			av.setSelfClosing(true);
+			ac.appendChild(av);
+		}
 		
 		HtmlElement usrn = new HtmlElement("a");
 		usrn.setText(account.getName());
@@ -134,7 +137,7 @@ public class WebinterfacePage implements HttpDocument {
 		
 		HtmlElement lo2 = new HtmlElement("a");
 		lo2.setAttribute("href", "/login");
-		lo2.setText("Add another account");
+		lo2.setText("Change account");
 		loc2.appendChild(lo2);
 		
 		HtmlElement loc = new HtmlElement("div");

@@ -63,9 +63,6 @@ public class WebinterfaceSession {
 	public static WebinterfaceSession startSession(WebinterfaceAccountConnection accountData) {
 		String sID = UUID.randomUUID().toString();
 		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
-		if(accountData.getUserEmail() == null) {
-			throw new AuthException("Login is only supported via Email");
-		}
 		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByPrimaryEmail(accountData.getUserEmail());
 		if(acc == null) {
 			if(!Webinterface.getConfig().getSetting(DefaultSettings.ALLOW_REGISTRATION)) {

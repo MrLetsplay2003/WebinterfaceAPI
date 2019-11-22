@@ -32,7 +32,10 @@ public class WebinterfaceAccount implements Permissible {
 	}
 	
 	public String getPrimaryEmail() {
-		return getEmails().get(0);
+		return connections.stream()
+			.map(c -> c.getUserEmail())
+			.filter(Objects::nonNull)
+			.findFirst().orElse(null);
 	}
 	
 	public String getAvatarUrl() {
