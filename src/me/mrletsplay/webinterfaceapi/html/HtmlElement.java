@@ -222,8 +222,8 @@ public class HtmlElement {
 	
 	public static HtmlImg img(Supplier<String> src, Supplier<String> alt) {
 		HtmlImg img = new HtmlImg();
-		img.setSrc(src);
-		img.setAlt(alt);
+		if(src != null) img.setSrc(src);
+		if(alt != null) img.setAlt(alt);
 		return img;
 	}
 	
