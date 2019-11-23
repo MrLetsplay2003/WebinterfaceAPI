@@ -7,7 +7,7 @@ import me.mrletsplay.webinterfaceapi.html.element.HtmlImg;
 
 public class WebinterfaceImage extends AbstractWebinterfacePageElement {
 	
-	private Supplier<String> src;
+	private Supplier<String> src, alt;
 	
 	public WebinterfaceImage(Supplier<String> src) {
 		this.src = src;
@@ -25,13 +25,25 @@ public class WebinterfaceImage extends AbstractWebinterfacePageElement {
 		setSource(() -> src);
 	}
 	
-	public Supplier<String> setSource() {
+	public Supplier<String> getSource() {
 		return src;
+	}
+	
+	public void setAlt(Supplier<String> alt) {
+		this.alt = alt;
+	}
+	
+	public void setAlt(String alt) {
+		setAlt(() -> alt);
+	}
+	
+	public Supplier<String> getAlt() {
+		return alt;
 	}
 	
 	@Override
 	public HtmlElement createElement() {
-		HtmlImg img = HtmlElement.img(src, () -> "lol");
+		HtmlImg img = HtmlElement.img(src, alt);
 		return img;
 	}
 
