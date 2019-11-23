@@ -23,4 +23,16 @@ public class HtmlImg extends HtmlElement {
 		return getAttribute("src");
 	}
 	
+	public void setAlt(Supplier<String> alt) {
+		setAttribute("alt", alt);
+	}
+	
+	public void setAlt(String alt) {
+		setAttribute("alt", alt);
+	}
+	
+	public Supplier<String> getAlt() {
+		return getAttribute("alt");
+	}
+	
 }

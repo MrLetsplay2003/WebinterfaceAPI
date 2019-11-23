@@ -12,6 +12,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import me.mrletsplay.webinterfaceapi.css.StyleSheet;
 import me.mrletsplay.webinterfaceapi.html.element.HtmlBr;
 import me.mrletsplay.webinterfaceapi.html.element.HtmlButton;
+import me.mrletsplay.webinterfaceapi.html.element.HtmlImg;
 import me.mrletsplay.webinterfaceapi.html.element.HtmlLink;
 import me.mrletsplay.webinterfaceapi.html.element.HtmlOption;
 import me.mrletsplay.webinterfaceapi.html.element.HtmlScript;
@@ -219,11 +220,10 @@ public class HtmlElement {
 		return new HtmlButton();
 	}
 	
-	public static HtmlElement img(Supplier<String> src, Supplier<String> alt) {
-		HtmlElement img = new HtmlElement("img");
-		img.setSelfClosing(true);
-		img.setAttribute("src", src);
-		img.setAttribute("alt", alt);
+	public static HtmlImg img(Supplier<String> src, Supplier<String> alt) {
+		HtmlImg img = new HtmlImg();
+		img.setSrc(src);
+		img.setAlt(alt);
 		return img;
 	}
 	
