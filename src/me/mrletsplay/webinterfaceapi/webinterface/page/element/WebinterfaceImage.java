@@ -9,8 +9,17 @@ public class WebinterfaceImage extends AbstractWebinterfacePageElement {
 	
 	private Supplier<String> src, alt;
 	
-	public WebinterfaceImage(Supplier<String> src) {
+	public WebinterfaceImage(Supplier<String> src, Supplier<String> alt) {
 		this.src = src;
+		this.alt = alt;
+	}
+	
+	public WebinterfaceImage(String src, String alt) {
+		this(() -> src, () -> alt);
+	}
+	
+	public WebinterfaceImage(Supplier<String> src) {
+		this(src, () -> "image");
 	}
 	
 	public WebinterfaceImage(String src) {
