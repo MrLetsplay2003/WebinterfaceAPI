@@ -6,6 +6,8 @@ public interface WebinterfaceSetting<T> {
 	
 	public String getKey();
 	
+	public void setDefaultValue(T value);
+	
 	public T getDefaultValue();
 	
 	public Complex<T> getType();

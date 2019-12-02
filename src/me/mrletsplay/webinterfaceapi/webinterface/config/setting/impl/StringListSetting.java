@@ -21,6 +21,11 @@ public class StringListSetting implements WebinterfaceSetting<List<String>> {
 	}
 
 	@Override
+	public void setDefaultValue(List<String> value) {
+		this.defaultValue = value;
+	}
+
+	@Override
 	public List<String> getDefaultValue() {
 		return defaultValue;
 	}

@@ -18,6 +18,11 @@ public class SimpleSetting<T> implements WebinterfaceSetting<T> {
 	public String getKey() {
 		return key;
 	}
+	
+	@Override
+	public void setDefaultValue(T value) {
+		this.defaultValue = value;
+	}
 
 	@Override
 	public T getDefaultValue() {

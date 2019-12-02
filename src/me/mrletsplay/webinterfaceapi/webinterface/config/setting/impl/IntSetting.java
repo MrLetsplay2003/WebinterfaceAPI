@@ -19,6 +19,11 @@ public class IntSetting implements WebinterfaceSetting<Integer> {
 	}
 
 	@Override
+	public void setDefaultValue(Integer value) {
+		this.defaultValue = value;
+	}
+
+	@Override
 	public Integer getDefaultValue() {
 		return defaultValue;
 	}

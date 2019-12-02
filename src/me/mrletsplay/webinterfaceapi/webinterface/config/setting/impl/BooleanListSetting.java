@@ -21,6 +21,11 @@ public class BooleanListSetting implements WebinterfaceSetting<List<Boolean>> {
 	}
 
 	@Override
+	public void setDefaultValue(List<Boolean> value) {
+		this.defaultValue = value;
+	}
+	
+	@Override
 	public List<Boolean> getDefaultValue() {
 		return defaultValue;
 	}

@@ -21,6 +21,11 @@ public class IntListSetting implements WebinterfaceSetting<List<Integer>> {
 	}
 
 	@Override
+	public void setDefaultValue(List<Integer> value) {
+		this.defaultValue = value;
+	}
+
+	@Override
 	public List<Integer> getDefaultValue() {
 		return defaultValue;
 	}

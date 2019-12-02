@@ -19,6 +19,11 @@ public class DoubleSetting implements WebinterfaceSetting<Double> {
 	}
 
 	@Override
+	public void setDefaultValue(Double value) {
+		this.defaultValue = value;
+	}
+
+	@Override
 	public Double getDefaultValue() {
 		return defaultValue;
 	}

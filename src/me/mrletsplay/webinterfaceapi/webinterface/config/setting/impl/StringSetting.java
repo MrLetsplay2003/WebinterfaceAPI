@@ -18,6 +18,11 @@ public class StringSetting implements WebinterfaceSetting<String> {
 	}
 
 	@Override
+	public void setDefaultValue(String value) {
+		this.defaultValue = value;
+	}
+
+	@Override
 	public String getDefaultValue() {
 		return defaultValue;
 	}

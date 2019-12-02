@@ -21,6 +21,11 @@ public class DoubleListSetting implements WebinterfaceSetting<List<Double>> {
 	}
 
 	@Override
+	public void setDefaultValue(List<Double> value) {
+		this.defaultValue = value;
+	}
+
+	@Override
 	public List<Double> getDefaultValue() {
 		return defaultValue;
 	}

@@ -17,7 +17,12 @@ public class BooleanSetting implements WebinterfaceSetting<Boolean> {
 	public String getKey() {
 		return key;
 	}
-
+	
+	@Override
+	public void setDefaultValue(Boolean value) {
+		this.defaultValue = value;
+	}
+	
 	@Override
 	public Boolean getDefaultValue() {
 		return defaultValue;
