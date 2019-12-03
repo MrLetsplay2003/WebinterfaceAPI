@@ -6,11 +6,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
+import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
+import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
+import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 
 public abstract class AbstractWebinterfacePageElement implements WebinterfacePageElement {
 
 	private String id, width, height;
 	private List<ElementLayout> layouts;
+	private WebinterfaceAction onClickAction;
 	
 	public AbstractWebinterfacePageElement() {
 		this.layouts = new ArrayList<>();
@@ -56,6 +62,11 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		return layouts;
 	}
 	
+	@Override
+	public void setOnClickAction(WebinterfaceAction onClickAction) {
+		this.onClickAction = onClickAction;
+	}
+	
 	public abstract HtmlElement createElement();
 	
 	@Override
@@ -67,6 +78,12 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		if(width != null) el.setAttribute("style", "width:" + width + "");
 		el.addClass("element");
 		String cN = layouts.stream().map(ElementLayout::getClassName).collect(Collectors.joining(" "));
+		if(onClickAction != null) {
+			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
+			JavaScriptFunction f = onClickAction.toJavaScript();
+			sc.addFunction(f);
+			elContainer.setAttribute("onclick", f.getSignature());
+		}
 		if(!cN.isEmpty()) elContainer.addClass(cN);
 		elContainer.appendChild(el);
 		return elContainer;

@@ -31,10 +31,6 @@ public class WebinterfaceButton extends AbstractWebinterfacePageElement {
 		setText(() -> text);
 	}
 	
-	public void setOnClickAction(WebinterfaceAction onClickAction) {
-		this.onClickAction = onClickAction;
-	}
-	
 	@Override
 	public HtmlElement createElement() {
 		HtmlButton b = HtmlElement.button();
