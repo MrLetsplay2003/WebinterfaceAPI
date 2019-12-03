@@ -2,7 +2,9 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
@@ -17,9 +19,14 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 	private String id, width, height;
 	private List<ElementLayout> layouts;
 	private WebinterfaceAction onClickAction;
+	private Map<String, String>
+		attributes,
+		containerAttributes;
 	
 	public AbstractWebinterfacePageElement() {
 		this.layouts = new ArrayList<>();
+		this.attributes = new HashMap<>();
+		this.containerAttributes = new HashMap<>();
 	}
 	
 	@Override
@@ -67,6 +74,31 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		this.onClickAction = onClickAction;
 	}
 	
+	@Override
+	public WebinterfaceAction getOnClickAction() {
+		return onClickAction;
+	}
+	
+	@Override
+	public void setAttribute(String key, String value) {
+		attributes.put(key, value);
+	}
+	
+	@Override
+	public String getAttribute(String key) {
+		return attributes.get(key);
+	}
+	
+	@Override
+	public void setContainerAttribute(String key, String value) {
+		containerAttributes.put(key, value);
+	}
+	
+	@Override
+	public String getContainerAttribute(String key) {
+		return containerAttributes.get(key);
+	}
+	
 	public abstract HtmlElement createElement();
 	
 	@Override
@@ -84,6 +116,8 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 			sc.addFunction(f);
 			elContainer.setAttribute("onclick", f.getSignature());
 		}
+		attributes.forEach(el::setAttribute);
+		containerAttributes.forEach(elContainer::setAttribute);
 		if(!cN.isEmpty()) elContainer.addClass(cN);
 		elContainer.appendChild(el);
 		return elContainer;

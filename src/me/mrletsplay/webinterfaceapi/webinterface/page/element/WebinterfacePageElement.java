@@ -31,6 +31,16 @@ public interface WebinterfacePageElement {
 	
 	public void setOnClickAction(WebinterfaceAction onClickAction);
 	
+	public WebinterfaceAction getOnClickAction();
+	
+	public void setAttribute(String key, String value);
+	
+	public String getAttribute(String key);
+	
+	public void setContainerAttribute(String key, String value);
+	
+	public String getContainerAttribute(String key);
+	
 	public HtmlElement toHtml();
 	
 }
