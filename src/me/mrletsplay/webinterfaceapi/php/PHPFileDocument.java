@@ -49,7 +49,7 @@ public class PHPFileDocument implements HttpDocument {
 		env.put("SCRIPT_NAME", c.getClientHeader().getPath().getDocumentPath());
 		env.put("SCRIPT_FILENAME", file.toPath().toAbsolutePath().normalize().toString());
 		env.put("REQUEST_URI", c.getClientHeader().getPath().getDocumentPath());
-		env.put("QUERY_STRING", c.getClientHeader().getPath().getGetParameters().entrySet().stream()
+		env.put("QUERY_STRING", c.getClientHeader().getPath().getQueryParameters().entrySet().stream()
 				.map(e -> HttpUtils.urlEncode(e.getKey()) + "=" + HttpUtils.urlEncode(e.getValue().stream().collect(Collectors.joining())))
 				.collect(Collectors.joining("&")));
 		if(c.getClientHeader().getMethod().equals("POST")

@@ -62,7 +62,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 	@Override
 	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
-		String code = c.getClientHeader().getPath().getGetParameterValue("code");
+		String code = c.getClientHeader().getPath().getQueryParameterValue("code");
 		
 		try {
 			HttpPost p = HttpRequest.createPost(TOKEN_ENDPOINT)

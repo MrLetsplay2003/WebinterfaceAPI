@@ -11,48 +11,48 @@ import me.mrletsplay.mrcore.http.HttpUtils;
 public class HttpRequestPath {
 
 	private String path;
-	private Map<String, List<String>> getParameters;
+	private Map<String, List<String>> queryParameters;
 	
-	public HttpRequestPath(String path, Map<String, List<String>> getParameters) {
+	public HttpRequestPath(String path, Map<String, List<String>> queryParameters) {
 		this.path = path;
-		this.getParameters = getParameters;
+		this.queryParameters = queryParameters;
 	}
 	
 	public String getDocumentPath() {
 		return path;
 	}
 	
-	public List<String> getGetParameterValues(String key) {
-		return getParameters.getOrDefault(key, new ArrayList<>());
+	public List<String> getQueryParameterValues(String key) {
+		return queryParameters.getOrDefault(key, new ArrayList<>());
 	}
 	
-	public String getGetParameterValue(String key) {
-		List<String> ps = getGetParameterValues(key);
+	public String getQueryParameterValue(String key) {
+		List<String> ps = getQueryParameterValues(key);
 		return ps.isEmpty() ? null : ps.get(0);
 	}
 	
-	public Map<String, List<String>> getGetParameters() {
-		return getParameters;
+	public Map<String, List<String>> getQueryParameters() {
+		return queryParameters;
 	}
 	
 	public static HttpRequestPath parse(String rawPath) {
 		String[] psp = rawPath.split("\\?", 2);
 		String path = psp[0];
-		Map<String, List<String>> getParameters = new HashMap<>();
-		if(psp.length == 2) getParameters = parseGetParameters(psp[1]);
-		return new HttpRequestPath(path, getParameters);
+		Map<String, List<String>> queryParameters = new HashMap<>();
+		if(psp.length == 2) queryParameters = parseQueryParameters(psp[1]);
+		return new HttpRequestPath(path, queryParameters);
 	}
 	
-	public static Map<String, List<String>> parseGetParameters(String getParams) {
-		Map<String, List<String>> getParameters = new HashMap<>();
-		for(String st : getParams.split("&")) {
+	public static Map<String, List<String>> parseQueryParameters(String queryParams) {
+		Map<String, List<String>> queryParameters = new HashMap<>();
+		for(String st : queryParams.split("&")) {
 			String[] kv = st.split("=", 2);
 			String key = HttpUtils.urlDecode(kv[0]);
-			List<String> vs = getParameters.getOrDefault(key, new ArrayList<>());
+			List<String> vs = queryParameters.getOrDefault(key, new ArrayList<>());
 			vs.add(kv.length == 2 ? HttpUtils.urlDecode(kv[1]) : "");
-			getParameters.put(key, vs);
+			queryParameters.put(key, vs);
 		}
-		return getParameters;
+		return queryParameters;
 	}
 	
 	@Override
@@ -60,12 +60,12 @@ public class HttpRequestPath {
 		if(!(obj instanceof HttpRequestPath)) return false;
 		HttpRequestPath o = (HttpRequestPath) obj;
 		return path.equals(o.path)
-				&& getParameters.equals(o.getParameters);
+				&& queryParameters.equals(o.queryParameters);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(path, getParameters);
+		return Objects.hash(path, queryParameters);
 	}
 	
 }
