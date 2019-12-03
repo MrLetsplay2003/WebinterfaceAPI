@@ -137,7 +137,7 @@ public class WebinterfacePage implements HttpDocument {
 		
 		HtmlElement lo2 = new HtmlElement("a");
 		lo2.setAttribute("href", "/login");
-		lo2.setText("Change account");
+		lo2.setText("Switch accounts");
 		loc2.appendChild(lo2);
 		
 		HtmlElement loc = new HtmlElement("div");
@@ -233,7 +233,7 @@ public class WebinterfacePage implements HttpDocument {
 
 	@Override
 	public void createContent() {
-		if(WebinterfaceSession.getCurrentSession() == null) {
+		if(WebinterfaceSession.getCurrentSession() == null || WebinterfaceSession.getCurrentSession().getAccount() == null) {
 			HttpRequestContext c = HttpRequestContext.getCurrentContext();
 			c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 			c.getServerHeader().getFields().setFieldValue("Location", "/login");

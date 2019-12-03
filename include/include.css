@@ -182,6 +182,7 @@ button {
 	background-color: var(--theme-color-content-bg);
 	border: 1px solid var(--theme-color-content-border);
 	min-height: 30px;
+	/* border-width: 0px 0px 1px 0px; */
 }
 
 button:hover {
@@ -208,6 +209,8 @@ input[type="text"] {
 	min-height: 30px;
 	padding: 0px 0px 0px 5px;
 	font-family: 'Open Sans', sans-serif;
+	border-width: 0px 0px 1px 0px;
+	border-color: #c0c0c0;
 }
 
 input[type="checkbox"] {

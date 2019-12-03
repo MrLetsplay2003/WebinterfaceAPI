@@ -172,7 +172,8 @@ public class HtmlElement {
 			return b.toString(); // Self closing elements can't have content
 		}
 		b.append(">");
-		if(getText() != null) b.append(flags.contains(HtmlElementFlag.DONT_ESCAPE_TEXT) ? getText().get() : StringEscapeUtils.escapeHtml4(getText().get()).replace("\n", "<br/>"));
+		String txt;
+		if(getText() != null && (txt = getText().get()) != null) b.append(flags.contains(HtmlElementFlag.DONT_ESCAPE_TEXT) ? txt : StringEscapeUtils.escapeHtml4(txt).replace("\n", "<br/>"));
 		for(HtmlElement child : getChildren()) {
 			b.append(child.toString());
 		}

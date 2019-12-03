@@ -69,6 +69,11 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 					s.getString("avatar"))
 				);
 		}
+		if(connections.isEmpty()) {
+			config.unset(id);
+			config.saveToFile();
+			return null;
+		}
 		List<Permission> perms = config.getStringList(id + ".permissions").stream()
 				.map(Permission::new)
 				.collect(Collectors.toList());
@@ -88,7 +93,9 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	
 	@Override
 	public List<WebinterfaceAccount> getAccounts() {
-		return config.getKeys().stream().map(this::getAccountByID).collect(Collectors.toList());
+		return config.getKeys().stream()
+				.map(this::getAccountByID)
+				.collect(Collectors.toList());
 	}
 
 }

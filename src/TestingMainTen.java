@@ -15,6 +15,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.ElementLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceCheckBox;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceElementGroup;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceImage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceSelect;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
@@ -91,6 +92,22 @@ public class TestingMainTen {
 			return ss;
 		});
 		Webinterface.registerPage(p2);
+		
+		WebinterfacePage pg = new WebinterfacePage("TV16", "/tv16");
+		
+		WebinterfacePageSection sc2 = new WebinterfacePageSection();
+		
+		sc2.addTitle("Test");
+		
+		WebinterfaceImage img = new WebinterfaceImage("https://www.mairie-francheville69.fr/wp-content/uploads/2017/11/image-test.jpeg");
+		
+		sc2.addElement(img);
+		sc2.addElement(img);
+		sc2.addElement(img);
+		
+		pg.addSection(sc2);
+		
+		Webinterface.registerPage(pg);
 		
 		Webinterface.start();
 		
