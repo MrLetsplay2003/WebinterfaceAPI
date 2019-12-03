@@ -1,5 +1,10 @@
 /*jshint esversion: 6*/
 
+let wiData = {
+	alerts: [],
+	alertWaiting: false
+};
+
 class Webinterface {
 
 	static call(target, method, data = {}) {
@@ -34,7 +39,42 @@ class WebinterfaceUtils {
 	}
 
 	static notify(message) {
-		alert(message);
+		wiData.alerts.push({
+			msg: message,
+			isError: true
+		});
+	}
+
+	static updateAlerts() {
+		if(wiData.alertWaiting) return;
+		if(wiData.alerts.length == 0) return;
+		wiData.alertWaiting = true;
+		let alert = wiData.alerts.shift();
+		let alertBox = $("#alert-box");
+		
+		alertBox.html(alert.msg);
+		
+		if(alert.isError) {
+			alertBox.css({backgroundColor: "#e63d00"});
+		}else {
+			alertBox.css({backgroundColor: "#11CC52"});
+		}
+		
+		alertBox.animate({
+			opacity: 1,
+			bottom: 0
+		}, 500, function() {
+			// Finished
+		});
+		
+		alertBox.delay(2500).animate({
+			//opacity: 0,
+			bottom: "-100%"
+		}, 500, function() {
+			// Finished
+			alertBox.css({bottom: "-100%"});
+			wiData.alertWaiting = false;
+		});
 	}
 
 }
@@ -75,3 +115,7 @@ function toggleSidebar() {
 function toggleProfileOptions() {
 	$(".profile-options").toggle();
 }
+
+setInterval(function() {
+    WebinterfaceUtils.updateAlerts();
+}, 1000);

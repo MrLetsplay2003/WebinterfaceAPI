@@ -89,6 +89,10 @@ public class WebinterfacePage implements HttpDocument {
 		ctx.setProperty(CONTEXT_PROPERTY_DOCUMENT, d);
 		ctx.setProperty(CONTEXT_PROPERTY_SCRIPT, sc);
 		
+		HtmlElement alertBox = new HtmlElement("div");
+		alertBox.setID("alert-box");
+		d.getBodyNode().appendChild(alertBox);
+		
 		HtmlElement header = new HtmlElement("header");
 		header.addClass("header");
 
