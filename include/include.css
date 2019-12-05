@@ -253,6 +253,12 @@ select > option {
 	font-family: 'Open Sans', sans-serif;
 }
 
+img.element {
+	/* Because Chrome doesn't keep aspect ratios */
+	max-width: none;
+	max-height: none;
+}
+
 /*input[type="checkbox"] {
 	display: none;
 }
