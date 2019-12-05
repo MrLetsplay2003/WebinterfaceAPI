@@ -162,7 +162,7 @@ public class Webinterface {
 					WebinterfaceSession s = WebinterfaceSession.startSession(acc);
 					c.getServerHeader().getFields().setCookie(WebinterfaceSession.COOKIE_NAME, s.getSessionID(), "Path=/", "Expires=" + WebinterfaceUtils.httpTimeStamp(s.getExpiresAt()));
 					c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
-					c.getServerHeader().getFields().setFieldValue("Location", "/");
+					c.getServerHeader().getFields().setFieldValue("Location", c.getClientHeader().getPath().getQueryParameterValue("from", "/"));
 				} catch(AuthException e) {
 					c.getServerHeader().setContent("text/plain", ("Auth failed: " + e.getMessage()).getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 				}catch(Exception e) {

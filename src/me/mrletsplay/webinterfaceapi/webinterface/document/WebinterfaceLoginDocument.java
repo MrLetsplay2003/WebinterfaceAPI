@@ -1,8 +1,10 @@
 package me.mrletsplay.webinterfaceapi.webinterface.document;
 
+import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.webinterfaceapi.html.HtmlDocument;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
+import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 
@@ -34,7 +36,7 @@ public class WebinterfaceLoginDocument implements HttpDocument {
 			
 			HtmlElement a = new HtmlElement("a");
 			a.setText(m.getName());
-			a.setAttribute("href", "/auth/" + m.getID());
+			a.setAttribute("href", () -> "/auth/" + m.getID() + "?from=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/")));
 			lo.appendChild(a);
 		}
 		

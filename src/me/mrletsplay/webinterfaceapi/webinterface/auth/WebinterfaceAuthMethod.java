@@ -2,6 +2,7 @@ package me.mrletsplay.webinterfaceapi.webinterface.auth;
 
 import java.io.File;
 
+import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
@@ -18,7 +19,7 @@ public interface WebinterfaceAuthMethod {
 	public default String getAuthResponseUrl() {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		String host = c.getClientHeader().getFields().getFieldValue("Host");
-		return "http://" + host + "/auth/" + getID() + "/response";
+		return "http://" + host + "/auth/" + getID() + "/response?from=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/"));
 	}
 	
 	public default File getConfigurationDirectory() {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.http.HttpUtils;
 
@@ -22,6 +23,10 @@ public class HttpRequestPath {
 		return path;
 	}
 	
+	public boolean hasQueryParameter(String key) {
+		return queryParameters.containsKey(key);
+	}
+	
 	public List<String> getQueryParameterValues(String key) {
 		return queryParameters.getOrDefault(key, new ArrayList<>());
 	}
@@ -29,6 +34,10 @@ public class HttpRequestPath {
 	public String getQueryParameterValue(String key) {
 		List<String> ps = getQueryParameterValues(key);
 		return ps.isEmpty() ? null : ps.get(0);
+	}
+	
+	public String getQueryParameterValue(String key, String fallback) {
+		return hasQueryParameter(key) ? getQueryParameterValue(key) : fallback;
 	}
 	
 	public Map<String, List<String>> getQueryParameters() {
@@ -66,6 +75,16 @@ public class HttpRequestPath {
 	@Override
 	public int hashCode() {
 		return Objects.hash(path, queryParameters);
+	}
+	
+	@Override
+	public String toString() {
+		String queryString = queryParameters.entrySet().stream()
+				.map(en -> en.getValue().stream()
+						.map(v -> HttpUtils.urlEncode(en.getKey()) + "=" + HttpUtils.urlEncode(v))
+						.collect(Collectors.joining("&")))
+				.collect(Collectors.joining("&"));
+		return path + (queryString.isEmpty() ? "" : "?" + queryString);
 	}
 	
 }
