@@ -1,6 +1,6 @@
-package me.mrletsplay.webinterfaceapi.webinterface.page.element;
+package me.mrletsplay.webinterfaceapi.webinterface.page.element.layout;
 
-public enum ElementLayout {
+public enum DefaultLayoutProperty implements ElementLayoutProperty {
 
 	FULL_WIDTH("el-full-width"),
 	LEFTBOUND("el-leftbound"),
@@ -16,10 +16,11 @@ public enum ElementLayout {
 	
 	private final String className;
 	
-	private ElementLayout(String className) {
+	private DefaultLayoutProperty(String className) {
 		this.className = className;
 	}
 	
+	@Override
 	public String getClassName() {
 		return className;
 	}

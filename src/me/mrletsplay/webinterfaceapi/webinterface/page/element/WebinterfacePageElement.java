@@ -5,6 +5,7 @@ import java.util.List;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutProperty;
 
 public interface WebinterfacePageElement {
 	
@@ -25,9 +26,9 @@ public interface WebinterfacePageElement {
 	
 	public String getHeight();
 	
-	public void addLayouts(ElementLayout... layouts);
+	public void addLayoutProperties(ElementLayoutProperty... layouts);
 	
-	public List<ElementLayout> getLayouts();
+	public List<ElementLayoutProperty> getLayoutProperties();
 	
 	public void setOnClickAction(WebinterfaceAction onClickAction);
 	

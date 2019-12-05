@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.ElementLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
 
 public class WebinterfacePageSection {
 	
@@ -33,7 +33,7 @@ public class WebinterfacePageSection {
 	
 	public void addTitle(Supplier<String> title) {
 		WebinterfaceTitleText tt = new WebinterfaceTitleText(title);
-		tt.addLayouts(ElementLayout.FULL_WIDTH, ElementLayout.CENTER_VERTICALLY);
+		tt.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY);
 		addElement(tt);
 	}
 	

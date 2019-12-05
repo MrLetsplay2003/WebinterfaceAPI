@@ -49,10 +49,10 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.ElementLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceSettingsPane;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
 import me.mrletsplay.webinterfaceapi.webinterface.session.FileSessionStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSessionStorage;
@@ -82,7 +82,7 @@ public class Webinterface {
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());
 		WebinterfaceText tx = new WebinterfaceText("Hello World!");
-		tx.addLayouts(ElementLayout.FULL_WIDTH, ElementLayout.CENTER_VERTICALLY);
+		tx.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY);
 		sc.addElement(tx);
 		homePage.addSection(sc);
 		
@@ -95,7 +95,7 @@ public class Webinterface {
 		sc2.addElement(new WebinterfaceSettingsPane(DefaultSettings.INSTANCE.getSettings()));
 		
 		WebinterfaceButton btn = new WebinterfaceButton("Restart");
-		btn.addLayouts(ElementLayout.FULL_WIDTH);
+		btn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		btn.setOnClickAction(new MultiAction(
 				new SendJSAction("webinterface", "restart", null),
 				new ReloadPageAfterAction(1000)));

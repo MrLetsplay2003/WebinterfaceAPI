@@ -11,7 +11,6 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValu
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementAttributeValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.ElementLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceCheckBox;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceElementGroup;
@@ -20,6 +19,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInput
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceSelect;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
 
 public class TestingMainTen {
 
@@ -31,15 +31,15 @@ public class TestingMainTen {
 		g.addTitle("This is a section");
 		
 		WebinterfaceTitleText tt = new WebinterfaceTitleText("Hello world!");
-		tt.addLayouts(ElementLayout.FULL_WIDTH, ElementLayout.LEFTBOUND, ElementLayout.CENTER_VERTICALLY);
+		tt.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.CENTER_VERTICALLY);
 		g.addElement(tt);
 		
 		WebinterfaceText tx = new WebinterfaceText("Lorem ipsum dolor sit amet etc etc etc text huiui wtf was tu ich hier");
-		tx.addLayouts(ElementLayout.FULL_WIDTH, ElementLayout.LEFTBOUND);
+		tx.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.LEFTBOUND);
 		g.addElement(tx);
 		
 		WebinterfaceInputField ip = new WebinterfaceInputField();
-		ip.addLayouts(ElementLayout.FULL_NOT_LAST_COLUMN);
+		ip.addLayoutProperties(DefaultLayoutProperty.FULL_NOT_LAST_COLUMN);
 		ip.setOnChangeAction(new SendJSAction("webinterface", "lol", new ElementValue(ip)));
 		g.addElement(ip);
 		
@@ -49,16 +49,16 @@ public class TestingMainTen {
 		g.addElement(b);
 		
 		WebinterfaceText txt = new WebinterfaceText("Enable some stuff?");
-		txt.addLayouts(ElementLayout.CENTER_VERTICALLY, ElementLayout.NEW_LINE);
+		txt.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY, DefaultLayoutProperty.NEW_LINE);
 		g.addElement(txt);
 		
 		WebinterfaceCheckBox ip2 = new WebinterfaceCheckBox();
 		ip2.setOnChangeAction(new SendJSAction("webinterface", "lol", new CheckboxValue(ip2)));
-		ip2.addLayouts(ElementLayout.CENTER_VERTICALLY);
+		ip2.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
 		g.addElement(ip2);
 		
 		WebinterfaceSelect sel = new WebinterfaceSelect();
-		sel.addLayouts(ElementLayout.NEW_LINE);
+		sel.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
 		sel.addOption("This is an option", "option-1");
 		sel.addOption("This is also an option", "option-2");
 		sel.addOption("This is another option", "option-3");
@@ -73,7 +73,7 @@ public class TestingMainTen {
 		
 		b2.setOnClickAction(new SendJSAction("webinterface", "lol", new ArrayValue(new ElementValue(ip), new ElementAttributeValue(b2, "style"), v)));
 		b2.setWidth("150px");
-		b2.addLayouts(ElementLayout.FULL_WIDTH);
+		b2.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		g.addElement(b2);
 
 		sc.addElement(g);

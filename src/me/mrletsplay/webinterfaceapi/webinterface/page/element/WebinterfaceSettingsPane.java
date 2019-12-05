@@ -18,6 +18,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WebinterfaceActionValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WrapperValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
 
 public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
@@ -25,7 +26,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
 	public WebinterfaceSettingsPane(List<WebinterfaceSetting<?>> settings) {
 		this.settings = new ArrayList<>();
-		addLayouts(ElementLayout.FULL_WIDTH);
+		addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		addSettings(settings);
 	}
 	
@@ -38,7 +39,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	public void addSetting(WebinterfaceSetting<?> setting) {
 		settings.add(setting);
 		WebinterfaceText t = new WebinterfaceText(setting.getKey());
-		t.addLayouts(ElementLayout.CENTER_VERTICALLY);
+		t.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
 		
 		WebinterfacePageElement el = null;
 		
@@ -69,7 +70,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		}
 		
 		if(el == null) return;
-		el.addLayouts(ElementLayout.SECOND_TO_LAST_COLUMN);
+		el.addLayoutProperties(DefaultLayoutProperty.SECOND_TO_LAST_COLUMN);
 		addElement(t);
 		addElement(el);
 	}

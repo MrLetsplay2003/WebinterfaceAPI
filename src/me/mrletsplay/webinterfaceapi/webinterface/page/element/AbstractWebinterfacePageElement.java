@@ -13,18 +13,19 @@ import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutProperty;
 
 public abstract class AbstractWebinterfacePageElement implements WebinterfacePageElement {
 
 	private String id, width, height;
-	private List<ElementLayout> layouts;
+	private List<ElementLayoutProperty> layoutProperties;
 	private WebinterfaceAction onClickAction;
 	private Map<String, String>
 		attributes,
 		containerAttributes;
 	
 	public AbstractWebinterfacePageElement() {
-		this.layouts = new ArrayList<>();
+		this.layoutProperties = new ArrayList<>();
 		this.attributes = new HashMap<>();
 		this.containerAttributes = new HashMap<>();
 	}
@@ -60,13 +61,13 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 	}
 	
 	@Override
-	public void addLayouts(ElementLayout... layouts) {
-		this.layouts.addAll(Arrays.asList(layouts));
+	public void addLayoutProperties(ElementLayoutProperty... layouts) {
+		this.layoutProperties.addAll(Arrays.asList(layouts));
 	}
 	
 	@Override
-	public List<ElementLayout> getLayouts() {
-		return layouts;
+	public List<ElementLayoutProperty> getLayoutProperties() {
+		return layoutProperties;
 	}
 	
 	@Override
@@ -109,7 +110,7 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		if(id != null && el.getID() == null) el.setID(id);
 		if(width != null) el.setAttribute("style", "width:" + width + "");
 		el.addClass("element");
-		String cN = layouts.stream().map(ElementLayout::getClassName).collect(Collectors.joining(" "));
+		String cN = layoutProperties.stream().map(ElementLayoutProperty::getClassName).collect(Collectors.joining(" "));
 		if(onClickAction != null) {
 			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
 			JavaScriptFunction f = onClickAction.toJavaScript();
