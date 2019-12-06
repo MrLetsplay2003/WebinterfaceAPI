@@ -11,7 +11,9 @@ import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.mrcore.json.JSONArray;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
+import me.mrletsplay.webinterfaceapi.http.header.HttpURLPath;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
@@ -38,7 +40,7 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 		} catch (Exception e) {
 			available = false;
 		}
-		if(!available) System.out.println("[WIAPI] GitHub auth needs to be configured");
+		if(!available) Webinterface.getLogger().warning("GitHub auth needs to be configured");
 	}
 	
 	@Override
@@ -57,9 +59,10 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 		c.getServerHeader().getFields().setFieldValue("Location", AUTH_ENDPOINT
 				+ "?client_id=" + HttpUtils.urlEncode(clientID) // TODO: auth client id
-				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl()) // TODO: protocol
+				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl().toString()) // TODO: protocol
 				+ "&response_type=code"
-				+ "&scope=" + HttpUtils.urlEncode("read:user user:email"));
+				+ "&scope=" + HttpUtils.urlEncode("read:user user:email")
+				+ "&state=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/")));
 	}
 
 	@Override
@@ -72,7 +75,7 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 					.setPostParameter("code", code)
 					.setPostParameter("client_id", clientID)
 					.setPostParameter("client_secret", clientSecret)
-					.setPostParameter("redirect_uri", getAuthResponseUrl())
+					.setPostParameter("redirect_uri", getAuthResponseUrl().toString())
 					.setPostParameter("grant_type", "authorization_code");
 			JSONObject res = p.execute().asJSONObject();
 			
@@ -101,6 +104,11 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 		} catch (Exception e) {
 			throw new AuthException("Failed to verify GitHub auth token", e);
 		}
+	}
+	
+	@Override
+	public HttpURLPath getPostAuthRedirectURL() {
+		return HttpURLPath.of(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("state", "/"));
 	}
 	
 	@Override

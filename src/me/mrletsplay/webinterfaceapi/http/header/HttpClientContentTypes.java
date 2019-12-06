@@ -11,7 +11,7 @@ public enum HttpClientContentTypes implements HttpClientContentType {
 	
 	JSON(c -> JSONParser.parse(new String(c, StandardCharsets.UTF_8)), "application/json"),
 	TEXT(c -> new String(c, StandardCharsets.UTF_8), "text/plain"),
-	URLENCODED(c -> HttpRequestPath.parseQueryParameters(new String(c, StandardCharsets.UTF_8)), "application/x-www-form-urlencoded"),
+	URLENCODED(c -> HttpURLPath.parseQueryParameters(new String(c, StandardCharsets.UTF_8)), "application/x-www-form-urlencoded"),
 	// TODO: form multipart
 	;
 	

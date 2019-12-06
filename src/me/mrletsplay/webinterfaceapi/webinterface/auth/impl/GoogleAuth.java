@@ -10,7 +10,9 @@ import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
+import me.mrletsplay.webinterfaceapi.http.header.HttpURLPath;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
@@ -37,7 +39,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 		} catch (Exception e) {
 			available = false;
 		}
-		if(!available) System.out.println("[WIAPI] Google auth needs to be configured");
+		if(!available) Webinterface.getLogger().warning("Google auth needs to be configured");
 	}
 	
 	@Override
@@ -57,10 +59,11 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 		c.getServerHeader().getFields().setFieldValue("Location", AUTH_ENDPOINT
 				+ "?client_id=" + HttpUtils.urlEncode(clientID) // TODO: auth client id
 				+ "&access_type=offline"
-				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl()) // TODO: protocol
+				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl().toString()) // TODO: protocol
 				+ "&response_type=code"
 				+ "&scope=" + HttpUtils.urlEncode("profile email openid")
-				+ "&prompt=" + HttpUtils.urlEncode("select_account"));
+				+ "&prompt=" + HttpUtils.urlEncode("select_account")
+				+ "&state=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/")));
 	}
 
 	@Override
@@ -73,7 +76,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 					.setPostParameter("code", code)
 					.setPostParameter("client_id", clientID)
 					.setPostParameter("client_secret", clientSecret)
-					.setPostParameter("redirect_uri", getAuthResponseUrl())
+					.setPostParameter("redirect_uri", getAuthResponseUrl().toString())
 					.setPostParameter("grant_type", "authorization_code");
 			JSONObject res = p.execute().asJSONObject();
 			String accToken = res.getString("access_token");
@@ -92,6 +95,11 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 		} catch (Exception e) {
 			throw new AuthException("Failed to verify Google auth token", e);
 		}
+	}
+	
+	@Override
+	public HttpURLPath getPostAuthRedirectURL() {
+		return HttpURLPath.of(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("state", "/"));
 	}
 	
 	@Override

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.logging.Level;
 
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
@@ -14,6 +15,7 @@ import me.mrletsplay.webinterfaceapi.http.header.HttpServerHeader;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.server.ServerException;
 import me.mrletsplay.webinterfaceapi.server.connection.impl.AbstractConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
 public class HttpConnection extends AbstractConnection {
 
@@ -22,7 +24,7 @@ public class HttpConnection extends AbstractConnection {
 		try {
 			socket.setSoTimeout(10000);
 		} catch (SocketException e) {
-			e.printStackTrace();
+			Webinterface.getLogger().log(Level.FINE, "Error while intializing connection", e);
 		}
 	}
 	
@@ -38,7 +40,7 @@ public class HttpConnection extends AbstractConnection {
 				}catch(SocketTimeoutException ignored) {
 				}catch(Exception e) {
 					close();
-//					e.printStackTrace(); // TODO: remove
+					Webinterface.getLogger().log(Level.FINE, "Error in client receive loop", e);
 					throw new ServerException("Error in client receive loop", e);
 				}
 			}
@@ -63,7 +65,7 @@ public class HttpConnection extends AbstractConnection {
 		try {
 			d.createContent();
 		}catch(Exception e) {
-			e.printStackTrace();
+			Webinterface.getLogger().log(Level.FINE, "Error while creating page content", e);
 			return false;
 		}
 		sh = ctx.getServerHeader();

@@ -10,7 +10,9 @@ import me.mrletsplay.mrcore.http.HttpRequest;
 import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
+import me.mrletsplay.webinterfaceapi.http.header.HttpURLPath;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
@@ -35,7 +37,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 		} catch (Exception e) {
 			available = false;
 		}
-		if(!available) System.out.println("[WIAPI] Discord auth needs to be configured");
+		if(!available) Webinterface.getLogger().warning("Discord auth needs to be configured");
 	}
 	
 	@Override
@@ -54,9 +56,10 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 		c.getServerHeader().getFields().setFieldValue("Location", AUTH_ENDPOINT
 				+ "?client_id=" + HttpUtils.urlEncode(clientID)
-				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl()) // TODO: protocol
+				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl().toString()) // TODO: protocol
 				+ "&response_type=code"
-				+ "&scope=identify email");
+				+ "&scope=identify email"
+				+ "&state=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/")));
 	}
 
 	@Override
@@ -70,7 +73,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 					.setPostParameter("client_secret", clientSecret)
 					.setPostParameter("grant_type", "authorization_code")
 					.setPostParameter("code", code)
-					.setPostParameter("redirect_uri", getAuthResponseUrl())
+					.setPostParameter("redirect_uri", getAuthResponseUrl().toString())
 					.setPostParameter("scope", "identify email");
 			JSONObject res = p.execute().asJSONObject();
 			String accToken = res.getString("access_token");
@@ -90,6 +93,11 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 		} catch (Exception e) {
 			throw new AuthException("Failed to verify Discord auth token", e);
 		}
+	}
+	
+	@Override
+	public HttpURLPath getPostAuthRedirectURL() {
+		return HttpURLPath.of(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("state", "/"));
 	}
 	
 	@Override

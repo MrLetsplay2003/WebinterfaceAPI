@@ -1,6 +1,7 @@
 package me.mrletsplay.webinterfaceapi.http.header;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,18 +10,22 @@ import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.http.HttpUtils;
 
-public class HttpRequestPath {
+public class HttpURLPath {
 
-	private String path;
+	private String documentPath;
 	private Map<String, List<String>> queryParameters;
 	
-	public HttpRequestPath(String path, Map<String, List<String>> queryParameters) {
-		this.path = path;
+	public HttpURLPath(String documentPath, Map<String, List<String>> queryParameters) {
+		this.documentPath = documentPath;
 		this.queryParameters = queryParameters;
 	}
 	
+	public void setDocumentPath(String path) {
+		this.documentPath = path;
+	}
+	
 	public String getDocumentPath() {
-		return path;
+		return documentPath;
 	}
 	
 	public boolean hasQueryParameter(String key) {
@@ -40,16 +45,28 @@ public class HttpRequestPath {
 		return hasQueryParameter(key) ? getQueryParameterValue(key) : fallback;
 	}
 	
+	public void setQueryParameterValue(String key, String value) {
+		queryParameters.put(key, new ArrayList<>(Arrays.asList(value)));
+	}
+	
+	public void addQueryParameterValue(String key, String value) {
+		if(!hasQueryParameter(key)) {
+			setQueryParameterValue(key, value);
+			return;
+		}
+		queryParameters.get(key).add(value);
+	}
+	
 	public Map<String, List<String>> getQueryParameters() {
 		return queryParameters;
 	}
 	
-	public static HttpRequestPath parse(String rawPath) {
+	public static HttpURLPath parse(String rawPath) {
 		String[] psp = rawPath.split("\\?", 2);
 		String path = psp[0];
 		Map<String, List<String>> queryParameters = new HashMap<>();
 		if(psp.length == 2) queryParameters = parseQueryParameters(psp[1]);
-		return new HttpRequestPath(path, queryParameters);
+		return new HttpURLPath(path, queryParameters);
 	}
 	
 	public static Map<String, List<String>> parseQueryParameters(String queryParams) {
@@ -64,17 +81,21 @@ public class HttpRequestPath {
 		return queryParameters;
 	}
 	
+	public static HttpURLPath of(String path) {
+		return parse(path);
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof HttpRequestPath)) return false;
-		HttpRequestPath o = (HttpRequestPath) obj;
-		return path.equals(o.path)
+		if(!(obj instanceof HttpURLPath)) return false;
+		HttpURLPath o = (HttpURLPath) obj;
+		return documentPath.equals(o.documentPath)
 				&& queryParameters.equals(o.queryParameters);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(path, queryParameters);
+		return Objects.hash(documentPath, queryParameters);
 	}
 	
 	@Override
@@ -84,7 +105,7 @@ public class HttpRequestPath {
 						.map(v -> HttpUtils.urlEncode(en.getKey()) + "=" + HttpUtils.urlEncode(v))
 						.collect(Collectors.joining("&")))
 				.collect(Collectors.joining("&"));
-		return path + (queryString.isEmpty() ? "" : "?" + queryString);
+		return documentPath + (queryString.isEmpty() ? "" : "?" + queryString);
 	}
 	
 }

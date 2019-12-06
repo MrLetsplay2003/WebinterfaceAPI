@@ -7,11 +7,13 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import me.mrletsplay.webinterfaceapi.server.Server;
 import me.mrletsplay.webinterfaceapi.server.ServerException;
 import me.mrletsplay.webinterfaceapi.server.connection.Connection;
 import me.mrletsplay.webinterfaceapi.server.connection.ConnectionAcceptor;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
 public abstract class AbstractServer implements Server {
 
@@ -36,7 +38,7 @@ public abstract class AbstractServer implements Server {
 						acceptConnection();
 					}catch(SocketTimeoutException ignored) {
 					}catch(Exception e) {
-						e.printStackTrace(); // TODO: ?
+						Webinterface.getLogger().log(Level.FINE, "Error while accepting connection", e);
 					}
 				}
 			});

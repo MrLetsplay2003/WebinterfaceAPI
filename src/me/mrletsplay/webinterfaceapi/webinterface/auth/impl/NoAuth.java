@@ -1,6 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.auth.impl;
 
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
+import me.mrletsplay.webinterfaceapi.http.header.HttpURLPath;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
@@ -21,8 +22,11 @@ public class NoAuth implements WebinterfaceAuthMethod {
 	@Override
 	public void handleAuthRequest() {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
-		c.getServerHeader().setStatusCode(HttpStatusCodes.MOVED_PERMANENTLY_301);
-		c.getServerHeader().getFields().setFieldValue("Location", getAuthResponseUrl());
+		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
+		String red = HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/");
+		HttpURLPath pth = getAuthResponseUrl();
+		pth.setQueryParameterValue("from", red);
+		c.getServerHeader().getFields().setFieldValue("Location", pth.toString());
 	}
 
 	@Override

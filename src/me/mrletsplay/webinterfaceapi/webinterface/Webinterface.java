@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -16,20 +15,17 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
 import me.mrletsplay.mrcore.misc.MiscUtils;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
-import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.document.FileDocument;
-import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.php.PHP;
-import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileAccountStorage;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.DiscordAuth;
@@ -39,25 +35,23 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.NoAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceFileConfig;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceAuthRequestDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceAuthResponseDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceCallbackDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
-import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceSettingsPane;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceHomePage;
+import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceSettingsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.FileSessionStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSessionStorage;
 
 public class Webinterface {
+	
+	private static final Logger LOGGER = Logger.getLogger(Webinterface.class.getPackage().getName());
 	
 	private static HttpServer server;
 	private static List<WebinterfacePage> pages;
@@ -78,32 +72,8 @@ public class Webinterface {
 		includedFiles = new HashMap<>();
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
 		
-		WebinterfacePage homePage = new WebinterfacePage("Home", "/");
-		WebinterfacePageSection sc = new WebinterfacePageSection();
-		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());
-		WebinterfaceText tx = new WebinterfaceText("Hello World!");
-		tx.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY);
-		sc.addElement(tx);
-		homePage.addSection(sc);
-		
-		registerPage(homePage);
-		
-		WebinterfacePage settings = new WebinterfacePage("Settings", "/settings", DefaultPermission.SETTINGS);
-		
-		WebinterfacePageSection sc2 = new WebinterfacePageSection();
-		sc2.addTitle("Settings");
-		sc2.addElement(new WebinterfaceSettingsPane(DefaultSettings.INSTANCE.getSettings()));
-		
-		WebinterfaceButton btn = new WebinterfaceButton("Restart");
-		btn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-		btn.setOnClickAction(new MultiAction(
-				new SendJSAction("webinterface", "restart", null),
-				new ReloadPageAfterAction(1000)));
-		sc2.addElement(btn);
-		
-		settings.addSection(sc2);
-		
-		registerPage(settings);
+		registerPage(new WebinterfaceHomePage());
+		registerPage(new WebinterfaceSettingsPage());
 		
 		registerActionHandler(new DefaultHandler());
 		
@@ -142,34 +112,8 @@ public class Webinterface {
 		pages.forEach(page -> server.getDocumentProvider().registerDocument(page.getUrl(), page));
 		
 		authMethods.forEach(method -> {
-			server.getDocumentProvider().registerDocument("/auth/" + method.getID(), () -> {
-				if(!method.isAvailable()) {
-					HttpRequestContext c = HttpRequestContext.getCurrentContext();
-					c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
-					return;
-				}
-				method.handleAuthRequest();
-			});
-			server.getDocumentProvider().registerDocument("/auth/" + method.getID() + "/response", () -> {
-				HttpRequestContext c = HttpRequestContext.getCurrentContext();
-				if(!method.isAvailable()) {
-					c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
-					return;
-				}
-				try {
-					WebinterfaceAccountConnection acc = method.handleAuthResponse();
-					WebinterfaceSession.stopSession();
-					WebinterfaceSession s = WebinterfaceSession.startSession(acc);
-					c.getServerHeader().getFields().setCookie(WebinterfaceSession.COOKIE_NAME, s.getSessionID(), "Path=/", "Expires=" + WebinterfaceUtils.httpTimeStamp(s.getExpiresAt()));
-					c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
-					c.getServerHeader().getFields().setFieldValue("Location", c.getClientHeader().getPath().getQueryParameterValue("from", "/"));
-				} catch(AuthException e) {
-					c.getServerHeader().setContent("text/plain", ("Auth failed: " + e.getMessage()).getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
-				}catch(Exception e) {
-					e.printStackTrace();
-					c.getServerHeader().setContent("text/plain", "Auth error".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
-				}
-			});
+			server.getDocumentProvider().registerDocument("/auth/" + method.getID(), new WebinterfaceAuthRequestDocument(method));
+			server.getDocumentProvider().registerDocument("/auth/" + method.getID() + "/response", new WebinterfaceAuthResponseDocument(method));
 		});
 	}
 	
@@ -202,7 +146,7 @@ public class Webinterface {
 			URL jarLoc = Webinterface.class.getProtectionDomain().getCodeSource().getLocation();
 			File jarFl = new File(jarLoc.toURI().getPath());
 			if(!jarFl.isFile()) return;
-			System.out.println("[WebinterfaceAPI] Extracting files from \"" + jarFl.getAbsolutePath() + "\"...");
+			Webinterface.getLogger().info("Extracting files from \"" + jarFl.getAbsolutePath() + "\"...");
 			try (JarFile fl = new JarFile(jarFl)) {
 				Enumeration<JarEntry> en = fl.entries();
 				while(en.hasMoreElements()) {
@@ -210,7 +154,7 @@ public class Webinterface {
 					if(!e.isDirectory() && e.getName().startsWith("include/")) {
 						File ofl = new File(getRootDirectory(), e.getName());
 						if(ofl.exists()) continue;
-						System.out.println("[WebinterfaceAPI] Extracting " + e.getName() + "...");
+						Webinterface.getLogger().log(Level.FINE, "Extracting " + e.getName() + "...");
 						IOUtils.createFile(ofl);
 						try (InputStream in = fl.getInputStream(e);
 								OutputStream out = new FileOutputStream(ofl)) {
@@ -219,10 +163,10 @@ public class Webinterface {
 					}
 				}
 			}catch(IOException e) {
-				e.printStackTrace();
+				Webinterface.getLogger().log(Level.FINE, "Error while extracting required files", e);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Webinterface.getLogger().log(Level.FINE, "Error while locating required files", e);
 		}
 	}
 	
@@ -312,6 +256,10 @@ public class Webinterface {
 	public static void shutdown() {
 		initialized = false;
 		if(server != null) server.shutdown();
+	}
+	
+	public static Logger getLogger() {
+		return LOGGER;
 	}
 
 }

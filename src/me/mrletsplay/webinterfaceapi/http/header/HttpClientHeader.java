@@ -8,12 +8,12 @@ import java.util.Objects;
 public class HttpClientHeader {
 
 	private String method;
-	private HttpRequestPath path;
+	private HttpURLPath path;
 	private String protocolVersion;
 	private HttpHeaderFields fields;
 	private byte[] postData;
 	
-	public HttpClientHeader(String method, HttpRequestPath path, String protocolVersion, HttpHeaderFields fields, byte[] postData) {
+	public HttpClientHeader(String method, HttpURLPath path, String protocolVersion, HttpHeaderFields fields, byte[] postData) {
 		this.method = method;
 		this.path = path;
 		this.protocolVersion = protocolVersion;
@@ -25,7 +25,7 @@ public class HttpClientHeader {
 		return method;
 	}
 	
-	public HttpRequestPath getPath() {
+	public HttpURLPath getPath() {
 		return path;
 	}
 	
@@ -46,7 +46,7 @@ public class HttpClientHeader {
 			String reqLine = readLine(data);
 			String[] fs = reqLine.split(" ");
 			String method = fs[0];
-			HttpRequestPath path = HttpRequestPath.parse(fs[1]);
+			HttpURLPath path = HttpURLPath.parse(fs[1]);
 			String protocolVersion = fs[2];
 			HttpHeaderFields fields = new HttpHeaderFields();
 			String l;

@@ -34,5 +34,5 @@ public class WebinterfaceText extends AbstractWebinterfacePageElement {
 		b.setText(text);
 		return b;
 	}
-
+	
 }

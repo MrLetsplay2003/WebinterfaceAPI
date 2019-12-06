@@ -1,6 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface;
 
-public class DefaultPermission {
+public class DefaultPermissions {
 	
 	public static final String
 		RESTART = "webinterface.restart",

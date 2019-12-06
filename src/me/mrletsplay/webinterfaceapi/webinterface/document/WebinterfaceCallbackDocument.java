@@ -1,6 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.document;
 
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.json.JSONType;
@@ -35,15 +36,14 @@ public class WebinterfaceCallbackDocument implements HttpDocument {
 						return;
 					}
 				}catch(Exception ex) {
-					ex.printStackTrace(); // TODO: remove
+					Webinterface.getLogger().log(Level.FINE, "Failed to handle request, error at handler", ex);
 					setResponse(WebinterfaceResponse.error("Failed to handle request, error at handler"));
 					return;
 				}
 			}
 			setResponse(WebinterfaceResponse.error("No handler available"));
 		}catch(Exception e) {
-			System.out.println("DEBUG STACK TRACE:"); // TODO remove
-			e.printStackTrace();
+			Webinterface.getLogger().log(Level.FINE, "Failed to handle request", e);
 			setResponse(WebinterfaceResponse.error("Failed to handle request"));
 			return;
 		}
