@@ -10,7 +10,12 @@ import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 
 public class HtmlDocument implements HttpDocument {
 
-	private HtmlElement html, head, body, title, description;
+	private HtmlElement
+		html,
+		head,
+		body,
+		title,
+		description;
 	
 	public HtmlDocument() {
 		this.html = new HtmlElement("html");

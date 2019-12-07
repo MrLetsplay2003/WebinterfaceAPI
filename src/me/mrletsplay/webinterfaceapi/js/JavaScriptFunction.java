@@ -4,7 +4,9 @@ import java.util.function.Supplier;
 
 public class JavaScriptFunction {
 
-	private Supplier<String> signature, code;
+	private Supplier<String>
+		signature,
+		code;
 	
 	public JavaScriptFunction(Supplier<String> signature) {
 		this.signature = signature;
