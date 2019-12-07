@@ -27,7 +27,10 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 		USER_EMAILS_ENDPOINT = "https://api.github.com/user/emails";
 	
 	private boolean available;
-	private String clientID, clientSecret;
+	
+	private String
+		clientID,
+		clientSecret;
 	
 	public GitHubAuth() {
 		File cfgFile = new File(getConfigurationDirectory(), "credentials.yml");

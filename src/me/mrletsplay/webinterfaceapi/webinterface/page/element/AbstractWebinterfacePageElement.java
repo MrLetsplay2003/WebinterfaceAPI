@@ -17,9 +17,15 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLay
 
 public abstract class AbstractWebinterfacePageElement implements WebinterfacePageElement {
 
-	private String id, width, height;
+	private String
+		id,
+		width,
+		height;
+	
 	private List<ElementLayoutProperty> layoutProperties;
+	
 	private WebinterfaceAction onClickAction;
+	
 	private Map<String, String>
 		attributes,
 		containerAttributes;

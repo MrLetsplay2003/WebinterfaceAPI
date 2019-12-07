@@ -12,6 +12,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
+import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
 public class WebinterfaceCallbackDocument implements HttpDocument {
 
@@ -27,7 +28,14 @@ public class WebinterfaceCallbackDocument implements HttpDocument {
 				setResponse(WebinterfaceResponse.error("Invalid data payload, not an object"));
 				return;
 			}
-			WebinterfaceRequestEvent e = new WebinterfaceRequestEvent(req.getString("target"), req.getString("method"), req.getJSONObject("data"));
+			
+			WebinterfaceSession sess = WebinterfaceSession.getCurrentSession();
+			if(sess == null) {
+				setResponse(WebinterfaceResponse.error("No session active"));
+				return;
+			}
+			
+			WebinterfaceRequestEvent e = new WebinterfaceRequestEvent(sess, req.getString("target"), req.getString("method"), req.getJSONObject("data"));
 			for(WebinterfaceActionHandler h : Webinterface.getActionHandlers()) {
 				try {
 					WebinterfaceResponse r = h.handle(e);

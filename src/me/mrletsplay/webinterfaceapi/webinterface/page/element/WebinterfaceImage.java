@@ -7,7 +7,9 @@ import me.mrletsplay.webinterfaceapi.html.element.HtmlImg;
 
 public class WebinterfaceImage extends AbstractWebinterfacePageElement {
 	
-	private Supplier<String> src, alt;
+	private Supplier<String>
+		src,
+		alt;
 	
 	public WebinterfaceImage(Supplier<String> src, Supplier<String> alt) {
 		this.src = src;

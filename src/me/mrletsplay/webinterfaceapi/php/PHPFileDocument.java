@@ -22,13 +22,15 @@ import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 public class PHPFileDocument implements HttpDocument {
 	
 	private File file;
+	private String fallbackMimeType;
 	
-	public PHPFileDocument(File file) {
+	public PHPFileDocument(File file, String fallbackMimeType) {
 		this.file = file;
+		this.fallbackMimeType = fallbackMimeType;
 	}
 	
-	public PHPFileDocument(File file, String mimeType) {
-		this.file = file;
+	public PHPFileDocument(File file) {
+		this(file, "text/html");
 	}
 	
 	@Override
@@ -112,7 +114,7 @@ public class PHPFileDocument implements HttpDocument {
 				}
 				c.getServerHeader().getFields().addFieldValue(spl[0], spl[1]);
 			}
-			c.getServerHeader().setContent("text/html", postData, false);
+			c.getServerHeader().setContent(fallbackMimeType, postData, false);
 		} catch (IOException e) {
 			Webinterface.getLogger().log(Level.FINE, "Error while running PHP-CGI", e);
 		}

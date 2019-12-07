@@ -5,7 +5,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class WebinterfaceAccountConnection {
 
-	private String authMethod, userID, userName, userEmail, userAvatar;
+	private String
+		authMethod,
+		userID,
+		userName,
+		userEmail,
+		userAvatar;
+	
 	private boolean isTemporary;
 	
 	public WebinterfaceAccountConnection(String authMethod, String userID, String userName, String userEmail, String userAvatar, boolean isTemporary) {

@@ -13,8 +13,6 @@ public class DefaultSettings implements AutoSettings {
 	
 	public static final DefaultSettings INSTANCE = new DefaultSettings();
 	
-	private DefaultSettings() {}
-	
 	@AutoSetting
 	public static final BooleanSetting
 		ENABLE_FILE_CACHING = new BooleanSetting("enable-file-caching", true),
@@ -39,5 +37,7 @@ public class DefaultSettings implements AutoSettings {
 	public static final StringListSetting
 		INDEX_FILES = new StringListSetting("index-files", Arrays.asList("index.php", "index.html")),
 		PHP_FILE_EXTENSIONS = new StringListSetting("php.file-extensions", Arrays.asList(".php"));
+	
+	private DefaultSettings() {}
 	
 }

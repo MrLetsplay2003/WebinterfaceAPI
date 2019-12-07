@@ -7,7 +7,10 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.Webinterface
 
 public class SendJSAction implements WebinterfaceAction {
 
-	private String target, method;
+	private String
+		target,
+		method;
+	
 	private WebinterfaceActionValue value;
 	
 	public SendJSAction(String target, String method, WebinterfaceActionValue js) {

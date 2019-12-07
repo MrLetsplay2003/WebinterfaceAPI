@@ -6,7 +6,9 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageE
 
 public class ElementAttributeValue implements WebinterfaceActionValue {
 
-	private String elementID, attributeName;
+	private String
+		elementID,
+		attributeName;
 	
 	public ElementAttributeValue(String elementID, String attributeName) {
 		this.elementID = elementID;

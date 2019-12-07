@@ -25,7 +25,10 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 		USERINFO_ENDPOINT = "https://www.googleapis.com/oauth2/v2/userinfo";
 	
 	private boolean available;
-	private String clientID, clientSecret;
+	
+	private String
+		clientID,
+		clientSecret;
 	
 	public GoogleAuth() {
 		File cfgFile = new File(getConfigurationDirectory(), "credentials.json");

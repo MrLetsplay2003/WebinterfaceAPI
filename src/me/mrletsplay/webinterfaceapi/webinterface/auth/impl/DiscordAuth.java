@@ -24,7 +24,10 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 		TOKEN_ENDPOINT = "https://discordapp.com/api/oauth2/token";
 	
 	private boolean available;
-	private String clientID, clientSecret;
+	
+	private String
+		clientID,
+		clientSecret;
 	
 	public DiscordAuth() {
 		File cfgFile = new File(getConfigurationDirectory(), "credentials.yml");

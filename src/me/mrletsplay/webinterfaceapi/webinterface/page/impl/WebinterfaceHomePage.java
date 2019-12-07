@@ -13,7 +13,7 @@ public class WebinterfaceHomePage extends WebinterfacePage {
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());
-		WebinterfaceText tx = new WebinterfaceText("See <a href=\"https://google.com\">Hi</a>");
+		WebinterfaceText tx = new WebinterfaceText("Hello World!");
 		tx.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY);
 		sc.addElement(tx);
 		addSection(sc);

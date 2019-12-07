@@ -17,8 +17,12 @@ public class WebinterfaceSession {
 	
 	public static final String COOKIE_NAME = "wi_sessid";
 	
-	private String sessionID, accountID;
+	private String
+		sessionID,
+		accountID;
+	
 	private Instant expiresAt;
+	
 	private Map<String, String> properties;
 	
 	public WebinterfaceSession(String sessionID, String accountID, Instant expiresAt, Map<String, String> properties) {

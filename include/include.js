@@ -8,7 +8,6 @@ let wiData = {
 class Webinterface {
 
 	static call(target, method, data = {}) {
-		console.log("call", target, method, data);
 		return new Promise(function(resolve, reject) {
 			$.ajax({
 				url: "/_internal/call",

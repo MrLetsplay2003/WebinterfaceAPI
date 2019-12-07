@@ -5,7 +5,9 @@ import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSet
 
 public class StringSetting implements WebinterfaceSetting<String> {
 
-	private String key, defaultValue;
+	private String
+		key,
+		defaultValue;
 	
 	public StringSetting(String key, String defaultValue) {
 		this.key = key;

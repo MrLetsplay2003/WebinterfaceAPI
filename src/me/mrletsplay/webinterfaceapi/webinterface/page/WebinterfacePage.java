@@ -31,7 +31,11 @@ public class WebinterfacePage implements HttpDocument {
 	
 	private static final Supplier<String> LOGIN_URL = () -> "/login?from=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().toString());
 	
-	private String name, url, permission;
+	private String
+		name,
+		url,
+		permission;
+	
 	private Supplier<List<WebinterfacePageSection>> sections;
 	
 	public WebinterfacePage(String name, String url, String permission) {
