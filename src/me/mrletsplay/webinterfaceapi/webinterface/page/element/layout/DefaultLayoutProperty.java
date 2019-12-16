@@ -1,5 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element.layout;
 
+import me.mrletsplay.webinterfaceapi.html.HtmlElement;
+
 public enum DefaultLayoutProperty implements ElementLayoutProperty {
 
 	FULL_WIDTH("el-full-width"),
@@ -21,8 +23,8 @@ public enum DefaultLayoutProperty implements ElementLayoutProperty {
 	}
 	
 	@Override
-	public String getClassName() {
-		return className;
+	public void apply(HtmlElement element) {
+		element.addClass(className);
 	}
 	
 }

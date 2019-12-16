@@ -68,16 +68,19 @@ public class WebinterfaceAccount implements Permissible {
 	@Override
 	public void addPermission(Permission permission) {
 		permissions.add(permission);
+		Webinterface.getAccountStorage().storeAccount(this);
 	}
 
 	@Override
 	public void removePermission(Permission permission) {
 		permissions.remove(permission);
+		Webinterface.getAccountStorage().storeAccount(this);
 	}
 
 	@Override
 	public void setPermissions(List<Permission> permissions) {
 		this.permissions = permissions;
+		Webinterface.getAccountStorage().storeAccount(this);
 	}
 
 	@Override

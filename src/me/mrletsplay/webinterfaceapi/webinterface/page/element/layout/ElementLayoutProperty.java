@@ -1,7 +1,9 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element.layout;
 
+import me.mrletsplay.webinterfaceapi.html.HtmlElement;
+
 public interface ElementLayoutProperty {
 
-	public String getClassName();
+	public void apply(HtmlElement element);
 	
 }

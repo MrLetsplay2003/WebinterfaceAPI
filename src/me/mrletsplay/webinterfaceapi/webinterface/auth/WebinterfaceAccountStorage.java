@@ -10,6 +10,8 @@ public interface WebinterfaceAccountStorage {
 
 	public void storeAccount(WebinterfaceAccount account);
 	
+	public void deleteAccount(WebinterfaceAccount account);
+	
 	public WebinterfaceAccount getAccountByID(String id);
 	
 	public WebinterfaceAccount getAccountByPrimaryEmail(String email);

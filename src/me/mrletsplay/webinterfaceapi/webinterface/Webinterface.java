@@ -41,8 +41,10 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceCallbackD
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
+import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceHomePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceSettingsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.FileSessionStorage;
@@ -64,6 +66,7 @@ public class Webinterface {
 	private static WebinterfaceAccountStorage accountStorage;
 	private static WebinterfaceSessionStorage sessionStorage;
 	private static WebinterfaceConfig config;
+	private static MarkdownRenderer markdownRenderer;
 	
 	static {
 		pages = new ArrayList<>();
@@ -71,9 +74,11 @@ public class Webinterface {
 		authMethods = new ArrayList<>();
 		includedFiles = new HashMap<>();
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
+		markdownRenderer = new MarkdownRenderer();
 		
 		registerPage(new WebinterfaceHomePage());
 		registerPage(new WebinterfaceSettingsPage());
+		registerPage(new WebinterfaceAccountsPage());
 		
 		registerActionHandler(new DefaultHandler());
 		
@@ -233,6 +238,14 @@ public class Webinterface {
 	
 	public static WebinterfaceSessionStorage getSessionStorage() {
 		return sessionStorage;
+	}
+	
+	public static void setMarkdownRenderer(MarkdownRenderer markdownRenderer) {
+		Webinterface.markdownRenderer = markdownRenderer;
+	}
+	
+	public static MarkdownRenderer getMarkdownRenderer() {
+		return markdownRenderer;
 	}
 	
 	public static void includeFile(String path, File file, boolean includeFileName) {

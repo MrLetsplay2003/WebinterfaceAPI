@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
@@ -22,7 +21,9 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		width,
 		height;
 	
-	private List<ElementLayoutProperty> layoutProperties;
+	private List<ElementLayoutProperty>
+		layoutProperties,
+		innerLayoutProperties;
 	
 	private WebinterfaceAction onClickAction;
 	
@@ -32,6 +33,7 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 	
 	public AbstractWebinterfacePageElement() {
 		this.layoutProperties = new ArrayList<>();
+		this.innerLayoutProperties = new ArrayList<>();
 		this.attributes = new HashMap<>();
 		this.containerAttributes = new HashMap<>();
 	}
@@ -77,6 +79,16 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 	}
 	
 	@Override
+	public void addInnerLayoutProperties(ElementLayoutProperty... layouts) {
+		this.innerLayoutProperties.addAll(Arrays.asList(layouts));
+	}
+	
+	@Override
+	public List<ElementLayoutProperty> getInnerLayoutProperties() {
+		return innerLayoutProperties;
+	}
+	
+	@Override
 	public void setOnClickAction(WebinterfaceAction onClickAction) {
 		this.onClickAction = onClickAction;
 	}
@@ -116,7 +128,6 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		if(id != null && el.getID() == null) el.setID(id);
 		if(width != null) el.setAttribute("style", "width:" + width + "");
 		el.addClass("element");
-		String cN = layoutProperties.stream().map(ElementLayoutProperty::getClassName).collect(Collectors.joining(" "));
 		if(onClickAction != null) {
 			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
 			JavaScriptFunction f = onClickAction.toJavaScript();
@@ -125,7 +136,8 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		}
 		attributes.forEach(el::setAttribute);
 		containerAttributes.forEach(elContainer::setAttribute);
-		if(!cN.isEmpty()) elContainer.addClass(cN);
+		layoutProperties.forEach(p -> p.apply(elContainer));
+		innerLayoutProperties.forEach(p -> p.apply(el));
 		elContainer.appendChild(el);
 		return elContainer;
 	}

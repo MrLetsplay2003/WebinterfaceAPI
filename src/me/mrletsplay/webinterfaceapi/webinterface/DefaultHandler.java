@@ -1,7 +1,9 @@
 package me.mrletsplay.webinterfaceapi.webinterface;
 import me.mrletsplay.mrcore.json.JSONArray;
+import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.misc.NullableOptional;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
@@ -33,6 +35,23 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 		WebinterfaceConfig cfg = Webinterface.getConfig();
 		WebinterfaceSetting<?> set = cfg.getSetting(keyAndValue.getString(0));
 		setSetting(set, keyAndValue.get(1));
+		return WebinterfaceResponse.success();
+	}
+	
+	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "setOP")
+	public WebinterfaceResponse setOP(WebinterfaceRequestEvent event) {
+		if(!WebinterfaceSession.getCurrentSession().getAccount().hasPermission(DefaultPermissions.MODIFY_USERS))
+			return WebinterfaceResponse.error("No permission");
+		JSONObject val = event.getRequestData().getJSONObject("value");
+		boolean b = val.getBoolean("value");
+		String accountID = val.getString("account_id");
+		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByID(accountID);
+		if(acc == null) return WebinterfaceResponse.error("Account doesn't exist");
+		if(b && !acc.hasPermission("*")) {
+			acc.addPermission("*");
+		}else if(!b) {
+			acc.removePermission("*");
+		}
 		return WebinterfaceResponse.success();
 	}
 	

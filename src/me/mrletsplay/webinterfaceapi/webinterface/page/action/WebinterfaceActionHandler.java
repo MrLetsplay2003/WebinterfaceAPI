@@ -22,6 +22,7 @@ public interface WebinterfaceActionHandler {
 						WebinterfaceResponse response = (WebinterfaceResponse) m.invoke(this, event);
 						return response;
 					}catch(InvocationTargetException | IllegalAccessException | IllegalArgumentException e2) {
+						e2.printStackTrace();
 						Webinterface.getLogger().log(Level.FINE, "Malformed request", e2);
 						return WebinterfaceResponse.error("Malformed request");
 					}

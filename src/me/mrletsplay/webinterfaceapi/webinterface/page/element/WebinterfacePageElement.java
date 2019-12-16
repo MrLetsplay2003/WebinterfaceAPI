@@ -30,6 +30,10 @@ public interface WebinterfacePageElement {
 	
 	public List<ElementLayoutProperty> getLayoutProperties();
 	
+	public void addInnerLayoutProperties(ElementLayoutProperty... layouts);
+	
+	public List<ElementLayoutProperty> getInnerLayoutProperties();
+	
 	public void setOnClickAction(WebinterfaceAction onClickAction);
 	
 	public WebinterfaceAction getOnClickAction();

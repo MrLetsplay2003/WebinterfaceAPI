@@ -55,6 +55,12 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 		config.set(account.getID() + ".permissions", account.getPermissions().stream().map(Permission::getPermission).collect(Collectors.toList()));
 		config.saveToFile();
 	}
+	
+	@Override
+	public void deleteAccount(WebinterfaceAccount account) {
+		config.unset(account.getID());
+		config.saveToFile();
+	}
 
 	@Override
 	public WebinterfaceAccount getAccountByID(String id) {

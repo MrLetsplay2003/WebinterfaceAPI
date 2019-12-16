@@ -4,6 +4,7 @@ public class DefaultPermissions {
 	
 	public static final String
 		RESTART = "webinterface.restart",
-		SETTINGS = "webinterface.settings";
+		SETTINGS = "webinterface.settings",
+		MODIFY_USERS = "webinterface.modify-users";
 
 }
