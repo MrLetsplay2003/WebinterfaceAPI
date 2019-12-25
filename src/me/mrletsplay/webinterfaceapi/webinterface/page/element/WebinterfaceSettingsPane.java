@@ -19,6 +19,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WebinterfaceActionValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WrapperValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 
 public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
@@ -27,6 +28,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	public WebinterfaceSettingsPane(List<WebinterfaceSetting<?>> settings) {
 		this.settings = new ArrayList<>();
 		addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+		addInnerLayoutProperties(new GridLayout("33fr", "66fr"));
 		addSettings(settings);
 	}
 	

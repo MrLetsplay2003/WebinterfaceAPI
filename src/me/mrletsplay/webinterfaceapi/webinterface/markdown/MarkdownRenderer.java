@@ -64,7 +64,7 @@ public class MarkdownRenderer {
 			el.setText(in.getLiteral());
 		}else if(node instanceof Text) {
 			Text l = (Text) node;
-			el = new HtmlElement("div");
+			el = new HtmlElement("span");
 			el.setText(l.getLiteral());
 		}else if(node instanceof Image) {
 			Image l = (Image) node;

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import me.mrletsplay.mrcore.permission.Permissible;
 import me.mrletsplay.mrcore.permission.Permission;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
@@ -24,6 +27,11 @@ public class WebinterfaceAccount implements Permissible {
 		return id;
 	}
 	
+	public boolean isTemporary() {
+		return connections.stream()
+				.allMatch(WebinterfaceAccountConnection::isTemporary);
+	}
+	
 	public List<String> getEmails() {
 		return connections.stream()
 				.map(c -> c.getUserEmail())
@@ -31,20 +39,23 @@ public class WebinterfaceAccount implements Permissible {
 				.collect(Collectors.toList());
 	}
 	
+	@Nullable
 	public String getPrimaryEmail() {
 		return connections.stream()
-			.map(c -> c.getUserEmail())
-			.filter(Objects::nonNull)
-			.findFirst().orElse(null);
+				.map(c -> c.getUserEmail())
+				.filter(Objects::nonNull)
+				.findFirst().orElse(null);
 	}
 	
+	@Nullable
 	public String getAvatarUrl() {
 		return connections.stream()
-					.map(c -> c.getUserAvatar())
-					.filter(Objects::nonNull)
-					.findFirst().orElse(null);
+				.map(c -> c.getUserAvatar())
+				.filter(Objects::nonNull)
+				.findFirst().orElse(null);
 	}
 	
+	@NotNull
 	public String getName() {
 		return connections.stream()
 				.map(c -> c.getUserName())

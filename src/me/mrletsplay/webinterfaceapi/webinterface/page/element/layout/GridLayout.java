@@ -15,7 +15,7 @@ public class GridLayout implements ElementLayoutProperty {
 	
 	@Override
 	public void apply(HtmlElement element) {
-		element.setAttribute("style", "grid-template-columns: " + Arrays.stream(columns).collect(Collectors.joining(" ")));
+		element.appendAttribute("style", "grid-template-columns: " + Arrays.stream(columns).collect(Collectors.joining(" ")) + ";");
 	}
 	
 }

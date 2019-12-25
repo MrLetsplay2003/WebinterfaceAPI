@@ -14,11 +14,15 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.ConfirmAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.SetValueAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceCheckBox;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceElementGroup;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
@@ -54,22 +58,56 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				grp.addElement(tx3);
 				grp.addElement(new WebinterfaceText(acc.getPermissions().isEmpty() ? "-" : acc.getPermissions().stream().map(Permission::getPermission).collect(Collectors.joining(", "))));
 				
+				WebinterfaceTitleText tx4 = new WebinterfaceTitleText("Is Temporary");
+				tx4.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+				grp.addElement(tx4);
+				grp.addElement(new WebinterfaceText(acc.isTemporary() ? "yes" : "no"));
+				
 				WebinterfaceElementGroup grp2 = new WebinterfaceElementGroup();
 				grp2.addInnerLayoutProperties(new GridLayout("1fr", "1fr"));
 				grp2.addTitle("Account Actions");
 				grp2.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 				
 				WebinterfaceText tx = new WebinterfaceText("Is OP (has * permission)");
+				tx.setEnableMarkdown(true);
 				grp2.addElement(tx);
 				
 				WebinterfaceCheckBox cb = new WebinterfaceCheckBox(acc.hasPermission("*"));
 				
-				ObjectValue val = new ObjectValue();
-				val.putValue("account_id", new StringValue(acc.getID()));
-				val.putValue("value", new CheckboxValue(cb));
+				ObjectValue opVal = new ObjectValue();
+				opVal.putValue("account_id", new StringValue(acc.getID()));
+				opVal.putValue("value", new CheckboxValue(cb));
 				
-				cb.setOnChangeAction(new MultiAction(new ConfirmAction(new SendJSAction("webinterface", "setOP", val)), new ReloadPageAfterAction(100)));
+				cb.setOnChangeAction(new MultiAction(new ConfirmAction(new SendJSAction("webinterface", "setOP", opVal)), new ReloadPageAfterAction(100)));
 				grp2.addElement(cb);
+				
+				WebinterfaceInputField addP = new WebinterfaceInputField("Add permission");
+				
+				ObjectValue addPVal = new ObjectValue();
+				addPVal.putValue("account_id", new StringValue(acc.getID()));
+				addPVal.putValue("permission", new ElementValue(addP));
+				
+				addP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "addPermission", addPVal), new SetValueAction(addP, new StringValue("")), new ReloadPageAfterAction(100)));
+				
+				grp2.addElement(addP);
+				
+				WebinterfaceInputField remP = new WebinterfaceInputField("Remove permission");
+				
+				ObjectValue remPVal = new ObjectValue();
+				remPVal.putValue("account_id", new StringValue(acc.getID()));
+				remPVal.putValue("permission", new ElementValue(remP));
+				
+				remP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "removePermission", remPVal), new SetValueAction(remP, new StringValue("")), new ReloadPageAfterAction(100)));
+				
+				grp2.addElement(remP);
+				
+				WebinterfaceButton delBtn = new WebinterfaceButton("Delete account");
+				delBtn.setWidth("auto");
+				delBtn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+				
+				delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "deleteAccount", new StringValue(acc.getID())), new ReloadPageAfterAction(100))));
+				
+				grp2.addElement(delBtn);
 				
 				grp.addElement(grp2);
 				grp.addElement(new WebinterfaceVerticalSpacer("50px"));

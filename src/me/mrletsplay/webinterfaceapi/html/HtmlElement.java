@@ -64,6 +64,19 @@ public class HtmlElement {
 		setAttribute(name, () -> value);
 	}
 	
+	public void appendAttribute(String name, Supplier<String> value) {
+		Supplier<String> prevVal = getAttribute(name);
+		if(prevVal == null) {
+			setAttribute(name, value);
+			return;
+		}
+		attributes.put(name, () -> prevVal.get() + value.get());
+	}
+	
+	public void appendAttribute(String name, String value) {
+		appendAttribute(name, () -> value);
+	}
+	
 	public void setAttribute(String name) {
 		setAttribute(name, (String) null);
 	}
