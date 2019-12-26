@@ -110,7 +110,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				grp2.addElement(delBtn);
 				
 				grp.addElement(grp2);
-				grp.addElement(new WebinterfaceVerticalSpacer("50px"));
+				grp.addElement(new WebinterfaceVerticalSpacer("30px"));
 				
 				els.add(grp);
 			}
