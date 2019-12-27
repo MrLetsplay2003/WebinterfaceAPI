@@ -127,6 +127,7 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		HtmlElement el = createElement();
 		if(id != null && el.getID() == null) el.setID(id);
 		if(width != null) el.appendAttribute("style", "width:" + width + ";");
+		if(height != null) el.appendAttribute("style", "height:" + height + ";");
 		el.addClass("element");
 		if(onClickAction != null) {
 			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
