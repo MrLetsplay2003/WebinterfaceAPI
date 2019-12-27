@@ -16,6 +16,11 @@ public class StringValue implements WebinterfaceActionValue {
 		this(() -> value);
 	}
 	
+	public void concat(StringValue other) {
+		Supplier<String> oldV = value;
+		this.value = () -> oldV.get() + other.value.get();
+	}
+	
 	@Override
 	public String toJavaScript() {
 		return "\"" + StringEscapeUtils.escapeEcmaScript(value.get()) + "\"";
