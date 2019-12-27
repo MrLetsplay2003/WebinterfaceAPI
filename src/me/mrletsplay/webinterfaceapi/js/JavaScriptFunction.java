@@ -37,6 +37,10 @@ public class JavaScriptFunction {
 	}
 	
 	public void appendCode(Supplier<String> code) {
+		if(this.code == null) {
+			setCode(code);
+			return;
+		}
 		Supplier<String> oldCode = this.code;
 		this.code = () -> oldCode.get() + code.get();
 	}
