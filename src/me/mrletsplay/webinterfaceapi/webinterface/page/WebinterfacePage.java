@@ -36,13 +36,23 @@ public class WebinterfacePage implements HttpDocument {
 		url,
 		permission;
 	
+	private boolean hidden;
+	
 	private Supplier<List<WebinterfacePageSection>> sections;
 	
-	public WebinterfacePage(String name, String url, String permission) {
+	public WebinterfacePage(String name, String url, String permission, boolean hidden) {
 		this.name = name;
 		this.url = url;
 		this.permission = permission;
 		this.sections = () -> new ArrayList<>();
+	}
+	
+	public WebinterfacePage(String name, String url, String permission) {
+		this(name, url, permission, false);
+	}
+	
+	public WebinterfacePage(String name, String url, boolean hidden) {
+		this(name, url, null, hidden);
 	}
 	
 	public WebinterfacePage(String name, String url) {
@@ -59,6 +69,10 @@ public class WebinterfacePage implements HttpDocument {
 	
 	public String getPermission() {
 		return permission;
+	}
+	
+	public boolean isHidden() {
+		return hidden;
 	}
 	
 	public void addDynamicSections(Supplier<List<WebinterfacePageSection>> sections) {
@@ -173,7 +187,7 @@ public class WebinterfacePage implements HttpDocument {
 		sidenav.appendChild(sideNavList);
 		
 		for(WebinterfacePage pg : Webinterface.getPages()) {
-			if(pg.getPermission() == null || account.hasPermission(pg.getPermission())) {
+			if(!pg.isHidden() && (pg.getPermission() == null || account.hasPermission(pg.getPermission()))) {
 				HtmlElement sideNavListItem = new HtmlElement("li");
 				sideNavListItem.addClass("sidenav-list-item");
 				
