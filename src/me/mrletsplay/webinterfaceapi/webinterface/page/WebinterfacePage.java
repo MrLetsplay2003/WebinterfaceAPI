@@ -45,6 +45,7 @@ public class WebinterfacePage implements HttpDocument {
 		this.url = url;
 		this.permission = permission;
 		this.sections = () -> new ArrayList<>();
+		this.hidden = hidden;
 	}
 	
 	public WebinterfacePage(String name, String url, String permission) {
