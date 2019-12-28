@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import me.mrletsplay.mrcore.json.JSONArray;
 import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.misc.NullableOptional;
-import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
@@ -110,8 +109,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
 	public static WebinterfaceResponse handleSetSettingRequest(WebinterfaceConfig config, WebinterfaceRequestEvent event) {
 		JSONArray keyAndValue = event.getRequestData().getJSONArray("value");
-		WebinterfaceConfig cfg = Webinterface.getConfig();
-		WebinterfaceSetting<?> set = cfg.getSetting(keyAndValue.getString(0));
+		WebinterfaceSetting<?> set = config.getSetting(keyAndValue.getString(0));
 		WebinterfaceSettingsPane.setSetting(config, set, keyAndValue.get(1));
 		return WebinterfaceResponse.success();
 	}
