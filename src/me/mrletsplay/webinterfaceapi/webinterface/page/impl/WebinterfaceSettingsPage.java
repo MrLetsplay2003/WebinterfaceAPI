@@ -1,6 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.impl;
 
 import me.mrletsplay.webinterfaceapi.webinterface.DefaultPermissions;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
@@ -18,7 +19,7 @@ public class WebinterfaceSettingsPage extends WebinterfacePage {
 		
 		WebinterfacePageSection sc2 = new WebinterfacePageSection();
 		sc2.addTitle("Settings");
-		sc2.addElement(new WebinterfaceSettingsPane(DefaultSettings.INSTANCE.getSettings()));
+		sc2.addElement(new WebinterfaceSettingsPane(() -> Webinterface.getConfig(), DefaultSettings.INSTANCE.getSettings()));
 		
 		WebinterfaceButton btn = new WebinterfaceButton("Restart");
 		btn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
