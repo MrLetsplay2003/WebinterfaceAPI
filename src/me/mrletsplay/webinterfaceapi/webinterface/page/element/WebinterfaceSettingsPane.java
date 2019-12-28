@@ -7,12 +7,17 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import me.mrletsplay.mrcore.json.JSONArray;
 import me.mrletsplay.mrcore.misc.Complex;
+import me.mrletsplay.mrcore.misc.NullableOptional;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ArrayValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
@@ -33,6 +38,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		
 		addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		addInnerLayoutProperties(new GridLayout("33fr", "66fr"));
+		
 		addSettings(settings);
 	}
 	
@@ -95,6 +101,33 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
 	public List<WebinterfaceSetting<?>> getSettings() {
 		return settings;
+	}
+	
+	public static WebinterfaceResponse handleSetSettingRequest(WebinterfaceConfig config, WebinterfaceRequestEvent event) {
+		JSONArray keyAndValue = event.getRequestData().getJSONArray("value");
+		WebinterfaceConfig cfg = Webinterface.getConfig();
+		WebinterfaceSetting<?> set = cfg.getSetting(keyAndValue.getString(0));
+		WebinterfaceSettingsPane.setSetting(config, set, keyAndValue.get(1));
+		return WebinterfaceResponse.success();
+	}
+	
+	private static <T> void setSetting(WebinterfaceConfig config, WebinterfaceSetting<T> setting, Object value) {
+		config.setSetting(setting, setting.getType().cast(value, WebinterfaceSettingsPane::jsonCast).get());
+	}
+	
+	private static <T> NullableOptional<T> jsonCast(Object o, Class<T> typeClass, Complex<?> exactClass) {
+		if(o == null) return NullableOptional.of(null);
+		if(typeClass.isInstance(o)) return NullableOptional.of(typeClass.cast(o));
+		if(Number.class.isAssignableFrom(typeClass)) {
+			if(!(o instanceof Number)) return NullableOptional.empty();
+			Number n = (Number) o;
+			if(typeClass.equals(Integer.class)) {
+				return NullableOptional.of(typeClass.cast(n.intValue()));
+			}else if(typeClass.equals(Double.class)) {
+				return NullableOptional.of(typeClass.cast(n.doubleValue()));
+			}
+		}
+		return NullableOptional.empty();
 	}
 	
 }
