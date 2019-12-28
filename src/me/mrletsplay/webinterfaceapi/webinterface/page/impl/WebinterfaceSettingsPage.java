@@ -19,7 +19,7 @@ public class WebinterfaceSettingsPage extends WebinterfacePage {
 		
 		WebinterfacePageSection sc2 = new WebinterfacePageSection();
 		sc2.addTitle("Settings");
-		sc2.addElement(new WebinterfaceSettingsPane(() -> Webinterface.getConfig(), DefaultSettings.INSTANCE.getSettings()));
+		sc2.addElement(new WebinterfaceSettingsPane(() -> Webinterface.getConfig(), DefaultSettings.INSTANCE.getSettings(), "webinterface", "setSetting"));
 		
 		WebinterfaceButton btn = new WebinterfaceButton("Restart");
 		btn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);

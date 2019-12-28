@@ -31,10 +31,15 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
 	private Supplier<WebinterfaceConfig> config;
 	private List<WebinterfaceSetting<?>> settings;
+	private String
+		requestTarget,
+		requestMethod;
 	
-	public WebinterfaceSettingsPane(Supplier<WebinterfaceConfig> config, List<WebinterfaceSetting<?>> settings) {
+	public WebinterfaceSettingsPane(Supplier<WebinterfaceConfig> config, List<WebinterfaceSetting<?>> settings, String requestTarget, String requestMethod) {
 		this.config = config;
 		this.settings = new ArrayList<>();
+		this.requestTarget = requestTarget;
+		this.requestMethod = requestMethod;
 		
 		addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		addInnerLayoutProperties(new GridLayout("33fr", "66fr"));
@@ -42,8 +47,8 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		addSettings(settings);
 	}
 	
-	public WebinterfaceSettingsPane(WebinterfaceConfig config, List<WebinterfaceSetting<?>> settings) {
-		this(() -> config, settings);
+	public WebinterfaceSettingsPane(WebinterfaceConfig config, List<WebinterfaceSetting<?>> settings, String requestTarget, String requestMethod) {
+		this(() -> config, settings, requestTarget, requestMethod);
 	}
 	
 	public void addSettings(List<WebinterfaceSetting<?>> settings) {
@@ -92,7 +97,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	}
 	
 	private MultiAction changeSettingAction(WebinterfaceSetting<?> setting, WebinterfaceActionValue value) {
-		return new MultiAction(new SendJSAction("webinterface", "setSetting", new ArrayValue(
+		return new MultiAction(new SendJSAction(requestTarget, requestMethod, new ArrayValue(
 				new StringValue(setting.getKey()),
 				value
 			)),
