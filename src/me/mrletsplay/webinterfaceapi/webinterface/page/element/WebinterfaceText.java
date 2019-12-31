@@ -5,12 +5,14 @@ import java.util.function.Supplier;
 import org.commonmark.parser.Parser;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
+import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownElementPostProcessor;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
 
 public class WebinterfaceText extends AbstractWebinterfacePageElement {
 	
 	private Supplier<String> text;
 	private boolean enableMarkdown;
+	private MarkdownElementPostProcessor markdownPostProcessor;
 	
 	public WebinterfaceText(Supplier<String> text) {
 		this.text = text;
@@ -40,11 +42,20 @@ public class WebinterfaceText extends AbstractWebinterfacePageElement {
 		return enableMarkdown;
 	}
 	
+	public void setMarkdownPostProcessor(MarkdownElementPostProcessor markdownPostProcessor) {
+		this.markdownPostProcessor = markdownPostProcessor;
+	}
+	
+	public MarkdownElementPostProcessor getMarkdownPostProcessor() {
+		return markdownPostProcessor;
+	}
+	
 	@Override
 	public HtmlElement createElement() {
 		HtmlElement b = new HtmlElement("a");
 		if(enableMarkdown) {
 			MarkdownRenderer r = new MarkdownRenderer();
+			if(markdownPostProcessor != null) r.setPostProcessor(markdownPostProcessor);
 			b.appendChild(r.render(Parser.builder().build().parse(text.get())));
 		}else {
 			b.setText(text);
