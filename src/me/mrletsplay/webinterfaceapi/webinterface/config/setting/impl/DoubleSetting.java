@@ -1,36 +1,16 @@
 package me.mrletsplay.webinterfaceapi.webinterface.config.setting.impl;
 
 import me.mrletsplay.mrcore.misc.Complex;
-import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
+import me.mrletsplay.webinterfaceapi.webinterface.config.setting.SimpleSetting;
 
-public class DoubleSetting implements WebinterfaceSetting<Double> {
+public class DoubleSetting extends SimpleSetting<Double> {
 
-	private String key;
-	private double defaultValue;
-	
 	public DoubleSetting(String key, double defaultValue) {
-		this.key = key;
-		this.defaultValue = defaultValue;
+		super(key, defaultValue, Complex.value(Double.class));
 	}
-
-	@Override
-	public String getKey() {
-		return key;
-	}
-
-	@Override
-	public void setDefaultValue(Double value) {
-		this.defaultValue = value;
-	}
-
-	@Override
-	public Double getDefaultValue() {
-		return defaultValue;
-	}
-
-	@Override
-	public Complex<Double> getType() {
-		return Complex.value(Double.class);
+	
+	public DoubleSetting(String key, double defaultValue, String friendlyName) {
+		super(key, defaultValue, Complex.value(Double.class), friendlyName);
 	}
 
 }

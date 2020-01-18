@@ -78,7 +78,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				opVal.putValue("account_id", new StringValue(acc.getID()));
 				opVal.putValue("value", new CheckboxValue(cb));
 				
-				cb.setOnChangeAction(new MultiAction(new ConfirmAction(new SendJSAction("webinterface", "setOP", opVal)), new ReloadPageAfterAction(100)));
+				cb.setOnChangeAction(new MultiAction(new ConfirmAction(new SendJSAction("webinterface", "setOP", opVal)), new ReloadPageAfterAction(100, true)));
 				grp2.addElement(cb);
 				
 				WebinterfaceInputField addP = new WebinterfaceInputField("Add permission");

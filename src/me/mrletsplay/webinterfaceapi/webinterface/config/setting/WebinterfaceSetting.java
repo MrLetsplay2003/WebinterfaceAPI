@@ -12,4 +12,6 @@ public interface WebinterfaceSetting<T> {
 	
 	public Complex<T> getType();
 	
+	public String getFriendlyName();
+	
 }

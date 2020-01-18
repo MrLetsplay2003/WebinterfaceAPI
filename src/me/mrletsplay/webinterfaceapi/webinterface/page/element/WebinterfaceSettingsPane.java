@@ -58,7 +58,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
 	public void addSetting(WebinterfaceSetting<?> setting) {
 		settings.add(setting);
-		WebinterfaceText t = new WebinterfaceText(setting.getKey());
+		WebinterfaceText t = new WebinterfaceText(setting.getFriendlyName() != null ? setting.getFriendlyName() : setting.getKey());
 		t.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
 		
 		WebinterfacePageElement el = null;
@@ -73,6 +73,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			el = in;
 		}else if(setting.getType().equals(Complex.value(Boolean.class))) {
 			WebinterfaceCheckBox in = new WebinterfaceCheckBox(() -> (Boolean) config.get().getSetting(setting));
+			in.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
 			in.setOnChangeAction(changeSettingAction(setting, new CheckboxValue(in)));
 			el = in;
 		}else if(setting.getType().equals(Complex.list(String.class))) {

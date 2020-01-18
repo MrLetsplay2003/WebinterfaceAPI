@@ -1,36 +1,16 @@
 package me.mrletsplay.webinterfaceapi.webinterface.config.setting.impl;
 
 import me.mrletsplay.mrcore.misc.Complex;
-import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
+import me.mrletsplay.webinterfaceapi.webinterface.config.setting.SimpleSetting;
 
-public class IntSetting implements WebinterfaceSetting<Integer> {
+public class IntSetting extends SimpleSetting<Integer> {
 
-	private String key;
-	private int defaultValue;
-	
 	public IntSetting(String key, int defaultValue) {
-		this.key = key;
-		this.defaultValue = defaultValue;
+		super(key, defaultValue, Complex.value(Integer.class));
 	}
-
-	@Override
-	public String getKey() {
-		return key;
-	}
-
-	@Override
-	public void setDefaultValue(Integer value) {
-		this.defaultValue = value;
-	}
-
-	@Override
-	public Integer getDefaultValue() {
-		return defaultValue;
-	}
-
-	@Override
-	public Complex<Integer> getType() {
-		return Complex.value(Integer.class);
+	
+	public IntSetting(String key, int defaultValue, String friendlyName) {
+		super(key, defaultValue, Complex.value(Integer.class), friendlyName);
 	}
 
 }

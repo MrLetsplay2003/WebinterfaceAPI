@@ -3,36 +3,16 @@ package me.mrletsplay.webinterfaceapi.webinterface.config.setting.impl;
 import java.util.List;
 
 import me.mrletsplay.mrcore.misc.Complex;
-import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
+import me.mrletsplay.webinterfaceapi.webinterface.config.setting.SimpleSetting;
 
-public class DoubleListSetting implements WebinterfaceSetting<List<Double>> {
+public class DoubleListSetting extends SimpleSetting<List<Double>> {
 
-	private String key;
-	private List<Double> defaultValue;
-	
 	public DoubleListSetting(String key, List<Double> defaultValue) {
-		this.key = key;
-		this.defaultValue = defaultValue;
+		super(key, defaultValue, Complex.list(Double.class));
 	}
 
-	@Override
-	public String getKey() {
-		return key;
-	}
-
-	@Override
-	public void setDefaultValue(List<Double> value) {
-		this.defaultValue = value;
-	}
-
-	@Override
-	public List<Double> getDefaultValue() {
-		return defaultValue;
-	}
-
-	@Override
-	public Complex<List<Double>> getType() {
-		return Complex.list(Double.class);
+	public DoubleListSetting(String key, List<Double> defaultValue, String friendlyName) {
+		super(key, defaultValue, Complex.list(Double.class), friendlyName);
 	}
 
 }

@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.io.IOUtils;
+import me.mrletsplay.webinterfaceapi.http.compression.HttpCompressionMethod;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.header.HttpClientHeader;
 import me.mrletsplay.webinterfaceapi.http.header.HttpHeaderFields;
@@ -68,6 +72,19 @@ public class HttpConnection extends AbstractConnection {
 			Webinterface.getLogger().log(Level.FINE, "Error while creating page content", e);
 			return false;
 		}
+
+		List<String> supCs = Arrays.stream(ctx.getClientHeader().getFields().getFieldValue("Accept-Encoding").split(","))
+				.map(String::trim)
+				.collect(Collectors.toList());
+		HttpCompressionMethod comp = getServer().getCompressionMethods().stream()
+				.filter(c -> supCs.contains(c.getName()))
+				.findFirst().orElse(null);
+		if(comp != null) {
+			byte[] content = ctx.getServerHeader().getContent();
+			ctx.getServerHeader().getFields().setFieldValue("Content-Encoding", comp.getName());
+			ctx.getServerHeader().setContent(comp.compress(content));
+		}
+		
 		sh = ctx.getServerHeader();
 		
 		IOUtils.transfer(new ByteArrayInputStream(sh.toByteArray()), getSocket().getOutputStream());
