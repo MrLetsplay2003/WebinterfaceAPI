@@ -7,7 +7,7 @@ let wiData = {
 
 class Webinterface {
 
-	static call(target, method, data = {}) {
+	static call(target, method, data = {}, suppressAlert = false) {
 		return new Promise(function(resolve, reject) {
 			$.ajax({
 				url: "/_internal/call",
@@ -18,11 +18,11 @@ class Webinterface {
 				cache: false,
 				success: function(response, status) {
 					let r = new WebinterfaceResponse(true, response, null);
-					if(!r.isSuccess()) WebinterfaceUtils.notify("Error: " + r.getErrorMessage());
+					if(!r.isSuccess() && !suppressAlert) WebinterfaceUtils.notify("Error: " + r.getErrorMessage());
 					resolve(r);
 				},
 				error: function(xhr, status, error) {
-					WebinterfaceUtils.notify(error);
+					if(!suppressAlert) WebinterfaceUtils.notify(error);
 					resolve(new WebinterfaceResponse(false, null, "Request error: " + error));
 				}
 			});
@@ -37,10 +37,18 @@ class WebinterfaceUtils {
 		return document.getElementById(elementId).getAttribute(attributeName);
 	}
 
-	static notify(message) {
+	static notifyInfo(message) {
+		WebinterfaceUtils.notify(message, false);
+	}
+
+	static notifyError(message) {
+		WebinterfaceUtils.notify(message, true);
+	}
+
+	static notify(message, isError = true) {
 		wiData.alerts.push({
 			msg: message,
-			isError: true
+			isError: isError
 		});
 	}
 
