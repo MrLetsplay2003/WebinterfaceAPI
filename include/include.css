@@ -325,6 +325,7 @@ input[type="checkbox"]:checked + .checkbox-label::after {
 	max-height: 100%;
 	font-family: 'Open Sans', sans-serif;
 	color: var(--theme-color-content-text);
+	word-wrap: break-word;
 }
 
 .element-container {
