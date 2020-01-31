@@ -91,10 +91,10 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 			String
 				userID = usr.getString("id"),
 				userName = usr.getString("name"),
-				userEmail = usr.getString("email"),
-				userAvatarUrl = usr.getString("picture");
+				userEmail = usr.getString("email");
+//				userAvatarUrl = usr.getString("picture");
 			
-			return new WebinterfaceAccountConnection(getID(), userID, userName, userEmail, userAvatarUrl);
+			return new WebinterfaceAccountConnection(getID(), userID, userName, userEmail, null);
 		} catch (Exception e) {
 			throw new AuthException("Failed to verify Google auth token", e);
 		}

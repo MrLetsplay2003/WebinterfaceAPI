@@ -116,6 +116,14 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
+.sidenav-list-category {
+	width: calc(100% - 20px);
+	color: #b9b9b9;
+	font-family: 'Open Sans', sans-serif;
+	margin-left: 20px;
+	margin-top: 10px;
+}
+
 .sidenav-list-item > a {
 	text-decoration: none;
 	display: block;

@@ -43,6 +43,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocu
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
+import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceHomePage;
@@ -57,6 +58,7 @@ public class Webinterface {
 	
 	private static HttpServer server;
 	private static List<WebinterfacePage> pages;
+	private static List<WebinterfacePageCategory> categories;
 	private static List<WebinterfaceActionHandler> handlers;
 	private static List<WebinterfaceAuthMethod> authMethods;
 	private static Map<String, Map.Entry<File, Boolean>> includedFiles;
@@ -70,15 +72,17 @@ public class Webinterface {
 	
 	static {
 		pages = new ArrayList<>();
+		categories = new ArrayList<>();
 		handlers = new ArrayList<>();
 		authMethods = new ArrayList<>();
 		includedFiles = new HashMap<>();
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
 		markdownRenderer = new MarkdownRenderer();
 		
-		registerPage(new WebinterfaceHomePage());
-		registerPage(new WebinterfaceSettingsPage());
-		registerPage(new WebinterfaceAccountsPage());
+		WebinterfacePageCategory cat = createCategory("WebinterfaceAPI");
+		cat.addPage(new WebinterfaceHomePage());
+		cat.addPage(new WebinterfaceSettingsPage());
+		cat.addPage(new WebinterfaceAccountsPage());
 		
 		registerActionHandler(new DefaultHandler());
 		
@@ -114,7 +118,9 @@ public class Webinterface {
 		server.getDocumentProvider().registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
 		server.getDocumentProvider().registerDocument("/login", new WebinterfaceLoginDocument());
 		server.getDocumentProvider().registerDocument("/logout", new WebinterfaceLogoutDocument());
+		
 		pages.forEach(page -> server.getDocumentProvider().registerDocument(page.getUrl(), page));
+		categories.forEach(category -> category.getPages().forEach(page -> server.getDocumentProvider().registerDocument(page.getUrl(), page)));
 		
 		authMethods.forEach(method -> {
 			server.getDocumentProvider().registerDocument("/auth/" + method.getID(), new WebinterfaceAuthRequestDocument(method));
@@ -201,6 +207,20 @@ public class Webinterface {
 	
 	public static List<WebinterfacePage> getPages() {
 		return pages;
+	}
+	
+	public static void registerCategory(WebinterfacePageCategory category) {
+		categories.add(category);
+	}
+	
+	public static WebinterfacePageCategory createCategory(String name) {
+		WebinterfacePageCategory cat = new WebinterfacePageCategory(name);
+		registerCategory(cat);
+		return cat;
+	}
+	
+	public static List<WebinterfacePageCategory> getCategories() {
+		return categories;
 	}
 	
 	public static void registerActionHandler(WebinterfaceActionHandler handler) {

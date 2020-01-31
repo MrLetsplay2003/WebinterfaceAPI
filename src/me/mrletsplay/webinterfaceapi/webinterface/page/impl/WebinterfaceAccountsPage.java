@@ -33,7 +33,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout
 public class WebinterfaceAccountsPage extends WebinterfacePage {
 	
 	public WebinterfaceAccountsPage() {
-		super("Account Management", "/accounts", DefaultPermissions.MODIFY_USERS);
+		super("Account Management", "/wiapi/accounts", DefaultPermissions.MODIFY_USERS);
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		

@@ -15,7 +15,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLay
 public class WebinterfaceSettingsPage extends WebinterfacePage {
 	
 	public WebinterfaceSettingsPage() {
-		super("Settings", "/settings", DefaultPermissions.SETTINGS);
+		super("Settings", "/wiapi/settings", DefaultPermissions.SETTINGS);
 		
 		WebinterfacePageSection sc2 = new WebinterfacePageSection();
 		sc2.addTitle("Settings");

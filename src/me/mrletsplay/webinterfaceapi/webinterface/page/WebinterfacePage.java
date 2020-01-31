@@ -188,63 +188,22 @@ public class WebinterfacePage implements HttpDocument {
 		sidenav.appendChild(sideNavList);
 		
 		for(WebinterfacePage pg : Webinterface.getPages()) {
-			if(!pg.isHidden() && (pg.getPermission() == null || account.hasPermission(pg.getPermission()))) {
-				HtmlElement sideNavListItem = new HtmlElement("li");
-				sideNavListItem.addClass("sidenav-list-item");
-				
-				HtmlElement a = new HtmlElement("a");
-				a.setText(pg.getName());
-				a.setAttribute("href", pg.getUrl());
-				sideNavListItem.appendChild(a);
-				
-				sideNavList.appendChild(sideNavListItem);
+			appendPageElement(sideNavList, pg);
+		}
+		
+		for(WebinterfacePageCategory category : Webinterface.getCategories()) {
+			HtmlElement catEl = new HtmlElement("li");
+			catEl.addClass("sidenav-list-category");
+			catEl.setText(category.getName());
+			sideNavList.appendChild(catEl);
+			
+			for(WebinterfacePage page : category.getPages()) {
+				appendPageElement(sideNavList, page);
 			}
 		}
 		
 		// Script minify
-		if(Webinterface.getConfig().getSetting(DefaultSettings.MINIFY_SCRIPTS)) {
-			Map<JavaScriptFunction, String> code = new HashMap<>();
-			Map<String, JavaScriptFunction> qFs = new HashMap<>();
-			int idx = 0;
-			for(JavaScriptFunction f : sc.getFunctions()) {
-				String cd = f.getCode().get();
-				Map.Entry<JavaScriptFunction, String> fo = code.entrySet().stream().filter(e -> e.getValue().equals(cd)).findFirst().orElse(null);
-				if(fo != null) {
-					f.setCode("return " + fo.getKey().getSignature() + ";");
-				}
-				
-				Pattern ebip = Pattern.compile("(?<method>(?:document|window|WebinterfaceUtils)\\.[^()\\[\\]]+)\\((?<params>[^\\)]*)\\)");
-				
-				String rest = cd;
-				Matcher m = ebip.matcher(rest);
-				StringBuilder nCode = new StringBuilder();
-				while(m.find()) {
-					
-					JavaScriptFunction of = qFs.get(m.group("method"));
-					if(of == null) {
-						String sig = "q" + (idx++);
-						List<String> args = new ArrayList<>();
-						for(int i = 0; i < m.group("params").split(",").length; i++) {
-							args.add("arg" + i);
-						}
-						String aStr = args.stream().collect(Collectors.joining(",", "(", ")"));
-						sig += aStr;
-						of = new JavaScriptFunction(sig);
-						of.setCode("return " + m.group("method") + aStr + ";");
-						qFs.put(m.group("method"), of);
-					}
-					
-					nCode.append(rest.substring(0, m.start())); // Append preceding code
-					nCode.append(of.getSignature().get().replaceAll("\\([^)]+\\)", "(" + m.group("params") + ")"));
-					rest = rest.substring(m.end(), rest.length());
-					m = ebip.matcher(rest);
-				}
-				nCode.append(rest);
-				f.setCode(nCode.toString());
-			}
-			
-			qFs.values().forEach(sc::addFunction);
-		}
+		if(Webinterface.getConfig().getSetting(DefaultSettings.MINIFY_SCRIPTS)) minifyScript();
 		
 		d.getBodyNode().appendChild(header);
 		d.getBodyNode().appendChild(main);
@@ -255,6 +214,68 @@ public class WebinterfacePage implements HttpDocument {
 		d.addStyleSheet("/_internal/include.css");
 		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
 		return d;
+	}
+	
+	private void appendPageElement(HtmlElement sideNavList, WebinterfacePage page) {
+		WebinterfaceAccount account = WebinterfaceSession.getCurrentSession().getAccount();
+		
+		if(!page.isHidden() && (page.getPermission() == null || account.hasPermission(page.getPermission()))) {
+			HtmlElement sideNavListItem = new HtmlElement("li");
+			sideNavListItem.addClass("sidenav-list-item");
+			
+			HtmlElement a = new HtmlElement("a");
+			a.setText(page.getName());
+			a.setAttribute("href", page.getUrl());
+			sideNavListItem.appendChild(a);
+			
+			sideNavList.appendChild(sideNavListItem);
+		}
+	}
+	
+	private void minifyScript() {
+		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
+		JavaScriptScript sc = (JavaScriptScript) ctx.getProperty(CONTEXT_PROPERTY_SCRIPT);
+		
+		Map<JavaScriptFunction, String> code = new HashMap<>();
+		Map<String, JavaScriptFunction> qFs = new HashMap<>();
+		int idx = 0;
+		for(JavaScriptFunction f : sc.getFunctions()) {
+			String cd = f.getCode().get();
+			Map.Entry<JavaScriptFunction, String> fo = code.entrySet().stream().filter(e -> e.getValue().equals(cd)).findFirst().orElse(null);
+			if(fo != null) {
+				f.setCode("return " + fo.getKey().getSignature() + ";");
+			}
+			
+			Pattern ebip = Pattern.compile("(?<method>(?:document|window|WebinterfaceUtils)\\.[^()\\[\\]]+)\\((?<params>[^\\)]*)\\)");
+			
+			String rest = cd;
+			Matcher m = ebip.matcher(rest);
+			StringBuilder nCode = new StringBuilder();
+			while(m.find()) {
+				JavaScriptFunction of = qFs.get(m.group("method"));
+				if(of == null) {
+					String sig = "q" + (idx++);
+					List<String> args = new ArrayList<>();
+					for(int i = 0; i < m.group("params").split(",").length; i++) {
+						args.add("arg" + i);
+					}
+					String aStr = args.stream().collect(Collectors.joining(",", "(", ")"));
+					sig += aStr;
+					of = new JavaScriptFunction(sig);
+					of.setCode("return " + m.group("method") + aStr + ";");
+					qFs.put(m.group("method"), of);
+				}
+				
+				nCode.append(rest.substring(0, m.start())); // Append preceding code
+				nCode.append(of.getSignature().get().replaceAll("\\([^)]+\\)", "(" + m.group("params") + ")"));
+				rest = rest.substring(m.end(), rest.length());
+				m = ebip.matcher(rest);
+			}
+			nCode.append(rest);
+			f.setCode(nCode.toString());
+		}
+		
+		qFs.values().forEach(sc::addFunction);
 	}
 
 	@Override

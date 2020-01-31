@@ -11,7 +11,10 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction
 
 public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
 	
-	private Supplier<String> placeholder, initialValue;
+	private Supplier<String>
+		placeholder,
+		initialValue;
+	
 	private WebinterfaceAction onChangeAction;
 	
 	public WebinterfaceInputField(Supplier<String> placeholder, Supplier<String> initialValue) {
