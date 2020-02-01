@@ -1,7 +1,8 @@
 package me.mrletsplay.webinterfaceapi.http;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -72,23 +73,32 @@ public class HttpConnection extends AbstractConnection {
 			Webinterface.getLogger().log(Level.FINE, "Error while creating page content", e);
 			return false;
 		}
-
-		List<String> supCs = Arrays.stream(ctx.getClientHeader().getFields().getFieldValue("Accept-Encoding").split(","))
-				.map(String::trim)
-				.collect(Collectors.toList());
-		HttpCompressionMethod comp = getServer().getCompressionMethods().stream()
-				.filter(c -> supCs.contains(c.getName()))
-				.findFirst().orElse(null);
-		if(comp != null) {
-			byte[] content = ctx.getServerHeader().getContent();
-			ctx.getServerHeader().getFields().setFieldValue("Content-Encoding", comp.getName());
-			ctx.getServerHeader().setContent(comp.compress(content));
-		}
 		
 		sh = ctx.getServerHeader();
+
+		if(sh.isCompressionEnabled()) {
+			List<String> supCs = Arrays.stream(ctx.getClientHeader().getFields().getFieldValue("Accept-Encoding").split(","))
+					.map(String::trim)
+					.collect(Collectors.toList());
+			HttpCompressionMethod comp = getServer().getCompressionMethods().stream()
+					.filter(c -> supCs.contains(c.getName()))
+					.findFirst().orElse(null);
+			if(comp != null) {
+				InputStream content = sh.getContent();
+				sh.getFields().setFieldValue("Content-Encoding", comp.getName());
+				
+				byte[] uncompressedContent = IOUtils.readAllBytes(content);
+				sh.setContent(comp.compress(uncompressedContent));
+			}
+		}
 		
-		IOUtils.transfer(new ByteArrayInputStream(sh.toByteArray()), getSocket().getOutputStream());
-		getSocket().getOutputStream().flush();
+		OutputStream sOut = getSocket().getOutputStream();
+		
+		sOut.write(sh.getHeaderBytes());
+		sOut.flush();
+		IOUtils.transfer(sh.getContent(), sOut);
+		sOut.flush();
+		
 		return !h.getFields().getFieldValue("Connection").equals("close");
 	}
 
