@@ -378,7 +378,7 @@ input[type="checkbox"]:checked + .checkbox-label::after {
 }
 
 .el-second-to-last-column {
-	grid-column: 2 / -1;
+	grid-column: 1 / -1;
 }
 
 .el-second-not-last-column {
@@ -434,6 +434,10 @@ input[type="checkbox"]:checked + .checkbox-label::after {
 
 	.sidenav-list {
 		margin-top: 85px;
+	}
+
+	.el-second-to-last-column {
+		grid-column: 2 / -1;
 	}
 }
 
