@@ -15,14 +15,15 @@ public class HttpServerHeader {
 	private HttpStatusCode statusCode;
 	private HttpHeaderFields fields;
 	private InputStream content;
-	private long contentLength;
-	private boolean compressionEnabled;
+	private long contentOffset, contentLength, totalContentLength;
+	private boolean compressionEnabled, allowByteRanges;
 	
 	public HttpServerHeader(HttpProtocolVersion protocolVersion, HttpStatusCode statusCode, HttpHeaderFields fields) {
 		this.protocolVersion = protocolVersion;
 		this.statusCode = statusCode;
 		this.fields = fields;
 		this.compressionEnabled = true;
+		this.allowByteRanges = true;
 		setContent(new byte[0]);
 	}
 	
@@ -70,17 +71,38 @@ public class HttpServerHeader {
 		if(fields.getFieldValues("Content-Type").isEmpty() || forceContentType) {
 			fields.setFieldValue("Content-Type", type == null ? "application/unknown" : (type + "; charset=utf-8")); // TODO: charset?
 		}
-		fields.setFieldValue("Content-Length", String.valueOf(length));
 		this.content = content;
-		this.contentLength = length;
+		setContentLength(length);
+		setTotalContentLength(length);
 	}
 	
 	public InputStream getContent() {
 		return content;
 	}
 	
+	public void setContentLength(long contentLength) {
+		this.contentLength = contentLength;
+		fields.setFieldValue("Content-Length", String.valueOf(contentLength));
+	}
+	
 	public long getContentLength() {
 		return contentLength;
+	}
+	
+	public void setContentOffset(long contentOffset) {
+		this.contentOffset = contentOffset;
+	}
+	
+	public long getContentOffset() {
+		return contentOffset;
+	}
+	
+	public void setTotalContentLength(long totalContentLength) {
+		this.totalContentLength = totalContentLength;
+	}
+	
+	public long getTotalContentLength() {
+		return totalContentLength;
 	}
 	
 	public void setCompressionEnabled(boolean compressionEnabled) {
@@ -91,8 +113,17 @@ public class HttpServerHeader {
 		return compressionEnabled;
 	}
 	
+	public void setAllowByteRanges(boolean allowByteRanges) {
+		this.allowByteRanges = allowByteRanges;
+	}
+	
+	public boolean isAllowByteRanges() {
+		return allowByteRanges;
+	}
+	
 	public byte[] getHeaderBytes() {
 		String header = protocolVersion.getVersionString() + " " + statusCode.getStatusCode() + " " + statusCode.getStatusMessage() + "\r\n";
+		if(allowByteRanges) fields.setFieldValue("Accept-Ranges", "bytes");
 		for(Map.Entry<String, List<String>> f : fields.getFields().entrySet()) {
 			for(String v : f.getValue()) {
 				header += f.getKey() + ": " + v + "\r\n";

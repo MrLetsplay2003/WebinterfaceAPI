@@ -6,12 +6,16 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.io.IOUtils;
+import me.mrletsplay.mrcore.misc.FriendlyException;
 import me.mrletsplay.webinterfaceapi.http.compression.HttpCompressionMethod;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.header.HttpClientHeader;
@@ -43,6 +47,8 @@ public class HttpConnection extends AbstractConnection {
 						return;
 					}
 				}catch(SocketTimeoutException ignored) {
+				}catch(SocketException ignored) {
+					// Client probably just disconnected
 				}catch(Exception e) {
 					close();
 					Webinterface.getLogger().log(Level.FINE, "Error in client receive loop", e);
@@ -92,14 +98,72 @@ public class HttpConnection extends AbstractConnection {
 			}
 		}
 		
+		if(sh.isAllowByteRanges()) applyRanges(sh);
+		
+		if(h.getFields().getFieldValue("Connection").equalsIgnoreCase("keep-alive")) {
+			sh.getFields().setFieldValue("Connection", "Keep-Alive");
+			sh.getFields().setFieldValue("Keep-Alive", "timeout=5, max=100");
+		}
+
+		InputStream sIn = getSocket().getInputStream();
 		OutputStream sOut = getSocket().getOutputStream();
 		
 		sOut.write(sh.getHeaderBytes());
 		sOut.flush();
-		IOUtils.transfer(sh.getContent(), sOut);
+		
+		InputStream in = sh.getContent();
+		in.skip(sh.getContentOffset());
+		byte[] buf = new byte[4096];
+		int len, tot = 0;
+		while(sIn.available() == 0 && tot < sh.getContentLength() && (len = in.read(buf, 0, (int) Math.min(buf.length, sh.getContentLength() - tot))) > 0) {
+			tot += len;
+			sOut.write(buf, 0, len);
+		}
+		
 		sOut.flush();
 		
-		return !h.getFields().getFieldValue("Connection").equals("close");
+		return !h.getFields().getFieldValue("Connection").equalsIgnoreCase("close");
+	}
+	
+	private void applyRanges(HttpServerHeader sh) {
+		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
+		
+		Pattern byteRangePattern = Pattern.compile("bytes=(?<start>\\d+)?-(?<end>\\d+)?"); // Multipart range requests are not supported
+		String range = ctx.getClientHeader().getFields().getFieldValue("Range");
+		if(range != null) {
+			Matcher m = byteRangePattern.matcher(range);
+			if(m.matches()) {
+				try {
+					if(m.group("start") != null) {
+						long start = Long.parseLong(m.group("start"));
+						if(start >= sh.getContentLength()) throw new FriendlyException("Range");
+						if(m.group("end") != null) {
+							long end = Long.parseLong(m.group("end"));
+							if(end >= sh.getContentLength() || end > start) throw new FriendlyException("Range");
+							sh.setContentOffset(start);
+							sh.setContentLength(end - start + 1);
+						}else {
+							sh.setContentOffset(start);
+							sh.setContentLength(sh.getContentLength() - start);
+						}
+					}else if(m.group("end") != null) {
+						long endOff = Long.parseLong(m.group("end"));
+						if(endOff > sh.getContentLength()) throw new FriendlyException("Range");
+						sh.setContentOffset(sh.getContentLength() - endOff);
+						sh.setContentLength(endOff);
+					}else {
+						sh.setStatusCode(HttpStatusCodes.BAD_REQUEST_400);
+						sh.setContent("text/html", "<h1>400 Bad Request</h1>".getBytes(StandardCharsets.UTF_8));
+						return;
+					}
+					sh.setStatusCode(HttpStatusCodes.PARTIAL_CONTENT_206);
+					sh.getFields().setFieldValue("Content-Range", "bytes " + sh.getContentOffset() + "-" + (sh.getContentOffset() + sh.getContentLength() - 1) + "/" + sh.getTotalContentLength());
+				}catch(NumberFormatException | FriendlyException e) {
+					sh.setStatusCode(HttpStatusCodes.REQUESTED_RANGE_NOT_SATISFIABLE_416);
+					sh.setContent("text/html", "<h1>416 Requested Range Not Satisfiable</h1>".getBytes(StandardCharsets.UTF_8));
+				}
+			}
+		}
 	}
 
 }
