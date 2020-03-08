@@ -60,9 +60,9 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 		c.getServerHeader().getFields().setFieldValue("Location", AUTH_ENDPOINT
-				+ "?client_id=" + HttpUtils.urlEncode(clientID) // TODO: auth client id
+				+ "?client_id=" + HttpUtils.urlEncode(clientID)
 				+ "&access_type=offline"
-				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl().toString()) // TODO: protocol
+				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl().toString())
 				+ "&response_type=code"
 				+ "&scope=" + HttpUtils.urlEncode("profile email openid")
 				+ "&prompt=" + HttpUtils.urlEncode("select_account")

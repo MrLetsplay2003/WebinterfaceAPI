@@ -61,8 +61,8 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 		c.getServerHeader().getFields().setFieldValue("Location", AUTH_ENDPOINT
-				+ "?client_id=" + HttpUtils.urlEncode(clientID) // TODO: auth client id
-				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl().toString()) // TODO: protocol
+				+ "?client_id=" + HttpUtils.urlEncode(clientID)
+				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl().toString())
 				+ "&response_type=code"
 				+ "&scope=" + HttpUtils.urlEncode("read:user user:email")
 				+ "&state=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/")));

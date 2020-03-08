@@ -267,57 +267,6 @@ img.element {
 	max-height: none;
 }
 
-/*input[type="checkbox"] {
-	display: none;
-}
-
-.checkbox-label {
-	position: relative;
-	width: 10px;
-	height: 10px;
-	text-align: center;
-}
-
-.checkbox-label::before {
-	position: absolute;
-	top: 3px;
-	content: "";
-	display: inline-block;
-	height: 16px;
-	width: 16px;
-	border: 1px solid;
-	border-radius: 2px;
-}
-
-.checkbox-label::after {
-	position: absolute;
-	left: 3px;
-	top: 7px;
-    content: "";
-    display: inline-block;
-    height: 5px;
-    width: 11px;
-    border-left: 2px solid;
-    border-bottom: 2px solid;
-    transform: rotate(-45deg);
-}
-
-.checkbox-label:hover {
-	cursor: pointer;
-}
-
-input[type="checkbox"] + .checkbox-label::after {
-    content: none;
-}
-
-input[type="checkbox"]:checked + .checkbox-label::after {
-    content: "";
-}
-
-.checkbox-wrapper {
-	height: 30px;
-}*/
-
 .element {
 	width: 100%;
 	height: 100%;

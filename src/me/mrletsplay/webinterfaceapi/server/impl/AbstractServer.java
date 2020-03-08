@@ -26,7 +26,7 @@ public abstract class AbstractServer implements Server {
 	
 	public AbstractServer(int port) {
 		this.port = port;
-		this.executor = Executors.newCachedThreadPool(); // TODO: executor error handling
+		this.executor = Executors.newCachedThreadPool();
 	}
 	
 	@Override
