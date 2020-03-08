@@ -24,7 +24,6 @@ import me.mrletsplay.webinterfaceapi.http.header.HttpServerHeader;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.server.ServerException;
 import me.mrletsplay.webinterfaceapi.server.connection.impl.AbstractConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
 public class HttpConnection extends AbstractConnection {
 
@@ -33,7 +32,7 @@ public class HttpConnection extends AbstractConnection {
 		try {
 			socket.setSoTimeout(10000);
 		} catch (SocketException e) {
-			Webinterface.getLogger().log(Level.FINE, "Error while intializing connection", e);
+			HttpServer.getLogger().log(Level.FINE, "Error while intializing connection", e);
 		}
 	}
 	
@@ -51,7 +50,7 @@ public class HttpConnection extends AbstractConnection {
 					// Client probably just disconnected
 				}catch(Exception e) {
 					close();
-					Webinterface.getLogger().log(Level.FINE, "Error in client receive loop", e);
+					HttpServer.getLogger().log(Level.FINE, "Error in client receive loop", e);
 					throw new ServerException("Error in client receive loop", e);
 				}
 			}
@@ -76,33 +75,17 @@ public class HttpConnection extends AbstractConnection {
 		try {
 			d.createContent();
 		}catch(Exception e) {
-			Webinterface.getLogger().log(Level.FINE, "Error while creating page content", e);
+			HttpServer.getLogger().log(Level.FINE, "Error while creating page content", e);
 			return false;
 		}
 		
 		sh = ctx.getServerHeader();
-
-		if(sh.isCompressionEnabled()) {
-			List<String> supCs = Arrays.stream(ctx.getClientHeader().getFields().getFieldValue("Accept-Encoding").split(","))
-					.map(String::trim)
-					.collect(Collectors.toList());
-			HttpCompressionMethod comp = getServer().getCompressionMethods().stream()
-					.filter(c -> supCs.contains(c.getName()))
-					.findFirst().orElse(null);
-			if(comp != null) {
-				InputStream content = sh.getContent();
-				sh.getFields().setFieldValue("Content-Encoding", comp.getName());
-				
-				byte[] uncompressedContent = IOUtils.readAllBytes(content);
-				sh.setContent(comp.compress(uncompressedContent));
-			}
-		}
 		
 		if(sh.isAllowByteRanges()) applyRanges(sh);
+		if(sh.isCompressionEnabled()) applyCompression(sh);
 		
 		if(h.getFields().getFieldValue("Connection").equalsIgnoreCase("keep-alive")) {
-			sh.getFields().setFieldValue("Connection", "Keep-Alive");
-			sh.getFields().setFieldValue("Keep-Alive", "timeout=5, max=100");
+			sh.getFields().setFieldValue("Connection", "keep-alive");
 		}
 
 		InputStream sIn = getSocket().getInputStream();
@@ -112,9 +95,12 @@ public class HttpConnection extends AbstractConnection {
 		sOut.flush();
 		
 		InputStream in = sh.getContent();
-		in.skip(sh.getContentOffset());
+		long skipped = in.skip(sh.getContentOffset());
+		if(skipped < sh.getContentOffset()) HttpServer.getLogger().fine("Could not skip to content offset (skipped " + skipped + " of " + sh.getContentOffset() + " bytes)");
+		
 		byte[] buf = new byte[4096];
-		int len, tot = 0;
+		int len;
+		int tot = 0;
 		while(sIn.available() == 0 && tot < sh.getContentLength() && (len = in.read(buf, 0, (int) Math.min(buf.length, sh.getContentLength() - tot))) > 0) {
 			tot += len;
 			sOut.write(buf, 0, len);
@@ -163,6 +149,24 @@ public class HttpConnection extends AbstractConnection {
 					sh.setContent("text/html", "<h1>416 Requested Range Not Satisfiable</h1>".getBytes(StandardCharsets.UTF_8));
 				}
 			}
+		}
+	}
+	
+	private void applyCompression(HttpServerHeader sh) throws IOException {
+		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
+		
+		List<String> supCs = Arrays.stream(ctx.getClientHeader().getFields().getFieldValue("Accept-Encoding").split(","))
+				.map(String::trim)
+				.collect(Collectors.toList());
+		HttpCompressionMethod comp = getServer().getCompressionMethods().stream()
+				.filter(c -> supCs.contains(c.getName()))
+				.findFirst().orElse(null);
+		if(comp != null) {
+			InputStream content = sh.getContent();
+			sh.getFields().setFieldValue("Content-Encoding", comp.getName());
+			
+			byte[] uncompressedContent = IOUtils.readAllBytes(content);
+			sh.setContent(comp.compress(uncompressedContent));
 		}
 	}
 

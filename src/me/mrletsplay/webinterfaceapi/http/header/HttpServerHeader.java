@@ -15,8 +15,15 @@ public class HttpServerHeader {
 	private HttpStatusCode statusCode;
 	private HttpHeaderFields fields;
 	private InputStream content;
-	private long contentOffset, contentLength, totalContentLength;
-	private boolean compressionEnabled, allowByteRanges;
+	
+	private long
+		contentOffset,
+		contentLength,
+		totalContentLength;
+	
+	private boolean
+		compressionEnabled,
+		allowByteRanges;
 	
 	public HttpServerHeader(HttpProtocolVersion protocolVersion, HttpStatusCode statusCode, HttpHeaderFields fields) {
 		this.protocolVersion = protocolVersion;

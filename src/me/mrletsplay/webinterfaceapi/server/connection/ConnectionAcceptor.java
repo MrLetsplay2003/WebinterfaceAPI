@@ -6,7 +6,7 @@ import java.util.logging.Level;
 
 import me.mrletsplay.webinterfaceapi.server.Server;
 import me.mrletsplay.webinterfaceapi.server.ServerException;
-import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
+import me.mrletsplay.webinterfaceapi.server.impl.AbstractServer;
 
 public interface ConnectionAcceptor {
 	
@@ -21,7 +21,7 @@ public interface ConnectionAcceptor {
 			try {
 				c.close();
 			} catch(ServerException e) {
-				Webinterface.getLogger().log(Level.FINE, "Error while closing connection", e);
+				AbstractServer.getLogger().log(Level.FINE, "Error while closing connection", e);
 			}
 		}
 	}

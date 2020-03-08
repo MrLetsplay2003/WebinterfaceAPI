@@ -2,8 +2,11 @@ package me.mrletsplay.webinterfaceapi.php;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class PHP {
+	
+	private static final Logger LOGGER = Logger.getLogger(PHP.class.getPackage().getName());
 
 	private static boolean enabled;
 	private static String cgiPath;
@@ -37,6 +40,10 @@ public class PHP {
 	
 	public static List<String> getFileExtensions() {
 		return fileExtensions;
+	}
+	
+	public static Logger getLogger() {
+		return LOGGER;
 	}
 	
 }

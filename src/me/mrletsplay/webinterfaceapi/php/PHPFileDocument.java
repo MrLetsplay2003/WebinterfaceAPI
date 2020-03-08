@@ -17,7 +17,6 @@ import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCode;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
 public class PHPFileDocument implements HttpDocument {
 	
@@ -116,7 +115,7 @@ public class PHPFileDocument implements HttpDocument {
 			}
 			c.getServerHeader().setContent(fallbackMimeType, postData, false);
 		} catch (IOException e) {
-			Webinterface.getLogger().log(Level.FINE, "Error while running PHP-CGI", e);
+			PHP.getLogger().log(Level.FINE, "Error while running PHP-CGI", e);
 		}
 	}
 
