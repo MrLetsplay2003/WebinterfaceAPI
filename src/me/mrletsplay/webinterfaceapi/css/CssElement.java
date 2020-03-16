@@ -40,6 +40,10 @@ public class CssElement {
 		return properties;
 	}
 	
+	public boolean isEmpty() {
+		return properties.isEmpty();
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder b = new StringBuilder();

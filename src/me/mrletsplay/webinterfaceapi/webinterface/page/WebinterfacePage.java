@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.http.HttpUtils;
+import me.mrletsplay.webinterfaceapi.css.StyleSheet;
 import me.mrletsplay.webinterfaceapi.html.HtmlDocument;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
@@ -27,7 +28,8 @@ public class WebinterfacePage implements HttpDocument {
 	
 	public static final String
 		CONTEXT_PROPERTY_DOCUMENT = "webinterface-document",
-		CONTEXT_PROPERTY_SCRIPT = "webinterface-script";
+		CONTEXT_PROPERTY_SCRIPT = "webinterface-script",
+		CONTEXT_PROPERTY_STYLE = "webinterface-style";
 	
 	private static final Supplier<String> LOGIN_URL = () -> "/login?from=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().toString());
 	
@@ -106,10 +108,12 @@ public class WebinterfacePage implements HttpDocument {
 		d.setTitle(name);
 		d.setLanguage("en");
 		JavaScriptScript sc = new JavaScriptScript();
+		StyleSheet st = new StyleSheet();
 		
 		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
 		ctx.setProperty(CONTEXT_PROPERTY_DOCUMENT, d);
 		ctx.setProperty(CONTEXT_PROPERTY_SCRIPT, sc);
+		ctx.setProperty(CONTEXT_PROPERTY_STYLE, st);
 		
 		HtmlElement alertBox = new HtmlElement("div");
 		alertBox.setID("alert-box");
@@ -209,6 +213,7 @@ public class WebinterfacePage implements HttpDocument {
 		d.getBodyNode().appendChild(main);
 		d.getBodyNode().appendChild(sidenav);
 		d.getHeadNode().appendChild(HtmlElement.script(sc));
+		d.getHeadNode().appendChild(HtmlElement.style(st));
 		d.includeScript("/_internal/include.js", true);
 		d.includeScript("https://code.jquery.com/jquery-3.4.1.min.js", true);
 		d.addStyleSheet("/_internal/include.css");

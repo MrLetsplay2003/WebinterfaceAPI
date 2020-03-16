@@ -17,6 +17,7 @@ import me.mrletsplay.webinterfaceapi.html.element.HtmlLink;
 import me.mrletsplay.webinterfaceapi.html.element.HtmlOption;
 import me.mrletsplay.webinterfaceapi.html.element.HtmlScript;
 import me.mrletsplay.webinterfaceapi.html.element.HtmlSelect;
+import me.mrletsplay.webinterfaceapi.html.element.HtmlStyle;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 
 public class HtmlElement {
@@ -194,8 +195,12 @@ public class HtmlElement {
 		return b.toString();
 	}
 	
-	public static HtmlElement style(StyleSheet style) {
-		HtmlElement st = new HtmlElement("style");
+	public static HtmlStyle style() {
+		return new HtmlStyle();
+	}
+	
+	public static HtmlStyle style(StyleSheet style) {
+		HtmlStyle st = style();
 		st.setText(() -> style.toString());
 		return st;
 	}
@@ -220,10 +225,10 @@ public class HtmlElement {
 		return new HtmlScript();
 	}
 	
-	public static HtmlElement script(JavaScriptScript script) {
-		HtmlScript st = script();
-		st.setText(() -> script.toString());
-		return st;
+	public static HtmlScript script(JavaScriptScript script) {
+		HtmlScript sc = script();
+		sc.setText(() -> script.toString());
+		return sc;
 	}
 	
 	public static HtmlElement p() {

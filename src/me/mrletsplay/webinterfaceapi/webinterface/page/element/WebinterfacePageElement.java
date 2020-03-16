@@ -2,6 +2,7 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
 import java.util.List;
 
+import me.mrletsplay.webinterfaceapi.css.CssElement;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
@@ -45,6 +46,10 @@ public interface WebinterfacePageElement {
 	public void setContainerAttribute(String key, String value);
 	
 	public String getContainerAttribute(String key);
+	
+	public CssElement getStyle();
+	
+	public CssElement getMobileStyle();
 	
 	public HtmlElement toHtml();
 	
