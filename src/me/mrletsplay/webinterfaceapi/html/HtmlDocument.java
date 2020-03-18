@@ -71,6 +71,14 @@ public class HtmlDocument implements HttpDocument {
 		head.appendChild(sc);
 	}
 	
+	public void includeScript(String src, boolean async, boolean defer) {
+		HtmlScript sc = HtmlElement.script();
+		sc.setSource(src);
+		sc.setAsync(async);
+		sc.setDefer(defer);
+		head.appendChild(sc);
+	}
+	
 	public void setTitle(Supplier<String> title) {
 		this.title.setText(title);
 	}

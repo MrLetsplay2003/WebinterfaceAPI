@@ -107,6 +107,8 @@ public class WebinterfacePage implements HttpDocument {
 		HtmlDocument d = new HtmlDocument();
 		d.setTitle(name);
 		d.setLanguage("en");
+		d.includeScript("https://code.jquery.com/jquery-3.4.1.min.js", false, true);
+		d.includeScript("/_internal/include.js", false, true);
 		JavaScriptScript sc = new JavaScriptScript();
 		StyleSheet st = new StyleSheet();
 		
@@ -214,8 +216,6 @@ public class WebinterfacePage implements HttpDocument {
 		d.getBodyNode().appendChild(sidenav);
 		d.getHeadNode().appendChild(HtmlElement.script(sc));
 		d.getHeadNode().appendChild(HtmlElement.style(st));
-		d.includeScript("/_internal/include.js", true);
-		d.includeScript("https://code.jquery.com/jquery-3.4.1.min.js", true);
 		d.addStyleSheet("/_internal/include.css");
 		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
 		return d;

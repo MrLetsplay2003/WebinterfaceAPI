@@ -32,6 +32,14 @@ public class HtmlScript extends HtmlElement {
 		}
 	}
 	
+	public void setDefer(boolean defer) {
+		if(defer) {
+			setAttribute("defer");
+		}else {
+			unsetAttribute("defer");
+		}
+	}
+	
 	@Override
 	protected HtmlElement copy(boolean deep) {
 		HtmlScript br = new HtmlScript();
