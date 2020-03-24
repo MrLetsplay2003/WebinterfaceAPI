@@ -15,7 +15,7 @@ public interface WebinterfacePageElement {
 	public String getID();
 	
 	public default String getOrGenerateID() {
-		if(getID() == null) setID(WebinterfaceUtils.randomID(16));
+		if(getID() == null) setID("e_" + WebinterfaceUtils.randomID(16));
 		return getID();
 	}
 	
