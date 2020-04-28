@@ -18,7 +18,7 @@ public interface HttpDocumentProvider {
 			}
 			return;
 		}
-		registerDocument(path + "/" + (appendFileName ? file.getName() : ""), createFileDocument(file));
+		registerDocument(path + (appendFileName ? "/" + file.getName() : ""), createFileDocument(file));
 	}
 	
 	public default HttpDocument createFileDocument(File file) {
