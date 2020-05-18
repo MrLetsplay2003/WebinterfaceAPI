@@ -14,6 +14,8 @@ public interface Server {
 	
 	public ConnectionAcceptor getConnectionAcceptor();
 	
+	public String getHost();
+	
 	public int getPort();
 	
 	public void setExecutor(ExecutorService executor) throws IllegalStateException;

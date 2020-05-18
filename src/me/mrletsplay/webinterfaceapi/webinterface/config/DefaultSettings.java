@@ -28,7 +28,8 @@ public class DefaultSettings implements AutoSettings {
 	@AutoSetting
 	public static final StringSetting
 		THEME = new StringSetting("theme", "blue", "Theme"),
-		PHP_CGI_PATH = new StringSetting("php.cgi-path", "php-cgi", "PHP CGI path");
+		PHP_CGI_PATH = new StringSetting("php.cgi-path", "php-cgi", "PHP CGI path"),
+		HOST = new StringSetting("host", "0.0.0.0", "Host");
 	
 	@AutoSetting
 	public static final IntSetting

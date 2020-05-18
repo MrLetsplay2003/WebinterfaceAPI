@@ -19,14 +19,18 @@ public class HttpServer extends AbstractServer {
 	private HttpProtocolVersion protocolVersion;
 	private List<HttpCompressionMethod> compressionMethods;
 
-	public HttpServer(int port) {
-		super(port);
+	public HttpServer(String host, int port) {
+		super(host, port);
 		this.protocolVersion = HttpProtocolVersions.HTTP1_1;
 		this.compressionMethods = new ArrayList<>();
 		setConnectionAcceptor(new HttpConnectionAcceptor());
 		setDocumentProvider(new DefaultDocumentProvider());
 		addCompressionMethod(new DeflateCompression());
 		addCompressionMethod(new GZIPCompression());
+	}
+	
+	public HttpServer(int port) {
+		this("0.0.0.0", port);
 	}
 	
 	public void setDocumentProvider(HttpDocumentProvider documentProvider) throws IllegalStateException {

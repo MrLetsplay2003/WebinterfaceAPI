@@ -109,7 +109,7 @@ public class Webinterface {
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
 		PHP.setFileExtensions(config.getSetting(DefaultSettings.PHP_FILE_EXTENSIONS));
 		
-		server = new HttpServer(config.getSetting(DefaultSettings.PORT));
+		server = new HttpServer(config.getSetting(DefaultSettings.HOST), config.getSetting(DefaultSettings.PORT));
 		server.setDocumentProvider(new WebinterfaceDocumentProvider());
 		
 		loadIncludedFiles();

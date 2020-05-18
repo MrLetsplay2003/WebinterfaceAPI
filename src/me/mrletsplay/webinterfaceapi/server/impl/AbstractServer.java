@@ -19,14 +19,20 @@ public abstract class AbstractServer implements Server {
 	
 	private static final Logger LOGGER = Logger.getLogger(AbstractServer.class.getPackage().getName());
 
+	private String host;
 	private int port;
 	private ServerSocket socket;
 	private ConnectionAcceptor acceptor;
 	private ExecutorService executor;
 	
-	public AbstractServer(int port) {
+	public AbstractServer(String host, int port) {
+		this.host = host;
 		this.port = port;
 		this.executor = Executors.newCachedThreadPool();
+	}
+	
+	public AbstractServer(int port) {
+		this("0.0.0.0", port);
 	}
 	
 	@Override
@@ -70,6 +76,11 @@ public abstract class AbstractServer implements Server {
 	@Override
 	public ConnectionAcceptor getConnectionAcceptor() {
 		return acceptor;
+	}
+	
+	@Override
+	public String getHost() {
+		return host;
 	}
 	
 	@Override
