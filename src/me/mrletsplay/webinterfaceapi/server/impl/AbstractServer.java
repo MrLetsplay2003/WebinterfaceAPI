@@ -1,9 +1,11 @@
 package me.mrletsplay.webinterfaceapi.server.impl;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -35,10 +37,14 @@ public abstract class AbstractServer implements Server {
 		this("0.0.0.0", port);
 	}
 	
+	protected ServerSocket createSocket() throws UnknownHostException, IOException {
+		return new ServerSocket(port, 50, InetAddress.getByName(host));
+	}
+	
 	@Override
 	public void start() {
 		try {
-			this.socket = new ServerSocket(port);
+			socket = createSocket();
 			socket.setSoTimeout(1000);
 			executor.execute(() -> {
 				while(!executor.isShutdown()) {

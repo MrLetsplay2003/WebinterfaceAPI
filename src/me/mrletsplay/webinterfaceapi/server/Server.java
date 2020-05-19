@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import me.mrletsplay.webinterfaceapi.server.connection.ConnectionAcceptor;
 
 public interface Server {
-
+	
 	public void start();
 	
 	public boolean isRunning();
