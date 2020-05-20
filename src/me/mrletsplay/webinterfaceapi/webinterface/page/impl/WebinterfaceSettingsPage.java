@@ -21,12 +21,19 @@ public class WebinterfaceSettingsPage extends WebinterfacePage {
 		sc2.addTitle("Settings");
 		sc2.addElement(new WebinterfaceSettingsPane(() -> Webinterface.getConfig(), DefaultSettings.INSTANCE.getSettings(), "webinterface", "setSetting"));
 		
-		WebinterfaceButton btn = new WebinterfaceButton("Restart");
-		btn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-		btn.setOnClickAction(new MultiAction(
+		WebinterfaceButton btnRestart = new WebinterfaceButton("Restart");
+		btnRestart.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+		btnRestart.setOnClickAction(new MultiAction(
 				new SendJSAction("webinterface", "restart", null),
 				new ReloadPageAfterAction(1000)));
-		sc2.addElement(btn);
+		sc2.addElement(btnRestart);
+		
+		WebinterfaceButton btnShutdown = new WebinterfaceButton("Shutdown");
+		btnShutdown.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+		btnShutdown.setOnClickAction(new MultiAction(
+				new SendJSAction("webinterface", "shutdown", null),
+				new ReloadPageAfterAction(1000)));
+		sc2.addElement(btnShutdown);
 		
 		addSection(sc2);
 	}

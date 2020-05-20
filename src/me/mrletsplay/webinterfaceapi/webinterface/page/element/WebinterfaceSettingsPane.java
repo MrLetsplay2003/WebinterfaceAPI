@@ -64,7 +64,10 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		WebinterfacePageElement el = null;
 		
 		if(setting.getType().equals(Complex.value(String.class))) {
-			WebinterfaceInputField in = new WebinterfaceInputField(() -> config.get().getSetting(setting).toString());
+			WebinterfaceInputField in = new WebinterfaceInputField(() -> {
+				String v = (String) config.get().getSetting(setting);
+				return v == null ? "(none)" : v;
+			});
 			in.setOnChangeAction(changeSettingAction(setting, new ElementValue(in)));
 			el = in;
 		}else if(setting.getType().equals(Complex.value(Integer.class)) || setting.getType().equals(Complex.value(Double.class))) {

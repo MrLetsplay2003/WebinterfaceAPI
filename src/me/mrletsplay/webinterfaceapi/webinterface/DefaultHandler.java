@@ -10,7 +10,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceSetti
 public class DefaultHandler implements WebinterfaceActionHandler {
 	
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "restart")
-	public WebinterfaceResponse lol(WebinterfaceRequestEvent event) {
+	public WebinterfaceResponse restart(WebinterfaceRequestEvent event) {
 		if(!event.getAccount().hasPermission(DefaultPermissions.RESTART))
 			return WebinterfaceResponse.error("No permission");
 		new Thread(() -> {
@@ -19,6 +19,17 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 			Webinterface.start();
 			Webinterface.getLogger().info("Done!");
 		}, "Webinterface-Restart-Thread").start();
+		return WebinterfaceResponse.success();
+	}
+	
+	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "shutdown")
+	public WebinterfaceResponse shutdown(WebinterfaceRequestEvent event) {
+		if(!event.getAccount().hasPermission(DefaultPermissions.SHUTDOWN))
+			return WebinterfaceResponse.error("No permission");
+		new Thread(() -> {
+			Webinterface.getLogger().info("Shutting down...");
+			Webinterface.shutdown();
+		}, "Webinterface-Shutdown-Thread").start();
 		return WebinterfaceResponse.success();
 	}
 

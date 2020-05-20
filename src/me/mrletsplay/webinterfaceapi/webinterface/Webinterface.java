@@ -19,11 +19,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
 import me.mrletsplay.mrcore.misc.MiscUtils;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
+import me.mrletsplay.webinterfaceapi.http.HttpsServer;
 import me.mrletsplay.webinterfaceapi.http.document.FileDocument;
+import me.mrletsplay.webinterfaceapi.http.document.HttpDocumentProvider;
 import me.mrletsplay.webinterfaceapi.php.PHP;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileAccountStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountStorage;
@@ -56,7 +61,11 @@ public class Webinterface {
 	
 	private static final Logger LOGGER = Logger.getLogger(Webinterface.class.getPackage().getName());
 	
-	private static HttpServer server;
+	private static HttpDocumentProvider documentProvider;
+	
+	private static HttpServer httpServer;
+	private static HttpsServer httpsServer;
+	
 	private static List<WebinterfacePage> pages;
 	private static List<WebinterfacePageCategory> categories;
 	private static List<WebinterfaceActionHandler> handlers;
@@ -109,22 +118,29 @@ public class Webinterface {
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
 		PHP.setFileExtensions(config.getSetting(DefaultSettings.PHP_FILE_EXTENSIONS));
 		
-		server = new HttpServer(config.getSetting(DefaultSettings.HOST), config.getSetting(DefaultSettings.PORT));
-		server.setDocumentProvider(new WebinterfaceDocumentProvider());
+		documentProvider = new WebinterfaceDocumentProvider();
+		
+		httpServer = new HttpServer(config.getSetting(DefaultSettings.HTTP_HOST), config.getSetting(DefaultSettings.HTTP_PORT));
+		httpServer.setDocumentProvider(documentProvider);
+		
+		if(config.getSetting(DefaultSettings.HTTPS_ENABLE)) {
+			httpsServer = new HttpsServer(config.getSetting(DefaultSettings.HTTPS_HOST), config.getSetting(DefaultSettings.HTTPS_PORT), null, null);
+			httpsServer.setDocumentProvider(documentProvider);
+		}
 		
 		loadIncludedFiles();
 		
-		server.getDocumentProvider().registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/favicon.ico")));
-		server.getDocumentProvider().registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
-		server.getDocumentProvider().registerDocument("/login", new WebinterfaceLoginDocument());
-		server.getDocumentProvider().registerDocument("/logout", new WebinterfaceLogoutDocument());
+		documentProvider.registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/favicon.ico")));
+		documentProvider.registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
+		documentProvider.registerDocument("/login", new WebinterfaceLoginDocument());
+		documentProvider.registerDocument("/logout", new WebinterfaceLogoutDocument());
 		
-		pages.forEach(page -> server.getDocumentProvider().registerDocument(page.getUrl(), page));
-		categories.forEach(category -> category.getPages().forEach(page -> server.getDocumentProvider().registerDocument(page.getUrl(), page)));
+		pages.forEach(page -> documentProvider.registerDocument(page.getUrl(), page));
+		categories.forEach(category -> category.getPages().forEach(page -> documentProvider.registerDocument(page.getUrl(), page)));
 		
 		authMethods.forEach(method -> {
-			server.getDocumentProvider().registerDocument("/auth/" + method.getID(), new WebinterfaceAuthRequestDocument(method));
-			server.getDocumentProvider().registerDocument("/auth/" + method.getID() + "/response", new WebinterfaceAuthResponseDocument(method));
+			documentProvider.registerDocument("/auth/" + method.getID(), new WebinterfaceAuthRequestDocument(method));
+			documentProvider.registerDocument("/auth/" + method.getID() + "/response", new WebinterfaceAuthResponseDocument(method));
 		});
 	}
 	
@@ -134,10 +150,10 @@ public class Webinterface {
 		
 		accountStorage.initialize();
 		sessionStorage.initialize();
-		server.start();
+		httpServer.start();
 		
-		server.getExecutor().execute(() -> {
-			Supplier<Boolean> keepRunning = () -> server.isRunning() && !server.getExecutor().isShutdown() && !Thread.interrupted();
+		httpServer.getExecutor().execute(() -> {
+			Supplier<Boolean> keepRunning = () -> httpServer.isRunning() && !httpServer.getExecutor().isShutdown() && !Thread.interrupted();
 			while(keepRunning.get()) {
 				for(WebinterfaceSession sess : getSessionStorage().getSessions()) {
 					if(sess.hasExpired()) getSessionStorage().deleteSession(sess.getSessionID());
@@ -181,8 +197,23 @@ public class Webinterface {
 		}
 	}
 	
+	@Deprecated
 	public static HttpServer getServer() {
-		return server;
+		return httpServer;
+	}
+	
+	@NotNull
+	public static HttpServer getHttpServer() {
+		return httpServer;
+	}
+	
+	@Nullable
+	public static HttpsServer getHttpsServer() {
+		return httpsServer;
+	}
+	
+	public static HttpDocumentProvider getDocumentProvider() {
+		return documentProvider;
 	}
 	
 	public static void setRootDirectory(File rootDirectory) {
@@ -278,7 +309,7 @@ public class Webinterface {
 	
 	public static void loadIncludedFiles() {
 		for(Map.Entry<String, Map.Entry<File, Boolean>> v : includedFiles.entrySet()) {
-			server.getDocumentProvider().registerFileDocument(v.getKey(), v.getValue().getKey(), v.getValue().getValue());
+			documentProvider.registerFileDocument(v.getKey(), v.getValue().getKey(), v.getValue().getValue());
 		}
 	}
 	
@@ -288,7 +319,7 @@ public class Webinterface {
 	
 	public static void shutdown() {
 		initialized = false;
-		if(server != null) server.shutdown();
+		if(httpServer != null) httpServer.shutdown();
 	}
 	
 	public static Logger getLogger() {

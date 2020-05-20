@@ -23,17 +23,22 @@ public class DefaultSettings implements AutoSettings {
 		ENABLE_DISCORD_AUTH = new BooleanSetting("use-auth.discord", true, "Enable Discord auth"),
 		ENABLE_GITHUB_AUTH = new BooleanSetting("use-auth.github", true, "Enable GitHub auth"),
 		ENABLE_GOOGLE_AUTH = new BooleanSetting("use-auth.google", true, "Enable Google auth"),
-		ENABLE_INITIAL_SETUP = new BooleanSetting("initial-setup.enable", true, "Enable initial setup");
+		ENABLE_INITIAL_SETUP = new BooleanSetting("initial-setup.enable", true, "Enable initial setup"),
+		HTTPS_ENABLE = new BooleanSetting("server.https.enable", false, "Enable HTTPS");
 	
 	@AutoSetting
 	public static final StringSetting
 		THEME = new StringSetting("theme", "blue", "Theme"),
 		PHP_CGI_PATH = new StringSetting("php.cgi-path", "php-cgi", "PHP CGI path"),
-		HOST = new StringSetting("host", "0.0.0.0", "Host");
+		HTTP_HOST = new StringSetting("server.http.host", "0.0.0.0", "HTTP Host"),
+		HTTPS_HOST = new StringSetting("server.https.host", "0.0.0.0", "HTTPS Host"),
+		HTTPS_CERTIFICATE_PATH = new StringSetting("server.https.certificate.path", null, "HTTPS Certificate path"),
+		HTTPS_CERTIFICATE_KEY_PATH = new StringSetting("server.https.certificate.key-path", null, "HTTPS Certificate Key path");
 	
 	@AutoSetting
 	public static final IntSetting
-		PORT = new IntSetting("port", 8880, "Port");
+		HTTP_PORT = new IntSetting("server.http.port", 8880, "HTTP Port"),
+		HTTPS_PORT = new IntSetting("server.https.port", 8881, "HTTPS Port");
 
 	@AutoSetting
 	public static final StringListSetting

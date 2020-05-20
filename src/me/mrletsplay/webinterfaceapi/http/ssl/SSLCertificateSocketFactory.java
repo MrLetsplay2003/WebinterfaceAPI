@@ -108,18 +108,16 @@ public class SSLCertificateSocketFactory {
 	}
 	
 	private PrivateKey loadCertificateKey(File certKeyFile) throws FileNotFoundException, IOException, GeneralSecurityException {
-//		KeyFactory f = KeyFactory.getInstance("RSA");
 		try(FileInputStream in = new FileInputStream(certKeyFile)) {
-//			return f.generatePrivate(new PKCS8EncodedKeySpec(IOUtils.readAllBytes(in)));
 			return getPrivateKeyFromString(new String(IOUtils.readAllBytes(in), StandardCharsets.UTF_8));
 		}
 	}
 	
-	public static RSAPrivateKey getPrivateKeyFromString(String key) throws IOException, GeneralSecurityException {
+	private RSAPrivateKey getPrivateKeyFromString(String key) throws IOException, GeneralSecurityException {
 	    String privateKeyPEM = key;
 	    privateKeyPEM = privateKeyPEM.replace("-----BEGIN PRIVATE KEY-----\n", "");
 	    privateKeyPEM = privateKeyPEM.replace("-----END PRIVATE KEY-----", "");
-	    byte[] encoded = Base64.getDecoder().decode(privateKeyPEM.replace("\n", ""));
+	    byte[] encoded = Base64.getDecoder().decode(privateKeyPEM.replace("\n", "").replace("\r", ""));
 	    KeyFactory kf = KeyFactory.getInstance("RSA");
 	    PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
 	    RSAPrivateKey privKey = (RSAPrivateKey) kf.generatePrivate(keySpec);
