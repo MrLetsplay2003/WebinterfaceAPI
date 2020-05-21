@@ -33,6 +33,7 @@ public class DefaultSettings implements AutoSettings {
 		HTTP_HOST = new StringSetting("server.http.host", "0.0.0.0", "HTTP Host"),
 		HTTPS_HOST = new StringSetting("server.https.host", "0.0.0.0", "HTTPS Host"),
 		HTTPS_CERTIFICATE_PATH = new StringSetting("server.https.certificate.path", null, "HTTPS Certificate path"),
+		HTTPS_CERTIFICATE_PASSWORD = new StringSetting("server.https.certificate.password", null, "HTTPS Certificate password"),
 		HTTPS_CERTIFICATE_KEY_PATH = new StringSetting("server.https.certificate.key-path", null, "HTTPS Certificate Key path");
 	
 	@AutoSetting

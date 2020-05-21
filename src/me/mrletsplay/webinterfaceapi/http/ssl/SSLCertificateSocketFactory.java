@@ -38,6 +38,8 @@ public class SSLCertificateSocketFactory {
 		certificateFile,
 		certificatePrivateKeyFile;
 	
+	private String certificatePassword;
+	
 	private Certificate certificate;
 	
 	private TrustManager[] trustManagers;
@@ -48,9 +50,10 @@ public class SSLCertificateSocketFactory {
 	
 	private SSLServerSocketFactory socketFactory;
 	
-	public SSLCertificateSocketFactory(File certificateFile, File certificatePrivateKeyFile) throws FileNotFoundException, IOException, GeneralSecurityException {
+	public SSLCertificateSocketFactory(File certificateFile, File certificatePrivateKeyFile, String certificatePassword) throws FileNotFoundException, IOException, GeneralSecurityException {
 		this.certificateFile = certificateFile;
 		this.certificatePrivateKeyFile = certificatePrivateKeyFile;
+		this.certificatePassword = certificatePassword;
 		load();
 	}
 	
@@ -59,7 +62,7 @@ public class SSLCertificateSocketFactory {
 		keyStore.load(null);
 		this.certificate = loadCertificate(certificateFile);
 		keyStore.setCertificateEntry("certificate", certificate);
-		keyStore.setKeyEntry("certificateKey", loadCertificateKey(certificatePrivateKeyFile), new char[0] /* TODO: password */, new Certificate[] {certificate});
+		keyStore.setKeyEntry("certificateKey", loadCertificateKey(certificatePrivateKeyFile), certificatePassword != null ? certificatePassword.toCharArray() : null, new Certificate[] {certificate});
 		this.trustManagers = createTrustManagers(keyStore);
 		this.keyManagers = createKeyManagers(keyStore);
 		
@@ -88,7 +91,7 @@ public class SSLCertificateSocketFactory {
 	
 	private X509KeyManager[] createKeyManagers(KeyStore keystore) throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException {
 		KeyManagerFactory keyMgrFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        keyMgrFactory.init(keystore, new char[0] /* TODO: password */);
+        keyMgrFactory.init(keystore, certificatePassword != null ? certificatePassword.toCharArray() : null);
         KeyManager keyManagers[] = keyMgrFactory.getKeyManagers();
         for (int i = 0; i < keyManagers.length; i++) {
             if (keyManagers[i] instanceof X509KeyManager) {

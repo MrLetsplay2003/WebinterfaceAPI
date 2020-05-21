@@ -124,8 +124,18 @@ public class Webinterface {
 		httpServer.setDocumentProvider(documentProvider);
 		
 		if(config.getSetting(DefaultSettings.HTTPS_ENABLE)) {
-			httpsServer = new HttpsServer(config.getSetting(DefaultSettings.HTTPS_HOST), config.getSetting(DefaultSettings.HTTPS_PORT), null, null);
-			httpsServer.setDocumentProvider(documentProvider);
+			String certPath = config.getSetting(DefaultSettings.HTTPS_CERTIFICATE_PATH);
+			String certKeyPath = config.getSetting(DefaultSettings.HTTPS_CERTIFICATE_KEY_PATH);
+			
+			if(certPath == null || certKeyPath == null) {
+				LOGGER.warning("Both certificate and certificate key need to be configured to use HTTPS");
+			}else {
+				File certFile = new File(certPath);
+				File certKeyFile = new File(certKeyPath);
+				String password = config.getSetting(DefaultSettings.HTTPS_CERTIFICATE_PASSWORD);
+				httpsServer = new HttpsServer(config.getSetting(DefaultSettings.HTTPS_HOST), config.getSetting(DefaultSettings.HTTPS_PORT), certFile, certKeyFile, password);
+				httpsServer.setDocumentProvider(documentProvider);
+			}
 		}
 		
 		loadIncludedFiles();
@@ -151,6 +161,7 @@ public class Webinterface {
 		accountStorage.initialize();
 		sessionStorage.initialize();
 		httpServer.start();
+		if(httpsServer != null) httpsServer.start();
 		
 		httpServer.getExecutor().execute(() -> {
 			Supplier<Boolean> keepRunning = () -> httpServer.isRunning() && !httpServer.getExecutor().isShutdown() && !Thread.interrupted();
@@ -320,6 +331,7 @@ public class Webinterface {
 	public static void shutdown() {
 		initialized = false;
 		if(httpServer != null) httpServer.shutdown();
+		if(httpsServer != null) httpsServer.shutdown();
 	}
 	
 	public static Logger getLogger() {

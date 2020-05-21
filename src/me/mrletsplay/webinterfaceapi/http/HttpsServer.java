@@ -13,17 +13,17 @@ public class HttpsServer extends HttpServer {
 	
 	private SSLCertificateSocketFactory socketFactory;
 
-	public HttpsServer(String host, int port, File certificateFile, File keyFile) {
+	public HttpsServer(String host, int port, File certificateFile, File keyFile, String certificatePassword) {
 		super(host, port);
 		try {
-			this.socketFactory = new SSLCertificateSocketFactory(certificateFile, keyFile);
+			this.socketFactory = new SSLCertificateSocketFactory(certificateFile, keyFile, certificatePassword);
 		} catch (IOException | GeneralSecurityException e) {
 			throw new FriendlyException("Failed to intialize http server");
 		}
 	}
 
-	public HttpsServer(int port, File certificateFile, File keyFile) {
-		this("0.0.0.0", port, certificateFile, keyFile);
+	public HttpsServer(int port, File certificateFile, File keyFile, String certificatePassword) {
+		this("0.0.0.0", port, certificateFile, keyFile, certificatePassword);
 	}
 	
 	@Override
