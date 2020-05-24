@@ -30,7 +30,6 @@ public abstract class AbstractServer implements Server {
 	public AbstractServer(String host, int port) {
 		this.host = host;
 		this.port = port;
-		this.executor = Executors.newCachedThreadPool();
 	}
 	
 	public AbstractServer(int port) {
@@ -46,6 +45,7 @@ public abstract class AbstractServer implements Server {
 		try {
 			socket = createSocket();
 			socket.setSoTimeout(1000);
+			executor = Executors.newCachedThreadPool();
 			executor.execute(() -> {
 				while(!executor.isShutdown()) {
 					try {
