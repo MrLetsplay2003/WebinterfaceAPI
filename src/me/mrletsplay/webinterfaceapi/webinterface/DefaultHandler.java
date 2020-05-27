@@ -1,6 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
@@ -91,6 +92,16 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByID(accountID);
 		if(acc == null) return WebinterfaceResponse.error("Account doesn't exist");
 		Webinterface.getAccountStorage().deleteAccount(acc);
+		return WebinterfaceResponse.success();
+	}
+	
+	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "passwordLogin")
+	public WebinterfaceResponse passwordLogin(WebinterfaceRequestEvent event) {
+		if(!Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH))
+			return WebinterfaceResponse.error("Password login is disabled");
+		String username = event.getRequestData().getString("username");
+		String password = event.getRequestData().getString("password");
+		System.out.println(username + "/" + password);
 		return WebinterfaceResponse.success();
 	}
 	

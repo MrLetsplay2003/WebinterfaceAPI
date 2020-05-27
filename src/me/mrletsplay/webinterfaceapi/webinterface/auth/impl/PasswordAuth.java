@@ -1,0 +1,37 @@
+package me.mrletsplay.webinterfaceapi.webinterface.auth.impl;
+
+import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
+import me.mrletsplay.webinterfaceapi.http.header.HttpURLPath;
+import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+
+public class PasswordAuth implements WebinterfaceAuthMethod {
+
+	@Override
+	public String getID() {
+		return "password";
+	}
+
+	@Override
+	public String getName() {
+		return "Password";
+	}
+
+	@Override
+	public void handleAuthRequest() {
+		HttpRequestContext c = HttpRequestContext.getCurrentContext();
+		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
+		String red = HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/");
+		HttpURLPath pth = new HttpURLPath("/auth/password/login");
+		pth.setQueryParameterValue("from", red);
+		c.getServerHeader().getFields().setFieldValue("Location", pth.toString());
+	}
+
+	@Override
+	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException {
+		return new WebinterfaceAccountConnection("no_auth", "0", "Anonymous", null, null, true);
+	}
+
+}

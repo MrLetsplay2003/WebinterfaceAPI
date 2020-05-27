@@ -37,6 +37,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.DiscordAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GitHubAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GoogleAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.NoAuth;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.PasswordAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceFileConfig;
@@ -46,6 +47,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceCallbackD
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfacePasswordLoginDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
@@ -113,6 +115,7 @@ public class Webinterface {
 		if(config.getSetting(DefaultSettings.ENABLE_DISCORD_AUTH)) registerAuthMethod(new DiscordAuth());
 		if(config.getSetting(DefaultSettings.ENABLE_GOOGLE_AUTH)) registerAuthMethod(new GoogleAuth());
 		if(config.getSetting(DefaultSettings.ENABLE_GITHUB_AUTH)) registerAuthMethod(new GitHubAuth());
+		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) registerAuthMethod(new PasswordAuth());
 		
 		PHP.setEnabled(config.getSetting(DefaultSettings.ENABLE_PHP));
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
@@ -144,6 +147,7 @@ public class Webinterface {
 		documentProvider.registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
 		documentProvider.registerDocument("/login", new WebinterfaceLoginDocument());
 		documentProvider.registerDocument("/logout", new WebinterfaceLogoutDocument());
+		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) documentProvider.registerDocument("/auth/password/login", new WebinterfacePasswordLoginDocument());
 		
 		pages.forEach(page -> documentProvider.registerDocument(page.getUrl(), page));
 		categories.forEach(category -> category.getPages().forEach(page -> documentProvider.registerDocument(page.getUrl(), page)));

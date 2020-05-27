@@ -20,6 +20,10 @@ public class HttpURLPath {
 		this.queryParameters = queryParameters;
 	}
 	
+	public HttpURLPath(String documentPath) {
+		this(documentPath, new HashMap<>());
+	}
+	
 	public void setDocumentPath(String path) {
 		this.documentPath = path;
 	}

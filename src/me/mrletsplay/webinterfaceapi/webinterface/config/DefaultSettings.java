@@ -23,6 +23,7 @@ public class DefaultSettings implements AutoSettings {
 		ENABLE_DISCORD_AUTH = new BooleanSetting("use-auth.discord", true, "Enable Discord auth"),
 		ENABLE_GITHUB_AUTH = new BooleanSetting("use-auth.github", true, "Enable GitHub auth"),
 		ENABLE_GOOGLE_AUTH = new BooleanSetting("use-auth.google", true, "Enable Google auth"),
+		ENABLE_PASSWORD_AUTH = new BooleanSetting("use-auth.password", true, "Enable Password auth"),
 		ENABLE_INITIAL_SETUP = new BooleanSetting("initial-setup.enable", true, "Enable initial setup"),
 		HTTPS_ENABLE = new BooleanSetting("server.https.enable", false, "Enable HTTPS");
 	
