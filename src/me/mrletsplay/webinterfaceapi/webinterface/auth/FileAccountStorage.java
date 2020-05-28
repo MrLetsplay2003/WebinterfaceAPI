@@ -105,6 +105,19 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	}
 	
 	@Override
+	public WebinterfaceAccount getAccountByConnectionSpecificID(String authMethod, String id) {
+		if(id == null) return null;
+		for(String aID : config.getKeys()) {
+			WebinterfaceAccount acc = getAccountByID(aID);
+			WebinterfaceAccountConnection con = acc.getConnection(authMethod);
+			if(con == null) continue;
+			String tID = con.getUserID();
+			if(tID != null && tID.equals(id)) return acc;
+		}
+		return null;
+	}
+	
+	@Override
 	public List<WebinterfaceAccount> getAccounts() {
 		return config.getKeys().stream()
 				.map(this::getAccountByID)

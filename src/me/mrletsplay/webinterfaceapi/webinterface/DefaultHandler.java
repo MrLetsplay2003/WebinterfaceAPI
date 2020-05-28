@@ -101,7 +101,10 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 			return WebinterfaceResponse.error("Password login is disabled");
 		String username = event.getRequestData().getString("username");
 		String password = event.getRequestData().getString("password");
-		System.out.println(username + "/" + password);
+		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID("password", username);
+		if(acc == null) return WebinterfaceResponse.error("Invalid username");
+		if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) return WebinterfaceResponse.error("Invalid password");
+		// NONBETA: Send token to be used to log in
 		return WebinterfaceResponse.success();
 	}
 	

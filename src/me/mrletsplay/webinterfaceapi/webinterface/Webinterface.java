@@ -31,8 +31,10 @@ import me.mrletsplay.webinterfaceapi.http.document.FileDocument;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocumentProvider;
 import me.mrletsplay.webinterfaceapi.php.PHP;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileAccountStorage;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.FileCredentialStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceCredentialsStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.DiscordAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GitHubAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GoogleAuth;
@@ -78,6 +80,7 @@ public class Webinterface {
 	private static File rootDirectory;
 	private static WebinterfaceAccountStorage accountStorage;
 	private static WebinterfaceSessionStorage sessionStorage;
+	private static WebinterfaceCredentialsStorage credentialsStorage;
 	private static WebinterfaceConfig config;
 	private static MarkdownRenderer markdownRenderer;
 	
@@ -107,6 +110,7 @@ public class Webinterface {
 		includeFile("/_internal", new File(rootDirectory, "include"));
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
+		credentialsStorage = new FileCredentialStorage(new File(rootDirectory, "data/credentials.yml"));
 		
 		config = new WebinterfaceFileConfig(new File(getConfigurationDirectory(), "config.yml"));
 		config.registerSettings(DefaultSettings.INSTANCE);
@@ -304,6 +308,14 @@ public class Webinterface {
 	
 	public static WebinterfaceSessionStorage getSessionStorage() {
 		return sessionStorage;
+	}
+	
+	public static void setCredentialsStorage(WebinterfaceCredentialsStorage credentialsStorage) {
+		Webinterface.credentialsStorage = credentialsStorage;
+	}
+	
+	public static WebinterfaceCredentialsStorage getCredentialsStorage() {
+		return credentialsStorage;
 	}
 	
 	public static void setMarkdownRenderer(MarkdownRenderer markdownRenderer) {
