@@ -23,6 +23,7 @@ public class FileCredentialStorage implements WebinterfaceCredentialsStorage {
 	
 	public FileCredentialStorage(File file) {
 		this.file = file;
+		this.random = new SecureRandom();
 	}
 	
 	@Override
@@ -35,6 +36,7 @@ public class FileCredentialStorage implements WebinterfaceCredentialsStorage {
 		byte[] salt = generateSalt();
 		config.set(id + ".salt", Base64.getEncoder().encodeToString(salt));
 		config.set(id + ".hash", hash(plainCredentials, salt));
+		config.saveToFile();
 	}
 
 	@Override

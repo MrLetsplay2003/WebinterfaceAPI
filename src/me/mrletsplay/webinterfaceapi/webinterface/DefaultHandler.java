@@ -1,7 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
-import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
@@ -92,19 +91,6 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByID(accountID);
 		if(acc == null) return WebinterfaceResponse.error("Account doesn't exist");
 		Webinterface.getAccountStorage().deleteAccount(acc);
-		return WebinterfaceResponse.success();
-	}
-	
-	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "passwordLogin")
-	public WebinterfaceResponse passwordLogin(WebinterfaceRequestEvent event) {
-		if(!Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH))
-			return WebinterfaceResponse.error("Password login is disabled");
-		String username = event.getRequestData().getString("username");
-		String password = event.getRequestData().getString("password");
-		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID("password", username);
-		if(acc == null) return WebinterfaceResponse.error("Invalid username");
-		if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) return WebinterfaceResponse.error("Invalid password");
-		// NONBETA: Send token to be used to log in
 		return WebinterfaceResponse.success();
 	}
 	

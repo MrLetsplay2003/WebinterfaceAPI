@@ -98,6 +98,7 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 		if(email == null) return null;
 		for(String id : config.getKeys()) {
 			WebinterfaceAccount acc = getAccountByID(id);
+			if(acc == null) continue;
 			String pEmail = acc.getPrimaryEmail();
 			if(pEmail != null && pEmail.equals(email)) return acc;
 		}
@@ -109,6 +110,7 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 		if(id == null) return null;
 		for(String aID : config.getKeys()) {
 			WebinterfaceAccount acc = getAccountByID(aID);
+			if(acc == null) continue;
 			WebinterfaceAccountConnection con = acc.getConnection(authMethod);
 			if(con == null) continue;
 			String tID = con.getUserID();

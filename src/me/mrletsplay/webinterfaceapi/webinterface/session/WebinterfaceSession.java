@@ -67,7 +67,11 @@ public class WebinterfaceSession {
 	public static WebinterfaceSession startSession(WebinterfaceAccountConnection accountData) {
 		String sID = UUID.randomUUID().toString();
 		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
-		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByPrimaryEmail(accountData.getUserEmail());
+		
+		WebinterfaceAccount acc = accountData.getUserEmail() != null ?
+				Webinterface.getAccountStorage().getAccountByPrimaryEmail(accountData.getUserEmail()): 
+				Webinterface.getAccountStorage().getAccountByConnectionSpecificID(accountData.getAuthMethod(), accountData.getUserID());
+		
 		if(acc == null) {
 			if(!Webinterface.getConfig().getSetting(DefaultSettings.ALLOW_REGISTRATION)) {
 				throw new AuthException("Registration not allowed");

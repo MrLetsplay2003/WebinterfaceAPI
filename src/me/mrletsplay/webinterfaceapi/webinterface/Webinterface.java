@@ -168,6 +168,7 @@ public class Webinterface {
 		
 		accountStorage.initialize();
 		sessionStorage.initialize();
+		credentialsStorage.initialize();
 		httpServer.start();
 		if(httpsServer != null) httpsServer.start();
 		

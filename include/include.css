@@ -181,24 +181,6 @@ body {
 	text-decoration: none;
 }
 
-#alert-box{
-	position: absolute;
-	width: calc(100% - 20px);
-	height: 43px;
-	bottom: 0;
-	left: 0;
-	padding-left: 10px; 
-	padding-right: 10px; 
-	display: inline-flex;
-	align-items: center;
-	font-family: 'Open Sans',sans-serif;
-	z-index: 5;
-	color: var(--theme-color-page-text);
-	bottom: -100%;
-	opacity: 0;
-	background-color: red;
-}
-
 .main {
 	background-color: var(--theme-color-page-bg);
 	grid-area: main;
