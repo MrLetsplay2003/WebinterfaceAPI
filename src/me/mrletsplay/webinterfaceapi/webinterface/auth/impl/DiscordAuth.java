@@ -90,7 +90,15 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 				userName = usr.getString("username"),
 				userEmail = usr.getString("email"),
 				userAvatar = usr.getString("avatar"),
+				userAvatarUrl;
+			
+			int discriminator = Integer.parseInt(usr.getString("discriminator"));
+			
+			if(userAvatar != null) {
 				userAvatarUrl = "https://cdn.discordapp.com/avatars/" + userID + "/" + userAvatar + (userAvatar.startsWith("a_") ? ".gif?size=64" : ".png?size=64");
+			}else {
+				userAvatarUrl = "https://cdn.discordapp.com/embed/avatars/" + (discriminator % 5) + ".png?size=64";
+			}
 			
 			return new WebinterfaceAccountConnection(getID(), userID, userName, userEmail, userAvatarUrl);
 		} catch (Exception e) {
