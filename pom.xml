@@ -51,14 +51,14 @@
 					<source>1.8</source>
 					<encoding>UTF-8</encoding>
 				</configuration>
-				<executions>
+				<!--<executions>
 					<execution>
 						<id>attach-javadocs</id>
 						<goals>
 							<goal>jar</goal>
 						</goals>
 					</execution>
-				</executions>
+				</executions>-->
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

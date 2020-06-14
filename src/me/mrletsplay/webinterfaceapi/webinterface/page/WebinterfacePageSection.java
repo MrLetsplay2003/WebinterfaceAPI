@@ -40,7 +40,7 @@ public class WebinterfacePageSection {
 	
 	public void addTitle(Supplier<String> title) {
 		WebinterfaceTitleText tt = new WebinterfaceTitleText(title);
-		tt.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY);
+		tt.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY, DefaultLayoutProperty.CENTER_TEXT);
 		addElement(tt);
 	}
 	

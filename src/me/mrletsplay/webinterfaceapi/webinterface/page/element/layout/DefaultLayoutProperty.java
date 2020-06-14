@@ -9,6 +9,7 @@ public enum DefaultLayoutProperty implements ElementLayoutProperty {
 	RIGHTBOUND("el-rightbound"),
 	JUSTIFY_TEXT("el-justify-text"),
 	CENTER_VERTICALLY("el-center-vertically"),
+	CENTER_TEXT("el-center-text"),
 	FULL_NOT_LAST_COLUMN("el-full-not-last-column"),
 	SECOND_TO_LAST_COLUMN("el-second-to-last-column"),
 	SECOND_NOT_LAST_COLUMN("el-second-not-last-column"),

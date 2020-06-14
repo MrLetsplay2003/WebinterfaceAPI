@@ -14,7 +14,7 @@ public class WebinterfaceHomePage extends WebinterfacePage {
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());
 		WebinterfaceText tx = new WebinterfaceText("Hello World!");
-		tx.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY);
+		tx.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY, DefaultLayoutProperty.CENTER_TEXT);
 		sc.addElement(tx);
 		addSection(sc);
 	}
