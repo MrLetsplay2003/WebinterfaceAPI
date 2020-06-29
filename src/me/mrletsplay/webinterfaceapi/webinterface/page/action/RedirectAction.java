@@ -1,6 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.action;
+
 import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WebinterfaceActionValue;
 
