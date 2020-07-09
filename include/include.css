@@ -15,7 +15,6 @@ body {
 }
 
 .header-avatar {
-	padding: 5px 0;
 	display: table;
 }
 
@@ -29,8 +28,7 @@ body {
 }
 
 .header-avatar > img {
-	border-radius: 50%;
-	height: 40px;
+	height: 50px;
 	margin-right: 10px;
 }
 
@@ -58,7 +56,7 @@ body {
 	display: grid;
 	grid-gap: 15px;
 	grid-auto-flow: row;
-	grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+	grid-template-columns: 1fr;
 	grid-template-rows: min-content;
 	padding-bottom: 10px;
 }
@@ -103,7 +101,7 @@ body {
 	z-index: 2;
 	height: 100%;
 	width: 100%;
-	overflow-y: auto;
+	overflow-y: scroll;
 }
 
 .sidenav-list {
@@ -186,7 +184,7 @@ body {
 .main {
 	background-color: var(--theme-color-page-bg);
 	grid-area: main;
-	overflow-y: auto;
+	overflow-y: scroll;
 }
 
 button {
@@ -265,12 +263,13 @@ img.element {
 	width: calc(100% - 10px);
 	height: calc(100% - 10px);
 	padding: 5px;
-	text-align: left;
+	text-align: center;
+	position: relative;
 }
 
 .grid-layout {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+	grid-template-columns: 1fr;
 	grid-template-rows: min-content;
 	grid-auto-flow: row;
 }
@@ -375,6 +374,10 @@ img.element {
 
 	.el-second-to-last-column {
 		grid-column: 2 / -1;
+	}
+
+	.content-container, .grid-layout {
+		grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
 	}
 }
 
