@@ -89,6 +89,7 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 		}
 		List<Permission> perms = config.getStringList(id + ".permissions").stream()
 				.map(Permission::new)
+				.distinct()
 				.collect(Collectors.toList());
 		return new WebinterfaceAccount(id, connections, perms);
 	}
