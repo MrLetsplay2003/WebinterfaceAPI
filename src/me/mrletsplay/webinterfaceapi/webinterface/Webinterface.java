@@ -75,6 +75,7 @@ public class Webinterface {
 	private static List<WebinterfaceActionHandler> handlers;
 	private static List<WebinterfaceAuthMethod> authMethods;
 	private static Map<String, Map.Entry<File, Boolean>> includedFiles;
+	private static WebinterfaceHomePage homePage;
 	
 	private static boolean initialized = false;
 	private static File rootDirectory;
@@ -94,7 +95,8 @@ public class Webinterface {
 		markdownRenderer = new MarkdownRenderer();
 		
 		WebinterfacePageCategory cat = createCategory("WebinterfaceAPI");
-		cat.addPage(new WebinterfaceHomePage());
+		homePage = new WebinterfaceHomePage();
+		cat.addPage(homePage);
 		cat.addPage(new WebinterfaceSettingsPage());
 		cat.addPage(new WebinterfaceAccountsPage());
 		
@@ -258,6 +260,10 @@ public class Webinterface {
 	
 	public static List<WebinterfacePage> getPages() {
 		return pages;
+	}
+	
+	public static WebinterfaceHomePage getHomePage() {
+		return homePage;
 	}
 	
 	public static void registerCategory(WebinterfacePageCategory category) {

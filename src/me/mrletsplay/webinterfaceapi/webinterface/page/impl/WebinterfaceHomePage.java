@@ -16,7 +16,14 @@ public class WebinterfaceHomePage extends WebinterfacePage {
 		WebinterfaceText tx = new WebinterfaceText("Hello World!");
 		tx.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY, DefaultLayoutProperty.CENTER_TEXT);
 		sc.addElement(tx);
+		sc.addInnerLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		addSection(sc);
+	}
+	
+	public WebinterfacePageSection createSection() {
+		WebinterfacePageSection sec = new WebinterfacePageSection();
+		addSection(sec);
+		return sec;
 	}
 
 }
