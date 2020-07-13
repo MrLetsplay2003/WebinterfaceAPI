@@ -18,7 +18,7 @@ public class HttpsServer extends HttpServer {
 		try {
 			this.socketFactory = new SSLCertificateSocketFactory(certificateFile, keyFile, certificatePassword);
 		} catch (IOException | GeneralSecurityException e) {
-			throw new FriendlyException("Failed to intialize http server");
+			throw new FriendlyException("Failed to intialize http server", e);
 		}
 	}
 

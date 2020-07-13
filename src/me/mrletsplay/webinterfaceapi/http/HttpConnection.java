@@ -14,6 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.net.ssl.SSLSocket;
+
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.misc.FriendlyException;
 import me.mrletsplay.webinterfaceapi.http.compression.HttpCompressionMethod;
@@ -34,6 +36,10 @@ public class HttpConnection extends AbstractConnection {
 		} catch (SocketException e) {
 			HttpServer.getLogger().log(Level.FINE, "Error while intializing connection", e);
 		}
+	}
+	
+	public boolean isSecure() {
+		return getSocket() instanceof SSLSocket;
 	}
 	
 	@Override

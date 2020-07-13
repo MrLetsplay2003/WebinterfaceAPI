@@ -129,7 +129,7 @@ public class Webinterface {
 		
 		documentProvider = new WebinterfaceDocumentProvider();
 		
-		httpServer = new HttpServer(config.getSetting(DefaultSettings.HTTP_HOST), config.getSetting(DefaultSettings.HTTP_PORT));
+		httpServer = new HttpServer(config.getSetting(DefaultSettings.HTTP_BIND), config.getSetting(DefaultSettings.HTTP_PORT));
 		httpServer.setDocumentProvider(documentProvider);
 		
 		if(config.getSetting(DefaultSettings.HTTPS_ENABLE)) {
@@ -142,7 +142,7 @@ public class Webinterface {
 				File certFile = new File(certPath);
 				File certKeyFile = new File(certKeyPath);
 				String password = config.getSetting(DefaultSettings.HTTPS_CERTIFICATE_PASSWORD);
-				httpsServer = new HttpsServer(config.getSetting(DefaultSettings.HTTPS_HOST), config.getSetting(DefaultSettings.HTTPS_PORT), certFile, certKeyFile, password);
+				httpsServer = new HttpsServer(config.getSetting(DefaultSettings.HTTPS_BIND), config.getSetting(DefaultSettings.HTTPS_PORT), certFile, certKeyFile, password);
 				httpsServer.setDocumentProvider(documentProvider);
 			}
 		}

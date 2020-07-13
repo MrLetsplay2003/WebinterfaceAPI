@@ -52,6 +52,10 @@ public class HttpRequestContext {
 		return properties.get(name);
 	}
 	
+	public boolean isConnectionSecure() {
+		return connection.isSecure();
+	}
+	
 	public static void setCurrentContext(HttpRequestContext ctx) {
 		context.set(ctx);
 	}

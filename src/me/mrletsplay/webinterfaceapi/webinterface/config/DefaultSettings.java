@@ -25,14 +25,17 @@ public class DefaultSettings implements AutoSettings {
 		ENABLE_GOOGLE_AUTH = new BooleanSetting("use-auth.google", true, "Enable Google auth"),
 		ENABLE_PASSWORD_AUTH = new BooleanSetting("use-auth.password", true, "Enable Password auth"),
 		ENABLE_INITIAL_SETUP = new BooleanSetting("initial-setup.enable", true, "Enable initial setup"),
-		HTTPS_ENABLE = new BooleanSetting("server.https.enable", false, "Enable HTTPS");
+		HTTPS_ENABLE = new BooleanSetting("server.https.enable", false, "Enable HTTPS"),
+		USE_CLIENT_HOST = new BooleanSetting("server.http.use-client-host", false, "Use client HTTP Host");
 	
 	@AutoSetting
 	public static final StringSetting
 		THEME = new StringSetting("theme", "blue", "Theme"),
 		PHP_CGI_PATH = new StringSetting("php.cgi-path", "php-cgi", "PHP CGI path"),
-		HTTP_HOST = new StringSetting("server.http.host", "0.0.0.0", "HTTP Host"),
-		HTTPS_HOST = new StringSetting("server.https.host", "0.0.0.0", "HTTPS Host"),
+		HTTP_BIND = new StringSetting("server.http.bind", "0.0.0.0", "HTTP IP Bind"),
+		HTTP_HOST = new StringSetting("server.http.host", "localhost", "HTTP Host"),
+		HTTPS_BIND = new StringSetting("server.https.bind", "0.0.0.0", "HTTPS IP Bind"),
+		HTTPS_HOST = new StringSetting("server.https.host", "localhost", "HTTPS Host"),
 		HTTPS_CERTIFICATE_PATH = new StringSetting("server.https.certificate.path", null, "HTTPS Certificate path"),
 		HTTPS_CERTIFICATE_PASSWORD = new StringSetting("server.https.certificate.password", null, "HTTPS Certificate password"),
 		HTTPS_CERTIFICATE_KEY_PATH = new StringSetting("server.https.certificate.key-path", null, "HTTPS Certificate Key path");

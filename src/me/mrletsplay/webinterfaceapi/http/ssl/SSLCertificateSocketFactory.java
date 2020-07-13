@@ -118,7 +118,7 @@ public class SSLCertificateSocketFactory {
 	
 	private RSAPrivateKey getPrivateKeyFromString(String key) throws IOException, GeneralSecurityException {
 	    String privateKeyPEM = key;
-	    privateKeyPEM = privateKeyPEM.replace("-----BEGIN PRIVATE KEY-----\n", "");
+	    privateKeyPEM = privateKeyPEM.replace("-----BEGIN PRIVATE KEY-----", "");
 	    privateKeyPEM = privateKeyPEM.replace("-----END PRIVATE KEY-----", "");
 	    byte[] encoded = Base64.getDecoder().decode(privateKeyPEM.replace("\n", "").replace("\r", ""));
 	    KeyFactory kf = KeyFactory.getInstance("RSA");

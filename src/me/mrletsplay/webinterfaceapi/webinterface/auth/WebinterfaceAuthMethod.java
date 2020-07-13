@@ -5,6 +5,8 @@ import java.io.File;
 import me.mrletsplay.webinterfaceapi.http.header.HttpURLPath;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
+import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 
 public interface WebinterfaceAuthMethod {
 	
@@ -18,8 +20,19 @@ public interface WebinterfaceAuthMethod {
 	
 	public default HttpURLPath getAuthResponseUrl() {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
-		String host = c.getClientHeader().getFields().getFieldValue("Host");
-		return HttpURLPath.of("http://" + host + "/auth/" + getID() + "/response"); // TODO: verify host
+		
+		WebinterfaceConfig cfg = Webinterface.getConfig();
+		
+		String host;
+		if(cfg.getSetting(DefaultSettings.USE_CLIENT_HOST)) {
+			host = c.getClientHeader().getFields().getFieldValue("Host");
+		}else {
+			int port = c.isConnectionSecure() ? cfg.getSetting(DefaultSettings.HTTPS_PORT) : cfg.getSetting(DefaultSettings.HTTP_PORT);
+			String hostname = c.isConnectionSecure() ? cfg.getSetting(DefaultSettings.HTTPS_HOST) : cfg.getSetting(DefaultSettings.HTTP_HOST);
+			host = hostname + ":" + port;
+		}
+		
+		return HttpURLPath.of((c.isConnectionSecure() ? "https" : "http") + "://" + host + "/auth/" + getID() + "/response"); // TODO: verify host
 	}
 	
 	public default HttpURLPath getPostAuthRedirectURL() {
