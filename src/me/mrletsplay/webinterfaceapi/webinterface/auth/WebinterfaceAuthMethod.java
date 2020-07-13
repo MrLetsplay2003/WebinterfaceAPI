@@ -23,6 +23,9 @@ public interface WebinterfaceAuthMethod {
 		
 		WebinterfaceConfig cfg = Webinterface.getConfig();
 		
+		String override = cfg.getOverride("auth." + getID() + ".redirect-url", String.class);
+		if(override != null) return HttpURLPath.of(override);
+		
 		String host;
 		if(cfg.getSetting(DefaultSettings.USE_CLIENT_HOST)) {
 			host = c.getClientHeader().getFields().getFieldValue("Host");

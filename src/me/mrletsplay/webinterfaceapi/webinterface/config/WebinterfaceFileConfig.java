@@ -50,5 +50,16 @@ public class WebinterfaceFileConfig implements WebinterfaceConfig {
 	public List<WebinterfaceSetting<?>> getSettings() {
 		return settings;
 	}
+	
+	@Override
+	public <T> T getOverride(String overrideTarget, Class<T> type) {
+		return config.getGeneric("override." + overrideTarget, type);
+	}
+	
+	@Override
+	public void setOverride(String overrideTarget, Object override) {
+		config.set("override." + overrideTarget, override);
+		config.saveToFile();
+	}
 
 }

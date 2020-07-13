@@ -32,4 +32,8 @@ public interface WebinterfaceConfig {
 		return getSettings().stream().filter(s -> s.getKey().equals(key)).findFirst().orElse(null);
 	}
 	
+	public <T> T getOverride(String overrideTarget, Class<T> type);
+	
+	public void setOverride(String overrideTarget, Object override);
+	
 }
