@@ -68,6 +68,16 @@ public class WebinterfaceAccount implements Permissible {
 		Webinterface.getAccountStorage().storeAccount(this);
 	}
 	
+	public void removeConnection(WebinterfaceAccountConnection connection) {
+		this.connections.remove(connection);
+	}
+	
+	public void removeConnection(String authMethod) {
+		WebinterfaceAccountConnection con = getConnection(authMethod);
+		if(con == null) return;
+		removeConnection(con);
+	}
+	
 	public List<WebinterfaceAccountConnection> getConnections() {
 		return connections;
 	}

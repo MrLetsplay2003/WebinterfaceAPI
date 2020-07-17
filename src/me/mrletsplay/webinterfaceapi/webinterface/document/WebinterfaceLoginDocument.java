@@ -4,6 +4,7 @@ import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.webinterfaceapi.html.HtmlDocument;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
+import me.mrletsplay.webinterfaceapi.http.header.HttpURLPath;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
@@ -12,6 +13,7 @@ public class WebinterfaceLoginDocument implements HttpDocument {
 
 	@Override
 	public void createContent() {
+		
 		HtmlDocument d = new HtmlDocument();
 		
 		HtmlElement cont = new HtmlElement("div");
@@ -36,7 +38,15 @@ public class WebinterfaceLoginDocument implements HttpDocument {
 			
 			HtmlElement a = new HtmlElement("a");
 			a.setText(m.getName());
-			a.setAttribute("href", () -> "/auth/" + m.getID() + "?from=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/")));
+			
+			HttpURLPath clientPath = HttpRequestContext.getCurrentContext().getClientHeader().getPath();
+			
+			boolean shouldConnect = clientPath.hasQueryParameter("connect") && clientPath.getQueryParameterValue("connect").equals("true");
+			
+			String href = "/auth/" + m.getID() + "?from=" + HttpUtils.urlEncode(clientPath.getQueryParameterValue("from", "/"))
+				+ (shouldConnect ? "&connect=true" : "");
+			
+			a.setAttribute("href", () -> href);
 			lo.appendChild(a);
 		}
 		

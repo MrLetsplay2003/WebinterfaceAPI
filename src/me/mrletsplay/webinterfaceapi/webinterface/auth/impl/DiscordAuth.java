@@ -57,12 +57,16 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 	public void handleAuthRequest() {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
+		
+		HttpURLPath clientPath = HttpRequestContext.getCurrentContext().getClientHeader().getPath();
+		boolean connect = clientPath.hasQueryParameter("connect") && clientPath.getQueryParameterValue("connect").equals("true");
+		
 		c.getServerHeader().getFields().setFieldValue("Location", AUTH_ENDPOINT
 				+ "?client_id=" + HttpUtils.urlEncode(clientID)
 				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl().toString()) // TODO: protocol
 				+ "&response_type=code"
 				+ "&scope=identify email"
-				+ "&state=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/")));
+				+ "&state=" + (connect ? "connect~" : "") + HttpUtils.urlEncode(clientPath.getQueryParameterValue("from", "/")));
 	}
 
 	@Override
@@ -108,7 +112,15 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 	
 	@Override
 	public HttpURLPath getPostAuthRedirectURL() {
-		return HttpURLPath.of(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("state", "/"));
+		String path = HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("state", "/");
+		if(path.startsWith("connect~")) path = path.substring("connect~".length());
+		return HttpURLPath.of(path);
+	}
+	
+	@Override
+	public boolean getShouldConnect() {
+		String path = HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("state", "/");
+		return path.startsWith("connect~");
 	}
 	
 	@Override

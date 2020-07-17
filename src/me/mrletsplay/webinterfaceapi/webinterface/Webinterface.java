@@ -54,6 +54,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
+import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceHomePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceSettingsPage;
@@ -64,6 +65,8 @@ import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSessionSto
 public class Webinterface {
 	
 	private static final Logger LOGGER = Logger.getLogger(Webinterface.class.getPackage().getName());
+	
+	private static WebinterfaceService service;
 	
 	private static HttpDocumentProvider documentProvider;
 	
@@ -99,15 +102,19 @@ public class Webinterface {
 		cat.addPage(homePage);
 		cat.addPage(new WebinterfaceSettingsPage());
 		cat.addPage(new WebinterfaceAccountsPage());
+		cat.addPage(new WebinterfaceAccountPage());
 		
 		registerActionHandler(new DefaultHandler());
 		
-		MrCoreServiceRegistry.registerService("WebinterfaceAPI", null);
+		service = new WebinterfaceService();
+		MrCoreServiceRegistry.registerService("WebinterfaceAPI", service);
 	}
 	
 	public static void initialize() {
 		if(initialized) return;
 		initialized = true;
+		
+		service.fire(WebinterfaceService.EVENT_PRE_INIT);
 		
 		includeFile("/_internal", new File(rootDirectory, "include"));
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
@@ -162,9 +169,13 @@ public class Webinterface {
 			documentProvider.registerDocument("/auth/" + method.getID(), new WebinterfaceAuthRequestDocument(method));
 			documentProvider.registerDocument("/auth/" + method.getID() + "/response", new WebinterfaceAuthResponseDocument(method));
 		});
+		
+		service.fire(WebinterfaceService.EVENT_POST_INIT);
 	}
 	
 	public static void start() {
+		service.fire(WebinterfaceService.EVENT_PRE_START);
+		
 		extractFiles();
 		initialize();
 		
@@ -188,6 +199,8 @@ public class Webinterface {
 				}
 			}
 		});
+		
+		service.fire(WebinterfaceService.EVENT_POST_START);
 	}
 	
 	private static void extractFiles() {

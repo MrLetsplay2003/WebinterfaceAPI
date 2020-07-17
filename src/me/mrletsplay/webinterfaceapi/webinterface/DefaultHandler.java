@@ -94,4 +94,12 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 		return WebinterfaceResponse.success();
 	}
 	
+	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "removeAccountConnection")
+	public WebinterfaceResponse removeAccountConnection(WebinterfaceRequestEvent event) {
+		WebinterfaceAccount account = event.getAccount();
+		String authMethod = event.getRequestData().getString("value");
+		if(account.getConnections().size() > 1) account.removeConnection(authMethod);
+		return WebinterfaceResponse.success();
+	}
+	
 }

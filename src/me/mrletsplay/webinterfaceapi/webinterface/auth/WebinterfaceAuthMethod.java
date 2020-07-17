@@ -42,6 +42,11 @@ public interface WebinterfaceAuthMethod {
 		return HttpURLPath.of(HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/"));
 	}
 	
+	public default boolean getShouldConnect() {
+		HttpURLPath clientPath = HttpRequestContext.getCurrentContext().getClientHeader().getPath();
+		return clientPath.hasQueryParameter("connect") && clientPath.getQueryParameterValue("connect", "/").equals("true");
+	}
+	
 	public default File getConfigurationDirectory() {
 		return new File(Webinterface.getConfigurationDirectory(), "auth/" + getID() + "/");
 	}

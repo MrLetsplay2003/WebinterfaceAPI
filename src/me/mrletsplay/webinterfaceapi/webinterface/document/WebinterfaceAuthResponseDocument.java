@@ -9,6 +9,7 @@ import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
@@ -30,9 +31,21 @@ public class WebinterfaceAuthResponseDocument implements HttpDocument {
 		}
 		try {
 			WebinterfaceAccountConnection acc = method.handleAuthResponse();
-			WebinterfaceSession.stopSession();
-			WebinterfaceSession s = WebinterfaceSession.startSession(acc);
-			c.getServerHeader().getFields().setCookie(WebinterfaceSession.COOKIE_NAME, s.getSessionID(), "Path=/", "Expires=" + WebinterfaceUtils.httpTimeStamp(s.getExpiresAt()));
+			
+			WebinterfaceSession sess = WebinterfaceSession.getCurrentSession();
+			if(sess != null && !acc.isTemporary() && method.getShouldConnect()) {
+				WebinterfaceAccount other = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(acc.getAuthMethod(), acc.getUserID());
+				
+				if(other == null) {
+					WebinterfaceAccount account = sess.getAccount();
+					if(account.getConnection(acc.getAuthMethod()) == null) account.addConnection(acc);
+				}
+			}else {
+				WebinterfaceSession.stopSession();
+				WebinterfaceSession s = WebinterfaceSession.startSession(acc);
+				c.getServerHeader().getFields().setCookie(WebinterfaceSession.COOKIE_NAME, s.getSessionID(), "Path=/", "Expires=" + WebinterfaceUtils.httpTimeStamp(s.getExpiresAt()));
+			}
+			
 			c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 			c.getServerHeader().getFields().setFieldValue("Location", method.getPostAuthRedirectURL().toString());
 		} catch(AuthException e) {

@@ -31,9 +31,14 @@ public class PasswordAuth implements WebinterfaceAuthMethod {
 	public void handleAuthRequest() {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
-		String red = HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQueryParameterValue("from", "/");
+		
+		HttpURLPath clientPath = HttpRequestContext.getCurrentContext().getClientHeader().getPath();
+		String red = clientPath.getQueryParameterValue("from", "/");
+		boolean con = clientPath.hasQueryParameter("connect") && clientPath.getQueryParameterValue("connect").equals("true");
+		
 		HttpURLPath pth = new HttpURLPath("/auth/password/login");
 		pth.setQueryParameterValue("from", red);
+		if(con) pth.setQueryParameterValue("connect", "true");
 		c.getServerHeader().getFields().setFieldValue("Location", pth.toString());
 	}
 

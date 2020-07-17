@@ -22,6 +22,7 @@ import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
+import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountPage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
 public class WebinterfacePage implements HttpDocument {
@@ -162,6 +163,15 @@ public class WebinterfacePage implements HttpDocument {
 		HtmlElement po = new HtmlElement("div");
 		po.addClass("profile-options");
 		main.appendChild(po);
+		
+		HtmlElement loc3 = new HtmlElement("div");
+		loc3.addClass("profile-option");
+		po.appendChild(loc3);
+		
+		HtmlElement lo3 = new HtmlElement("a");
+		lo3.setAttribute("href", WebinterfaceAccountPage.URL);
+		lo3.setText("My account");
+		loc3.appendChild(lo3);
 		
 		HtmlElement loc2 = new HtmlElement("div");
 		loc2.addClass("profile-option");
