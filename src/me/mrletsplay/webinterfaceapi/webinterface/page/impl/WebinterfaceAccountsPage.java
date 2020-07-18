@@ -38,7 +38,8 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		
 		sc.addHeading("Accounts", 2);
-		sc.addInnerLayoutProperties(new GridLayout("1fr", "1fr"));
+		sc.getStyle().setProperty("grid-template-columns", "1fr 1fr");
+		sc.getMobileStyle().setProperty("grid-template-columns", "1fr");
 		
 		sc.addDynamicElements(() -> {
 			List<WebinterfacePageElement> els = new ArrayList<>();

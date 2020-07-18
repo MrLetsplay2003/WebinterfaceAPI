@@ -23,7 +23,6 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceVerticalSpacer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
 public class WebinterfaceAccountPage extends WebinterfacePage {
@@ -36,7 +35,8 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		
 		sc.addHeading("Account connections", 2);
-		sc.addInnerLayoutProperties(new GridLayout("1fr", "1fr"));
+		sc.getStyle().setProperty("grid-template-columns", "1fr 1fr");
+		sc.getMobileStyle().setProperty("grid-template-columns", "1fr");
 		
 		sc.addDynamicElements(() -> {
 			List<WebinterfacePageElement> els = new ArrayList<>();
@@ -69,7 +69,6 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 					WebinterfaceButton delBtn = new WebinterfaceButton("Remove connection");
 					delBtn.setWidth("auto");
 					delBtn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-					
 					delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getAuthMethod())), new ReloadPageAfterAction(100))));
 					
 					grp.addElement(delBtn);

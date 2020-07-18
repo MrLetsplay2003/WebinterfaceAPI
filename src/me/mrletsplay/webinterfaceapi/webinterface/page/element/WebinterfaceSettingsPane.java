@@ -24,7 +24,6 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WebinterfaceActionValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WrapperValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 
 public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
@@ -41,7 +40,8 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		this.requestMethod = requestMethod;
 		
 		addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-		addInnerLayoutProperties(new GridLayout("33fr", "66fr"));
+		getStyle().setProperty("grid-template-columns", "33fr 66fr");
+		getMobileStyle().setProperty("grid-template-columns", "1fr");
 		
 		addSettings(settings);
 	}
