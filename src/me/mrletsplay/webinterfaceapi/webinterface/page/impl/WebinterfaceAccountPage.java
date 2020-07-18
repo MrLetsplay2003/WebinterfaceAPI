@@ -44,11 +44,13 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 			WebinterfaceAccount account = WebinterfaceSession.getCurrentSession().getAccount();
 			
 			for(WebinterfaceAccountConnection con : account.getConnections()) {
-				WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
-				
 				WebinterfaceAuthMethod mth = Webinterface.getAuthMethods().stream()
 						.filter(m -> m.getID().equals(con.getAuthMethod()))
 						.findFirst().orElse(null);
+				
+				if(mth == null) continue;
+				
+				WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
 				
 				grp.addTitle("Auth method: " + mth.getName());
 				
