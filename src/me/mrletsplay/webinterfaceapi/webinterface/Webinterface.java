@@ -156,7 +156,7 @@ public class Webinterface {
 		
 		loadIncludedFiles();
 		
-		documentProvider.registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/favicon.ico")));
+		documentProvider.registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/icon.png")));
 		documentProvider.registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
 		documentProvider.registerDocument("/login", new WebinterfaceLoginDocument());
 		documentProvider.registerDocument("/logout", new WebinterfaceLogoutDocument());
