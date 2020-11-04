@@ -8,10 +8,13 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnec
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 
 public class NoAuth implements WebinterfaceAuthMethod {
+	
+	public static final String
+		ID = "no_auth";
 
 	@Override
 	public String getID() {
-		return "no_auth";
+		return ID;
 	}
 
 	@Override

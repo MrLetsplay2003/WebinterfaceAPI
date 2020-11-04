@@ -20,6 +20,9 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 
 public class GitHubAuth implements WebinterfaceAuthMethod {
 
+	public static final String
+		ID = "github";
+
 	private static final String
 		AUTH_ENDPOINT = "https://github.com/login/oauth/authorize",
 		TOKEN_ENDPOINT = "https://github.com/login/oauth/access_token",
@@ -48,7 +51,7 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 	
 	@Override
 	public String getID() {
-		return "github";
+		return ID;
 	}
 
 	@Override

@@ -3,10 +3,12 @@ package me.mrletsplay.webinterfaceapi.bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.mrletsplay.webinterfaceapi.bukkit.command.CommandWebinterfaceAPI;
 import me.mrletsplay.webinterfaceapi.bukkit.page.BukkitPage;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
 
 public class WebinterfacePlugin extends JavaPlugin {
 	
@@ -19,9 +21,12 @@ public class WebinterfacePlugin extends JavaPlugin {
 	public void onEnable() {
 		pl = this;
 		MrCoreBukkitImpl.loadMrCore(this);
+		
+		getCommand("webinterfaceapi").setExecutor(new CommandWebinterfaceAPI());
 		Webinterface.setRootDirectory(getDataFolder());
 		
-		Webinterface.registerPage(new BukkitPage());
+		WebinterfacePageCategory cat = Webinterface.createCategory("Bukkit");
+		cat.addPage(new BukkitPage());
 		
 		Webinterface.registerActionHandler(new BukkitHandler());
 		

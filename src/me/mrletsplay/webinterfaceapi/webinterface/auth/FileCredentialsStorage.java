@@ -14,14 +14,14 @@ import me.mrletsplay.mrcore.config.ConfigLoader;
 import me.mrletsplay.mrcore.config.FileCustomConfig;
 import me.mrletsplay.mrcore.misc.FriendlyException;
 
-public class FileCredentialStorage implements WebinterfaceCredentialsStorage {
+public class FileCredentialsStorage implements WebinterfaceCredentialsStorage {
 	
 	private File file;
 	private FileCustomConfig config;
 	
 	private SecureRandom random;
 	
-	public FileCredentialStorage(File file) {
+	public FileCredentialsStorage(File file) {
 		this.file = file;
 		this.random = new SecureRandom();
 	}

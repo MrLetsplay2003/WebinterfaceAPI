@@ -19,6 +19,9 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 
 public class DiscordAuth implements WebinterfaceAuthMethod {
 
+	public static final String
+		ID = "discord";
+	
 	private static final String
 		AUTH_ENDPOINT = "https://discordapp.com/api/oauth2/authorize",
 		TOKEN_ENDPOINT = "https://discordapp.com/api/oauth2/token";
@@ -45,7 +48,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 	
 	@Override
 	public String getID() {
-		return "discord";
+		return ID;
 	}
 
 	@Override
@@ -85,7 +88,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 			JSONObject res = p.execute().asJSONObject();
 			String accToken = res.getString("access_token");
 			
-			HttpGet g = HttpRequest.createGet("https://discordapp.com/api/v6/users/@me")
+			HttpGet g = HttpRequest.createGet("https://discord.com/api/v6/users/@me")
 					.setHeaderParameter("Authorization", "Bearer " + accToken);
 			JSONObject usr = g.execute().asJSONObject();
 			

@@ -10,6 +10,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceImage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
@@ -19,7 +20,30 @@ import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 public class BukkitPage extends WebinterfacePage {
 
 	public BukkitPage() {
-		super("Bukkit", "/bukkit");
+		super("Home", "/bukkit/home");
+		
+		addDynamicSections(() -> {
+			List<WebinterfacePageSection> secs = new ArrayList<>();
+			
+			WebinterfaceAccount acc = WebinterfaceSession.getCurrentSession().getAccount();
+			WebinterfaceAccountConnection mcAcc = acc.getConnection(WebinterfacePlugin.MINECRAFT_ACCOUNT_CONNECTION_NAME);
+			
+			if(mcAcc != null) {
+				WebinterfacePageSection yourAccount = new WebinterfacePageSection();
+				yourAccount.addInnerLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+				yourAccount.addTitle("Your Profile");
+				
+				yourAccount.addElement(WebinterfaceImage.builder()
+						.src("https://minotar.net/avatar/" + mcAcc.getUserName())
+						.alt("Avatar")
+						.width("128px")
+						.create());
+				
+				secs.add(yourAccount);
+			}
+			
+			return secs;
+		});
 		
 		WebinterfacePageSection sets = new WebinterfacePageSection();
 		sets.addTitle("Settings");
@@ -43,8 +67,8 @@ public class BukkitPage extends WebinterfacePage {
 				txt.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
 				els.add(txt);
 				
-				WebinterfaceInputField f = new WebinterfaceInputField("MC name");
-				f.setOnChangeAction(new SendJSAction("bukkit", "connectMCAccount", new ElementValue(f)));
+				WebinterfaceInputField f = new WebinterfaceInputField("Minecraft name");
+				f.setOnChangeAction(new SendJSAction("bukkit", "connectMinecraftAccount", new ElementValue(f)));
 				els.add(f);
 			}
 			return els;

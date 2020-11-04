@@ -1,6 +1,9 @@
 main: "me.mrletsplay.webinterfaceapi.bukkit.WebinterfacePlugin"
 name: "WebinterfaceAPI"
-version: "1.7.2"
+version: "${project.version}"
 api-version: "1.13"
 author: "MrLetsplay2003"
 softdepend: ["MrCore_BukkitImpl"]
+commands:
+  webinterfaceapi:
+    aliases: ["wiapi"]

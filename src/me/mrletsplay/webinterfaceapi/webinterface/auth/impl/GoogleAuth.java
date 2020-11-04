@@ -19,6 +19,9 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 
 public class GoogleAuth implements WebinterfaceAuthMethod {
 
+	public static final String
+		ID = "google";
+
 	private static final String
 		AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth",
 		TOKEN_ENDPOINT = "https://www.googleapis.com/oauth2/v4/token",
@@ -47,7 +50,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 	
 	@Override
 	public String getID() {
-		return "google";
+		return ID;
 	}
 
 	@Override

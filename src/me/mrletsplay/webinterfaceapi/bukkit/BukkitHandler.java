@@ -67,7 +67,7 @@ public class BukkitHandler implements WebinterfaceActionHandler {
 					+ "§8[§7+§8]----------------------[§7+§8]"
 					)).build();
 
-	@WebinterfaceHandler(requestTarget = "bukkit", requestTypes = "connectMCAccount")
+	@WebinterfaceHandler(requestTarget = "bukkit", requestTypes = "connectMinecraftAccount")
 	public static WebinterfaceResponse connectMCAccount(WebinterfaceRequestEvent event) {
 		String mcAccName = event.getRequestData().getString("value");
 		Player p = Bukkit.getPlayer(mcAccName);

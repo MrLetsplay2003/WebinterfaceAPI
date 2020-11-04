@@ -31,7 +31,7 @@ import me.mrletsplay.webinterfaceapi.http.document.FileDocument;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocumentProvider;
 import me.mrletsplay.webinterfaceapi.php.PHP;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileAccountStorage;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.FileCredentialStorage;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.FileCredentialsStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceCredentialsStorage;
@@ -119,7 +119,7 @@ public class Webinterface {
 		includeFile("/_internal", new File(rootDirectory, "include"));
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
-		credentialsStorage = new FileCredentialStorage(new File(rootDirectory, "data/credentials.yml"));
+		credentialsStorage = new FileCredentialsStorage(new File(rootDirectory, "data/credentials.yml"));
 		
 		config = new WebinterfaceFileConfig(new File(getConfigurationDirectory(), "config.yml"));
 		config.registerSettings(DefaultSettings.INSTANCE);

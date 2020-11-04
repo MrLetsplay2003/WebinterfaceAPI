@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.header.HttpClientContentTypes;
@@ -17,9 +18,14 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
 
 public class PasswordAuth implements WebinterfaceAuthMethod {
 
+	public static final String
+		ID = "password";
+	
+	private static final Pattern VALID_USERNAME = Pattern.compile("[a-zA-Z0-9-_.]{2,64}"); // 2 - 64 chars, alphanumeric with -_.
+
 	@Override
 	public String getID() {
-		return "password";
+		return ID;
 	}
 
 	@Override
@@ -51,22 +57,27 @@ public class PasswordAuth implements WebinterfaceAuthMethod {
 			String username = params.get("username").get(0).toLowerCase(); // NONBETA: allow case
 			String password = params.get("password").get(0);
 			boolean register = (params.containsKey("register") ? params.get("register").get(0).equalsIgnoreCase("on") : false);
-			WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID("password", username);
+			WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(ID, username);
 			if(!register) {
 				if(acc == null) throw new AuthException("Invalid username");
-				WebinterfaceAccountConnection con = acc.getConnection("password");
+				WebinterfaceAccountConnection con = acc.getConnection(ID);
 				if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) throw new AuthException("Invalid password");
 				return con;
 			}else {
+				if(!isValidUsername(username)) throw new AuthException("Username contains invalid characters");
 				if(acc != null) throw new AuthException("An account with that username already exists");
 				Webinterface.getCredentialsStorage().storeCredentials(username, password);
-				return new WebinterfaceAccountConnection("password", username, username, null, null);
+				return new WebinterfaceAccountConnection(getID(), username, username, null, null);
 			}
 		}catch(AuthException e) {
 			c.getServerHeader().setStatusCode(HttpStatusCodes.FOUND_302);
 			c.getServerHeader().getFields().setFieldValue("Location", "/auth/password/login?" + Base64.getEncoder().encodeToString(e.getMessage().getBytes(StandardCharsets.UTF_8)));
 			throw e;
 		}
+	}
+	
+	public static boolean isValidUsername(String username) {
+		return VALID_USERNAME.matcher(username).matches();
 	}
 
 }
