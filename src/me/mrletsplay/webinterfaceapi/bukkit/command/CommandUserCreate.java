@@ -27,7 +27,7 @@ public class CommandUserCreate extends BukkitCommand {
 		String password = event.getArguments()[1];
 		
 		if(!PasswordAuth.isValidUsername(username)) {
-			event.getSender().sendMessage("§cUsername contains invalid characters");
+			event.getSender().sendMessage("§cUsername contains invalid characters or is too long/short");
 			return;
 		}
 		

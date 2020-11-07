@@ -64,7 +64,7 @@ public class PasswordAuth implements WebinterfaceAuthMethod {
 				if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) throw new AuthException("Invalid password");
 				return con;
 			}else {
-				if(!isValidUsername(username)) throw new AuthException("Username contains invalid characters");
+				if(!isValidUsername(username)) throw new AuthException("Username contains invalid characters or is too long/short");
 				if(acc != null) throw new AuthException("An account with that username already exists");
 				Webinterface.getCredentialsStorage().storeCredentials(username, password);
 				return new WebinterfaceAccountConnection(getID(), username, username, null, null);

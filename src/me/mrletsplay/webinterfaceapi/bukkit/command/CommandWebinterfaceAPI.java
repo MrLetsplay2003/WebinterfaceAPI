@@ -2,6 +2,8 @@ package me.mrletsplay.webinterfaceapi.bukkit.command;
 
 import me.mrletsplay.mrcore.bukkitimpl.command.BukkitCommand;
 import me.mrletsplay.mrcore.command.CommandInvokedEvent;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class CommandWebinterfaceAPI extends BukkitCommand {
 
@@ -17,6 +19,8 @@ public class CommandWebinterfaceAPI extends BukkitCommand {
 		sendCommandInfo(event.getSender());
 	}
 	
+	public static Text createHoverText(WebinterfaceAccount account) {
+		return new Text("§7Account Name: §6" + account.getName() + "\n§7Account ID: §6" + account.getID());
+	}
 	
-
 }
