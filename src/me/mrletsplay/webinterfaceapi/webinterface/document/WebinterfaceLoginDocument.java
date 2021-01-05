@@ -8,6 +8,7 @@ import me.mrletsplay.webinterfaceapi.http.header.HttpURLPath;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class WebinterfaceLoginDocument implements HttpDocument {
 
@@ -62,6 +63,7 @@ public class WebinterfaceLoginDocument implements HttpDocument {
 		}
 		
 		d.getBodyNode().appendChild(cont);
+		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
 		d.addStyleSheet("/_internal/login-include.css");
 		d.createContent();
 	}

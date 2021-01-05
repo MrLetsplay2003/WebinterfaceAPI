@@ -1,16 +1,23 @@
 body {
-	--theme-color-primary: #424957;
-	--theme-color-secondary: #2f343d;
-	--theme-color-tertiary: #343944;
+	--theme-color-primary: #181818;
+	--theme-color-secondary: #121212;
+	--theme-color-tertiary: #1d1d1d;
 
-	--theme-color-page-bg: #575757;
-	--theme-color-page-text: white;
-	--theme-color-page-text-secondary: white;
-	--theme-color-page-shadow: rgb(49, 50, 61);
+	--theme-color-page-bg: #0c0c0c;
+	--theme-color-page-text: hsla(0,0%,100%,.8);
+	--theme-color-page-text-secondary: red;
+	--theme-color-page-shadow:rgba(0,0,0,0);
 
-	--theme-color-content-bg: #2f343d;
-	--theme-color-content-shadow: rgb(49, 50, 61);
-	--theme-color-content-border: rgb(37, 37, 37);
-	--theme-color-content-text: rgb(255, 255, 255);
-	--theme-color-content-hover-bg: #39404d;
+	--theme-color-section-background: #161616;
+	--theme-color-group-background: #1d1d1d;
+
+	--theme-color-sidenav-category: #696969;
+	--theme-color-sidenav-item: hsla(0,0%,100%,.8);
+	--theme-color-sidenav-hover: rgba(255, 255, 255, 0.1);
+
+	--theme-color-content-bg: #1d1d1d;
+	--theme-color-content-shadow: #00000000;
+	--theme-color-content-border: #00000000;
+	--theme-color-content-text: hsla(0,0%,100%,.8);
+	--theme-color-content-hover-bg: #282828;
 }

@@ -1,5 +1,7 @@
 package me.mrletsplay.webinterfaceapi.js;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class JavaScriptFunction {
@@ -7,6 +9,8 @@ public class JavaScriptFunction {
 	private Supplier<String>
 		signature,
 		code;
+	
+	private List<String> modifiers = new ArrayList<>();
 	
 	public JavaScriptFunction(Supplier<String> signature) {
 		this.signature = signature;
@@ -53,9 +57,19 @@ public class JavaScriptFunction {
 		return code;
 	}
 	
+	public void addModifier(String modifier) {
+		modifiers.add(modifier);
+	}
+	
+	public List<String> getModifiers() {
+		return modifiers;
+	}
+	
 	@Override
 	public String toString() {
-		StringBuilder b = new StringBuilder("function ")
+		StringBuilder b = new StringBuilder();
+		for(String m : modifiers) b.append(m).append(" ");
+		b.append("function ")
 				.append(getSignature().get())
 				.append("{");
 		if(getCode() != null) b.append(getCode().get());

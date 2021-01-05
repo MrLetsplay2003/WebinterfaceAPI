@@ -16,9 +16,14 @@ public class StringValue implements WebinterfaceActionValue {
 		this(() -> value);
 	}
 	
-	public void concat(StringValue other) {
+	public StringValue concat(StringValue other) {
 		Supplier<String> oldV = value;
 		this.value = () -> oldV.get() + other.value.get();
+		return this;
+	}
+	
+	public RawValue concat(WebinterfaceActionValue other) {
+		return new RawValue(toJavaScript() + " + " + other.toJavaScript());
 	}
 	
 	@Override

@@ -8,6 +8,13 @@ body {
 	--theme-color-page-text-secondary: white;
 	--theme-color-page-shadow: gray;
 
+	--theme-color-section-background: white;
+	--theme-color-group-background: #1d1d1d;
+
+	--theme-color-sidenav-category: #a8a8a8;
+	--theme-color-sidenav-item: white;
+	--theme-color-sidenav-hover: rgba(255, 255, 255, 0.2);
+
 	--theme-color-content-bg: white;
 	--theme-color-content-shadow: lightgray;
 	--theme-color-content-border: lightgray;
