@@ -13,22 +13,42 @@ public class HttpsServer extends HttpServer {
 	
 	private SSLCertificateSocketFactory socketFactory;
 
-	public HttpsServer(String host, int port, File certificateFile, File keyFile, String certificatePassword) {
-		super(host, port);
+	public HttpsServer(HttpsServerConfiguration configuration) {
+		super(configuration);
 		try {
-			this.socketFactory = new SSLCertificateSocketFactory(certificateFile, keyFile, certificatePassword);
+			this.socketFactory = new SSLCertificateSocketFactory(configuration.getCertificateFile(), configuration.getCertificateKeyFile(), configuration.getCertificatePassword());
 		} catch (IOException | GeneralSecurityException e) {
 			throw new FriendlyException("Failed to intialize http server", e);
 		}
 	}
 
+	@Deprecated
+	public HttpsServer(String host, int port, File certificateFile, File keyFile, String certificatePassword) {
+		this(newConfigurationBuilder()
+				.host(host)
+				.port(port)
+				.certificate(certificateFile, keyFile)
+				.certificatePassword(certificatePassword)
+				.create());
+	}
+
+	@Deprecated
 	public HttpsServer(int port, File certificateFile, File keyFile, String certificatePassword) {
-		this("0.0.0.0", port, certificateFile, keyFile, certificatePassword);
+		this(newConfigurationBuilder()
+				.hostBindAll()
+				.port(port)
+				.certificate(certificateFile, keyFile)
+				.certificatePassword(certificatePassword)
+				.create());
 	}
 	
 	@Override
 	protected ServerSocket createSocket() throws UnknownHostException, IOException {
-		return socketFactory.createServerSocket(getHost(), getPort());
+		return socketFactory.createServerSocket(getConfiguration().getHost(), getConfiguration().getPort());
+	}
+	
+	public static HttpsServerConfiguration.Builder newConfigurationBuilder() {
+		return new HttpsServerConfiguration.Builder();
 	}
 
 }

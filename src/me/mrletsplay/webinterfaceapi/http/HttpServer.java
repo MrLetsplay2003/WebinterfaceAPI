@@ -18,9 +18,9 @@ public class HttpServer extends AbstractServer {
 	private HttpDocumentProvider documentProvider;
 	private HttpProtocolVersion protocolVersion;
 	private List<HttpCompressionMethod> compressionMethods;
-
-	public HttpServer(String host, int port) {
-		super(host, port);
+	
+	public HttpServer(HttpServerConfiguration configuration) {
+		super(configuration);
 		this.protocolVersion = HttpProtocolVersions.HTTP1_1;
 		this.compressionMethods = new ArrayList<>();
 		setConnectionAcceptor(new HttpConnectionAcceptor());
@@ -28,9 +28,26 @@ public class HttpServer extends AbstractServer {
 		addCompressionMethod(new DeflateCompression());
 		addCompressionMethod(new GZIPCompression());
 	}
+
+	@Deprecated
+	public HttpServer(String host, int port) {
+		this(newConfigurationBuilder()
+				.host(host)
+				.port(port)
+				.create());
+	}
 	
+	@Deprecated
 	public HttpServer(int port) {
-		this("0.0.0.0", port);
+		this(newConfigurationBuilder()
+				.hostBindAll()
+				.port(port)
+				.create());
+	}
+	
+	@Override
+	public HttpServerConfiguration getConfiguration() {
+		return (HttpServerConfiguration) super.getConfiguration();
 	}
 	
 	public void setDocumentProvider(HttpDocumentProvider documentProvider) throws IllegalStateException {
@@ -56,6 +73,10 @@ public class HttpServer extends AbstractServer {
 	
 	public static Logger getLogger() {
 		return LOGGER;
+	}
+	
+	public static HttpServerConfiguration.Builder newConfigurationBuilder() {
+		return new HttpServerConfiguration.Builder();
 	}
 
 }

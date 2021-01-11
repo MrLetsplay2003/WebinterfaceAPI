@@ -136,7 +136,10 @@ public class Webinterface {
 		
 		documentProvider = new WebinterfaceDocumentProvider();
 		
-		httpServer = new HttpServer(config.getSetting(DefaultSettings.HTTP_BIND), config.getSetting(DefaultSettings.HTTP_PORT));
+		httpServer = new HttpServer(HttpServer.newConfigurationBuilder()
+				.host(config.getSetting(DefaultSettings.HTTP_BIND))
+				.port(config.getSetting(DefaultSettings.HTTP_PORT))
+				.create());
 		httpServer.setDocumentProvider(documentProvider);
 		
 		if(config.getSetting(DefaultSettings.HTTPS_ENABLE)) {
@@ -149,7 +152,12 @@ public class Webinterface {
 				File certFile = new File(certPath);
 				File certKeyFile = new File(certKeyPath);
 				String password = config.getSetting(DefaultSettings.HTTPS_CERTIFICATE_PASSWORD);
-				httpsServer = new HttpsServer(config.getSetting(DefaultSettings.HTTPS_BIND), config.getSetting(DefaultSettings.HTTPS_PORT), certFile, certKeyFile, password);
+				httpsServer = new HttpsServer(HttpsServer.newConfigurationBuilder()
+						.host(config.getSetting(DefaultSettings.HTTPS_BIND))
+						.port(config.getSetting(DefaultSettings.HTTPS_PORT))
+						.certificate(certFile, certKeyFile)
+						.certificatePassword(password)
+						.create());
 				httpsServer.setDocumentProvider(documentProvider);
 			}
 		}

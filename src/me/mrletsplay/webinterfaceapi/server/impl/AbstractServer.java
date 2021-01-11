@@ -21,23 +21,17 @@ public abstract class AbstractServer implements Server {
 	
 	private static final Logger LOGGER = Logger.getLogger(AbstractServer.class.getPackage().getName());
 
-	private String host;
-	private int port;
+	private AbstractServerConfiguration configuration;
 	private ServerSocket socket;
 	private ConnectionAcceptor acceptor;
 	private ExecutorService executor;
 	
-	public AbstractServer(String host, int port) {
-		this.host = host;
-		this.port = port;
-	}
-	
-	public AbstractServer(int port) {
-		this("0.0.0.0", port);
+	public AbstractServer(AbstractServerConfiguration configuration) {
+		this.configuration = configuration;
 	}
 	
 	protected ServerSocket createSocket() throws UnknownHostException, IOException {
-		return new ServerSocket(port, 50, InetAddress.getByName(host));
+		return new ServerSocket(configuration.getPort(), 50, InetAddress.getByName(configuration.getHost()));
 	}
 	
 	@Override
@@ -83,15 +77,29 @@ public abstract class AbstractServer implements Server {
 	public ConnectionAcceptor getConnectionAcceptor() {
 		return acceptor;
 	}
-	
+
+	/**
+	 * @see #getConfiguration()
+	 * @return The configured host of this server
+	 */
+	@Deprecated
 	@Override
 	public String getHost() {
-		return host;
+		return configuration.getHost();
 	}
 	
+	/**
+	 * @see #getConfiguration()
+	 * @return The configured port of this server
+	 */
+	@Deprecated
 	@Override
 	public int getPort() {
-		return port;
+		return configuration.getPort();
+	}
+
+	public AbstractServerConfiguration getConfiguration() {
+		return configuration;
 	}
 	
 	@Override
