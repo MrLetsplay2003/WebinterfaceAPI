@@ -55,8 +55,6 @@ public class HttpConnection extends AbstractConnection {
 				}catch(SocketException ignored) {
 					// Client probably just disconnected
 				}catch(Exception e) {
-					HttpServerHeader sh = new HttpServerHeader(HttpProtocolVersions.HTTP1_1, HttpStatusCodes.INTERNAL_SERVER_ERROR_500, new HttpHeaderFields());
-					sh.setContent("text/html", "<h1>500 Internal Server Error</h1>".getBytes(StandardCharsets.UTF_8));
 					close();
 					HttpServer.getLogger().log(Level.FINE, "Error in client receive loop", e);
 					throw new ServerException("Error in client receive loop", e);
