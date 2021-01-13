@@ -20,6 +20,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRespon
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ArrayValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.RawValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WebinterfaceActionValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WrapperValue;
@@ -40,7 +41,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		this.requestMethod = requestMethod;
 		
 		addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-		getStyle().setProperty("grid-template-columns", "33fr 66fr");
+		getStyle().setProperty("grid-template-columns", "auto 50px");
 		getMobileStyle().setProperty("grid-template-columns", "1fr");
 		
 		addSettings(settings);
@@ -59,9 +60,10 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	public void addSetting(WebinterfaceSetting<?> setting) {
 		settings.add(setting);
 		WebinterfaceText t = new WebinterfaceText(setting.getFriendlyName() != null ? setting.getFriendlyName() : setting.getKey());
-		t.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
+		t.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.NEW_LINE);
 		
 		WebinterfacePageElement el = null;
+		WebinterfaceActionValue defaultValue = null;
 		
 		if(setting.getType().equals(Complex.value(String.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> {
@@ -70,33 +72,58 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			});
 			in.setOnChangeAction(changeSettingAction(setting, new ElementValue(in)));
 			el = in;
+			defaultValue = new StringValue((String) setting.getDefaultValue());
 		}else if(setting.getType().equals(Complex.value(Integer.class)) || setting.getType().equals(Complex.value(Double.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> config.get().getSetting(setting).toString());
 			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), setting.getType().equals(Complex.value(Integer.class)) ? "parseInt(%s)" : "parseFloat(%s)")));
 			el = in;
+			defaultValue = new RawValue(setting.getDefaultValue().toString());
 		}else if(setting.getType().equals(Complex.value(Boolean.class))) {
 			WebinterfaceCheckBox in = new WebinterfaceCheckBox(() -> (Boolean) config.get().getSetting(setting));
 			in.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
 			in.setOnChangeAction(changeSettingAction(setting, new CheckboxValue(in)));
 			el = in;
+			defaultValue = new RawValue(setting.getDefaultValue().toString());
 		}else if(setting.getType().equals(Complex.list(String.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
 			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x=>x.trim())")));
 			el = in;
+			defaultValue = new ArrayValue(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
+					.map(s -> new StringValue(s))
+					.collect(Collectors.toList()));
 		}else if(setting.getType().equals(Complex.list(Integer.class)) || setting.getType().equals(Complex.list(Double.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
 			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x=>x.trim()).map(" + (setting.getType().equals(Complex.list(Integer.class)) ? "x=>parseInt(x)" : "x=>parseFloat(x)") + ")")));
 			el = in;
+			defaultValue = new ArrayValue(((List<?>) setting.getDefaultValue()).stream()
+					.map(s -> new RawValue(s.toString()))
+					.collect(Collectors.toList()));
 		}else if(setting.getType().equals(Complex.list(Boolean.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
 			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x=>x.trim()).map(x=>x==\"true\")")));
 			el = in;
+			defaultValue = new ArrayValue(((List<?>) setting.getDefaultValue()).stream()
+					.map(s -> new RawValue(s.toString()))
+					.collect(Collectors.toList()));
 		}
 		
-		if(el == null) return;
-		el.addLayoutProperties(DefaultLayoutProperty.SECOND_TO_LAST_COLUMN);
+		if(el == null || defaultValue == null) return;
+		el.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+		
+		WebinterfaceButton reset = new WebinterfaceButton("X");
+		reset.setOnClickAction(new MultiAction(new SendJSAction(requestTarget, requestMethod, new ArrayValue(
+				new StringValue(setting.getKey()),
+				defaultValue
+			)),
+			new ReloadPageAfterAction(100)));
+		
 		addElement(t);
 		addElement(el);
+		addElement(reset);
+		
+		WebinterfaceVerticalSpacer sp = new WebinterfaceVerticalSpacer("30px");
+		sp.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+		addElement(sp);
 	}
 	
 	private MultiAction changeSettingAction(WebinterfaceSetting<?> setting, WebinterfaceActionValue value) {

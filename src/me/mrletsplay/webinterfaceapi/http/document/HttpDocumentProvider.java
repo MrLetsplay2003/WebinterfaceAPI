@@ -42,5 +42,9 @@ public interface HttpDocumentProvider {
 	public void set404Document(HttpDocument document);
 
 	public HttpDocument get404Document();
+
+	public void set500Document(HttpDocument document);
+
+	public HttpDocument get500Document();
 	
 }

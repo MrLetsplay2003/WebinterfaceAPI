@@ -146,6 +146,10 @@ public class HtmlElement {
 		addClass(() -> htmlClass);
 	}
 	
+	public EnumSet<HtmlElementFlag> getFlags() {
+		return flags;
+	}
+	
 	public HtmlElement copy() {
 		return copy(false);
 	}

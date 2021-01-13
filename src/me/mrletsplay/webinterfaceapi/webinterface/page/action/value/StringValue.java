@@ -28,7 +28,8 @@ public class StringValue implements WebinterfaceActionValue {
 	
 	@Override
 	public String toJavaScript() {
-		return "\"" + StringEscapeUtils.escapeEcmaScript(value.get()) + "\"";
+		String v = value.get();
+		return v == null ? "null" : "\"" + StringEscapeUtils.escapeEcmaScript(v) + "\"";
 	}
 
 }

@@ -16,6 +16,7 @@ public class HttpRequestContext {
 	private HttpClientHeader clientHeader;
 	private HttpServerHeader serverHeader;
 	private Map<String, Object> properties;
+	private Exception exception;
 	
 	public HttpRequestContext(HttpConnection connection, HttpClientHeader clientHeader, HttpServerHeader serverHeader) {
 		this.connection = connection;
@@ -58,6 +59,14 @@ public class HttpRequestContext {
 	
 	public static void setCurrentContext(HttpRequestContext ctx) {
 		context.set(ctx);
+	}
+	
+	public void setException(Exception exception) {
+		this.exception = exception;
+	}
+	
+	public Exception getException() {
+		return exception;
 	}
 	
 	public static HttpRequestContext getCurrentContext() {

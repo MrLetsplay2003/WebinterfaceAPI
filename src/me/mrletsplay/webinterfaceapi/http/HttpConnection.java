@@ -55,6 +55,8 @@ public class HttpConnection extends AbstractConnection {
 				}catch(SocketException ignored) {
 					// Client probably just disconnected
 				}catch(Exception e) {
+					HttpServerHeader sh = new HttpServerHeader(HttpProtocolVersions.HTTP1_1, HttpStatusCodes.INTERNAL_SERVER_ERROR_500, new HttpHeaderFields());
+					sh.setContent("text/html", "<h1>500 Internal Server Error</h1>".getBytes(StandardCharsets.UTF_8));
 					close();
 					HttpServer.getLogger().log(Level.FINE, "Error in client receive loop", e);
 					throw new ServerException("Error in client receive loop", e);
@@ -78,17 +80,25 @@ public class HttpConnection extends AbstractConnection {
 		
 		HttpDocument d = getServer().getDocumentProvider().getDocument(h.getPath().getDocumentPath());
 		if(d == null) d = getServer().getDocumentProvider().get404Document();
+		
 		try {
 			d.createContent();
+			
+			sh = ctx.getServerHeader();
+			
+			if(sh.isAllowByteRanges()) applyRanges(sh);
+			if(sh.isCompressionEnabled()) applyCompression(sh);
 		}catch(Exception e) {
 			HttpServer.getLogger().log(Level.FINE, "Error while creating page content", e);
-			return false;
+
+			// Reset all of the context-related fields to ensure a clean environment
+			sh = new HttpServerHeader(getServer().getProtocolVersion(), HttpStatusCodes.OK_200, new HttpHeaderFields());
+			ctx = new HttpRequestContext(this, h, sh);
+			HttpRequestContext.setCurrentContext(ctx);
+			ctx.setException(e);
+			
+			getServer().getDocumentProvider().get500Document().createContent();
 		}
-		
-		sh = ctx.getServerHeader();
-		
-		if(sh.isAllowByteRanges()) applyRanges(sh);
-		if(sh.isCompressionEnabled()) applyCompression(sh);
 		
 		if(h.getFields().getFieldValue("Connection").equalsIgnoreCase("keep-alive")) {
 			sh.getFields().setFieldValue("Connection", "keep-alive");

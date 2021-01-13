@@ -12,6 +12,7 @@ public enum HttpStatusCodes implements HttpStatusCode {
 	ACCESS_DENIED_403(403, "Access Denied"),
 	NOT_FOUND_404(404, "Not Found"),
 	REQUESTED_RANGE_NOT_SATISFIABLE_416(416, "Requested Range Not Satisfiable"),
+	INTERNAL_SERVER_ERROR_500(500, "Internal Server Error"),
 	;
 	
 	private final int code;

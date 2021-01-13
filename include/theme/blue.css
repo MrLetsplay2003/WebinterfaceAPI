@@ -20,4 +20,6 @@ body {
 	--theme-color-content-border: lightgray;
 	--theme-color-content-text: black;
 	--theme-color-content-hover-bg: #efefef;
+
+	--theme-button-font-weight: normal;
 }
