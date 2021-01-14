@@ -18,7 +18,7 @@ public class CheckboxValue implements WebinterfaceActionValue {
 	
 	@Override
 	public String toJavaScript() {
-		return "document.getElementById(\"" + StringEscapeUtils.escapeEcmaScript(elementID) + "\").checked";
+		return "document.getElementById(\"" + StringEscapeUtils.escapeEcmaScript(elementID) + "\").firstChild.checked";
 	}
 
 }

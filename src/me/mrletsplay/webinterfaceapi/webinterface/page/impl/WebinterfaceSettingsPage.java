@@ -16,6 +16,7 @@ public class WebinterfaceSettingsPage extends WebinterfacePage {
 	
 	public WebinterfaceSettingsPage() {
 		super("Settings", "/wiapi/settings", DefaultPermissions.SETTINGS);
+		getContainerStyle().setProperty("max-width", "900px");
 		
 		WebinterfacePageSection sc2 = new WebinterfacePageSection();
 		sc2.addTitle("Settings");

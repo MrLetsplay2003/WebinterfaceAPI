@@ -34,11 +34,12 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 	
 	public WebinterfaceAccountsPage() {
 		super("Accounts", "/wiapi/accounts", DefaultPermissions.MODIFY_USERS);
+		getContainerStyle().setProperty("max-width", "900px");
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		
 		sc.addHeading("Accounts", 2);
-		sc.getStyle().setProperty("grid-template-columns", "1fr 1fr");
+		sc.getStyle().setProperty("grid-template-columns", "1fr");
 		sc.getMobileStyle().setProperty("grid-template-columns", "1fr");
 		
 		sc.addDynamicElements(() -> {

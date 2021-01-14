@@ -8,6 +8,7 @@ import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
 
 public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 	
@@ -34,19 +35,29 @@ public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 		return initialState;
 	}
 	
+	public CheckboxValue getCheckedValue() {
+		return new CheckboxValue(this);
+	}
+	
 	@Override
 	public HtmlElement createElement() {
-		HtmlElement b = new HtmlElement("input");
-		b.setAttribute("type", "checkbox");
-		b.setAttribute("aria-label", "Yes/No"); // TODO aria-label
-		if(initialState.get()) b.setAttribute("checked");
+		HtmlElement label = new HtmlElement("label");
+		label.addClass("checkbox-container");
+		HtmlElement ch = new HtmlElement("input");
+		ch.setAttribute("type", "checkbox");
+		ch.setAttribute("aria-label", "Yes/No"); // TODO aria-label
+		if(initialState.get()) ch.setAttribute("checked");
 		if(onChangeAction != null) {
 			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
 			JavaScriptFunction f = onChangeAction.toJavaScript();
 			sc.addFunction(f);
-			b.setAttribute("onchange", f.getSignature());
+			ch.setAttribute("onchange", f.getSignature());
 		}
-		return b;
+		label.appendChild(ch);
+		HtmlElement sp = new HtmlElement("span");
+		sp.addClass("checkbox-checkmark");
+		label.appendChild(sp);
+		return label;
 	}
 
 }

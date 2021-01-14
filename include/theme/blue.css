@@ -22,4 +22,7 @@ body {
 	--theme-color-content-hover-bg: #efefef;
 
 	--theme-button-font-weight: normal;
+
+	--theme-checkbox-border-width: 1px;
+	--theme-checkbox-hover-background: rgba(0, 0, 0, 0.1);
 }

@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.http.HttpUtils;
+import me.mrletsplay.webinterfaceapi.css.CssElement;
 import me.mrletsplay.webinterfaceapi.css.StyleSheet;
+import me.mrletsplay.webinterfaceapi.css.selector.CssSelector;
 import me.mrletsplay.webinterfaceapi.html.HtmlDocument;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
@@ -43,12 +45,18 @@ public class WebinterfacePage implements HttpDocument {
 	
 	private Supplier<List<WebinterfacePageSection>> sections;
 	
+	private CssElement
+		containerStyle,
+		mobileContainerStyle;
+	
 	public WebinterfacePage(String name, String url, String permission, boolean hidden) {
 		this.name = name;
 		this.url = url;
 		this.permission = permission;
 		this.sections = () -> new ArrayList<>();
 		this.hidden = hidden;
+		this.containerStyle = new CssElement(CssSelector.selectClass("content-container"));
+		this.mobileContainerStyle = new CssElement(CssSelector.selectClass("content-container"));
 	}
 	
 	public WebinterfacePage(String name, String url, String permission) {
@@ -78,6 +86,15 @@ public class WebinterfacePage implements HttpDocument {
 	public boolean isHidden() {
 		return hidden;
 	}
+	
+	public CssElement getContainerStyle() {
+		return containerStyle;
+	}
+	
+	public CssElement getMobileContainerStyle() {
+		return mobileContainerStyle;
+	}
+	
 	
 	public void addDynamicSections(Supplier<List<WebinterfacePageSection>> sections) {
 		Supplier<List<WebinterfacePageSection>> oldS = this.sections;
@@ -112,6 +129,8 @@ public class WebinterfacePage implements HttpDocument {
 		d.includeScript("/_internal/include.js", false, true);
 		JavaScriptScript sc = new JavaScriptScript();
 		StyleSheet st = new StyleSheet();
+		st.addElement(containerStyle);
+		st.addMobileElement(mobileContainerStyle);
 		
 		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
 		ctx.setProperty(CONTEXT_PROPERTY_DOCUMENT, d);

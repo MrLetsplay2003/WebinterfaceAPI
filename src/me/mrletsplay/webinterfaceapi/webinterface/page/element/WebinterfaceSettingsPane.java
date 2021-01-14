@@ -80,7 +80,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			defaultValue = new RawValue(setting.getDefaultValue().toString());
 		}else if(setting.getType().equals(Complex.value(Boolean.class))) {
 			WebinterfaceCheckBox in = new WebinterfaceCheckBox(() -> (Boolean) config.get().getSetting(setting));
-			in.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
+			in.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
 			in.setOnChangeAction(changeSettingAction(setting, new CheckboxValue(in)));
 			el = in;
 			defaultValue = new RawValue(setting.getDefaultValue().toString());
@@ -121,7 +121,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		addElement(el);
 		addElement(reset);
 		
-		WebinterfaceVerticalSpacer sp = new WebinterfaceVerticalSpacer("30px");
+		WebinterfaceVerticalSpacer sp = new WebinterfaceVerticalSpacer("10px");
 		sp.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
 		addElement(sp);
 	}
