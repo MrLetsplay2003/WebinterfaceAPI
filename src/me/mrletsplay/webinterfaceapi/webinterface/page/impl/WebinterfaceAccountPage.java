@@ -23,6 +23,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceVerticalSpacer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
 public class WebinterfaceAccountPage extends WebinterfacePage {
@@ -31,11 +32,12 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 	
 	public WebinterfaceAccountPage() {
 		super("Account", URL, true);
+		getContainerStyle().setProperty("max-width", "900px");
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		
 		sc.addHeading("Account connections", 2);
-		sc.getStyle().setProperty("grid-template-columns", "1fr 1fr");
+		sc.getStyle().setProperty("grid-template-columns", "1fr");
 		sc.getMobileStyle().setProperty("grid-template-columns", "1fr");
 		
 		sc.addDynamicElements(() -> {
@@ -51,21 +53,36 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 				if(mth == null) continue;
 				
 				WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
+				grp.addInnerLayoutProperties(new GridLayout("min-content", "auto"));
 				
-				grp.addTitle("Auth method: " + mth.getName());
+//				grp.addTitle("Auth method: " + mth.getName());
+				WebinterfaceTitleText title = new WebinterfaceTitleText(con.getUserName());
+				title.getStyle().setProperty("font-size", "24px");
+				title.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.FULL_WIDTH);
+				grp.addElement(title);
 				
-				grp.addElement(new WebinterfaceTitleText("Username"));
-				grp.addElement(new WebinterfaceText(con.getUserName()));
+				WebinterfaceTitleText tt = new WebinterfaceTitleText("Auth method");
+				tt.getStyle().setProperty("white-space", "nowrap");
+				tt.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+				grp.addElement(tt);
+				WebinterfaceText un = new WebinterfaceText(mth.getName());
+				un.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+				grp.addElement(un);
 				
 				WebinterfaceTitleText tx2 = new WebinterfaceTitleText("Email");
-				tx2.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+				tx2.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
 				grp.addElement(tx2);
-				grp.addElement(new WebinterfaceText(con.getUserEmail() == null ? "-" : con.getUserEmail()));
+				WebinterfaceText em = new WebinterfaceText(con.getUserEmail() == null ? "-" : con.getUserEmail());
+				em.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+				grp.addElement(em);
 				
 				WebinterfaceTitleText tx4 = new WebinterfaceTitleText("Is Temporary");
-				tx4.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+				tx4.getStyle().setProperty("white-space", "nowrap");
+				tx4.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
 				grp.addElement(tx4);
-				grp.addElement(new WebinterfaceText(con.isTemporary() ? "yes" : "no"));
+				WebinterfaceText temp = new WebinterfaceText(con.isTemporary() ? "yes" : "no");
+				temp.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+				grp.addElement(temp);
 				
 				if(account.getConnections().size() > 1) {
 					WebinterfaceButton delBtn = new WebinterfaceButton("Remove connection");

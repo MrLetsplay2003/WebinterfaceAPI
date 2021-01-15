@@ -47,32 +47,51 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 			
 			for(WebinterfaceAccount acc : Webinterface.getAccountStorage().getAccounts()) {
 				WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
-				grp.addElement(new WebinterfaceTitleText("Username"));
-				grp.addElement(new WebinterfaceText(acc.getName()));
+				grp.addInnerLayoutProperties(new GridLayout("min-content", "auto"));
 				
-				WebinterfaceTitleText tx2 = new WebinterfaceTitleText("Primary Email");
-				tx2.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+				WebinterfaceTitleText tt = WebinterfaceTitleText.builder()
+						.text(acc.getName())
+						.leftbound()
+						.noLineBreaks()
+						.create();
+				tt.getStyle().setProperty("font-size", "24px");
+				grp.addElement(tt);
+				
+				WebinterfaceTitleText tx2 = WebinterfaceTitleText.builder()
+						.text("Primary Email")
+						.noLineBreaks()
+						.leftbound()
+						.create();
+				tx2.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
 				grp.addElement(tx2);
-				grp.addElement(new WebinterfaceText(acc.getPrimaryEmail() == null ? "-" : acc.getPrimaryEmail()));
+				grp.addElement(WebinterfaceText.builder()
+						.text(acc.getPrimaryEmail() == null ? "-" : acc.getPrimaryEmail())
+						.leftbound()
+						.create());
 				
 				WebinterfaceTitleText tx3 = new WebinterfaceTitleText("Permissions");
-				tx3.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+				tx3.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
 				grp.addElement(tx3);
-				grp.addElement(new WebinterfaceText(acc.getPermissions().isEmpty() ? "-" : acc.getPermissions().stream().map(Permission::getPermission).collect(Collectors.joining(", "))));
+				grp.addElement(WebinterfaceText.builder()
+						.text(acc.getPermissions().isEmpty() ? "-" : acc.getPermissions().stream().map(Permission::getPermission).collect(Collectors.joining(", ")))
+						.leftbound()
+						.create());
 				
-				WebinterfaceTitleText tx4 = new WebinterfaceTitleText("Is Temporary");
+				WebinterfaceTitleText tx4 = WebinterfaceTitleText.builder()
+						.text("Is Temporary")
+						.noLineBreaks()
+						.leftbound()
+						.create();
 				tx4.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
 				grp.addElement(tx4);
-				grp.addElement(new WebinterfaceText(acc.isTemporary() ? "yes" : "no"));
+				grp.addElement(WebinterfaceText.builder()
+						.text(acc.isTemporary() ? "yes" : "no")
+						.leftbound()
+						.create());
 				
-				WebinterfaceElementGroup grp2 = new WebinterfaceElementGroup();
-				grp2.addInnerLayoutProperties(new GridLayout("1fr", "1fr"));
-				grp2.addTitle("Account Actions");
-				grp2.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-				
-				WebinterfaceText tx = new WebinterfaceText("Is OP (has * permission)");
-				tx.setEnableMarkdown(true);
-				grp2.addElement(tx);
+				WebinterfaceTitleText tx = new WebinterfaceTitleText("Is Admin");
+				tx.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
+				grp.addElement(tx);
 				
 				WebinterfaceCheckBox cb = new WebinterfaceCheckBox(acc.hasPermission("*"));
 				
@@ -81,7 +100,12 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				opVal.putValue("value", new CheckboxValue(cb));
 				
 				cb.setOnChangeAction(new MultiAction(new ConfirmAction(new SendJSAction("webinterface", "setOP", opVal)), new ReloadPageAfterAction(100, true)));
-				grp2.addElement(cb);
+				grp.addElement(cb);
+				
+				WebinterfaceElementGroup grp2 = new WebinterfaceElementGroup();
+				grp2.addInnerLayoutProperties(new GridLayout("1fr", "1fr"));
+				grp2.addTitle("Account Actions");
+				grp2.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 				
 				WebinterfaceInputField addP = new WebinterfaceInputField("Add permission");
 				

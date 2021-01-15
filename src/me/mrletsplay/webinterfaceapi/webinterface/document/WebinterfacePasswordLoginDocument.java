@@ -3,6 +3,8 @@ package me.mrletsplay.webinterfaceapi.webinterface.document;
 import me.mrletsplay.webinterfaceapi.html.HtmlDocument;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class WebinterfacePasswordLoginDocument implements HttpDocument {
 
@@ -82,6 +84,7 @@ public class WebinterfacePasswordLoginDocument implements HttpDocument {
 		d.includeScript("https://code.jquery.com/jquery-3.5.1.min.js", false, true);
 		d.includeScript("/_internal/include.js", false, true);
 		d.includeScript("/_internal/password-login-include.js", false, true);
+		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
 		d.addStyleSheet("/_internal/password-login-include.css");
 		d.addStyleSheet("/_internal/alerts.css");
 		d.createContent();

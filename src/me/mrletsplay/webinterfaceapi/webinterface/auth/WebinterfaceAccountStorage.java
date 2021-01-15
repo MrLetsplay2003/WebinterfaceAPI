@@ -16,7 +16,11 @@ public interface WebinterfaceAccountStorage {
 	
 	public WebinterfaceAccount getAccountByPrimaryEmail(String email);
 	
-	public WebinterfaceAccount getAccountByConnectionSpecificID(String authMethod, String id);
+	public WebinterfaceAccount getAccountByConnectionSpecificID(String authMethod, String id, boolean caseInsensitive);
+	
+	public default WebinterfaceAccount getAccountByConnectionSpecificID(String authMethod, String id) {
+		return getAccountByConnectionSpecificID(authMethod, id, false);
+	}
 	
 	public List<WebinterfaceAccount> getAccounts();
 	

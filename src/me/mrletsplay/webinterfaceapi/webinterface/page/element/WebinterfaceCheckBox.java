@@ -53,6 +53,8 @@ public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 			sc.addFunction(f);
 			ch.setAttribute("onchange", f.getSignature());
 		}
+//		getStyle().setProperty("display", "flex");
+//		getStyle().setProperty("align-items", "center");
 		label.appendChild(ch);
 		HtmlElement sp = new HtmlElement("span");
 		sp.addClass("checkbox-checkmark");

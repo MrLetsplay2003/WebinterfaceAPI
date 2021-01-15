@@ -54,14 +54,14 @@ public class PasswordAuth implements WebinterfaceAuthMethod {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		try {
 			Map<String, List<String>> params = (Map<String, List<String>>) c.getClientHeader().getPostData().getParsedAs(HttpClientContentTypes.URLENCODED);
-			String username = params.get("username").get(0).toLowerCase(); // NONBETA: allow case
+			String username = params.get("username").get(0); // NONBETA: allow case
 			String password = params.get("password").get(0);
 			boolean register = (params.containsKey("register") ? params.get("register").get(0).equalsIgnoreCase("on") : false);
-			WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(ID, username);
+			WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(ID, username, true);
 			if(!register) {
-				if(acc == null) throw new AuthException("Invalid username");
+				if(acc == null) throw new AuthException("Invalid username/password");
 				WebinterfaceAccountConnection con = acc.getConnection(ID);
-				if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) throw new AuthException("Invalid password");
+				if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) throw new AuthException("Invalid password/password");
 				return con;
 			}else {
 				if(!isValidUsername(username)) throw new AuthException("Username contains invalid characters or is too long/short");

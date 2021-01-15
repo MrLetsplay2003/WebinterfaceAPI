@@ -2,6 +2,7 @@ body {
 	--theme-color-primary: #181818;
 	--theme-color-secondary: #121212;
 	--theme-color-tertiary: #1d1d1d;
+	--theme-color-accent: #394263;
 
 	--theme-color-page-bg: #0c0c0c;
 	--theme-color-page-text: hsla(0,0%,100%,.8);

@@ -22,6 +22,16 @@ public abstract class AbstractElementBuilder<T extends WebinterfacePageElement, 
 		return getSelf();
 	}
 	
+	public S leftbound() {
+		element.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+		return getSelf();
+	}
+	
+	public S rightbound() {
+		element.addLayoutProperties(DefaultLayoutProperty.RIGHTBOUND);
+		return getSelf();
+	}
+	
 	public S fullWidth() {
 		element.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		return getSelf();

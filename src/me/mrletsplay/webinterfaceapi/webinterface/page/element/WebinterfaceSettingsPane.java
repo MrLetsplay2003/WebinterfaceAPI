@@ -41,8 +41,9 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		this.requestMethod = requestMethod;
 		
 		addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-		getStyle().setProperty("grid-template-columns", "auto 50px");
-		getMobileStyle().setProperty("grid-template-columns", "1fr");
+//		getStyle().setProperty("grid-template-columns", "auto 50px");
+//		getMobileStyle().setProperty("grid-template-columns", "1fr");
+		getStyle().setProperty("grid-template-columns", "1fr");
 		
 		addSettings(settings);
 	}
@@ -59,11 +60,11 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
 	public void addSetting(WebinterfaceSetting<?> setting) {
 		settings.add(setting);
-		WebinterfaceText t = new WebinterfaceText(setting.getFriendlyName() != null ? setting.getFriendlyName() : setting.getKey());
-		t.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.NEW_LINE);
 		
 		WebinterfacePageElement el = null;
 		WebinterfaceActionValue defaultValue = null;
+		
+		boolean oneLineLayout = false;
 		
 		if(setting.getType().equals(Complex.value(String.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> {
@@ -84,6 +85,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			in.setOnChangeAction(changeSettingAction(setting, new CheckboxValue(in)));
 			el = in;
 			defaultValue = new RawValue(setting.getDefaultValue().toString());
+			oneLineLayout = true;
 		}else if(setting.getType().equals(Complex.list(String.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
 			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x=>x.trim())")));
@@ -106,24 +108,39 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 					.map(s -> new RawValue(s.toString()))
 					.collect(Collectors.toList()));
 		}
-		
+
 		if(el == null || defaultValue == null) return;
-		el.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+		if(!oneLineLayout) el.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+		
+		WebinterfaceText t = new WebinterfaceText(setting.getFriendlyName() != null ? setting.getFriendlyName() : setting.getKey());
+		t.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.CENTER_VERTICALLY);
+		if(!oneLineLayout) t.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
 		
 		WebinterfaceButton reset = new WebinterfaceButton("X");
-		reset.setOnClickAction(new MultiAction(new SendJSAction(requestTarget, requestMethod, new ArrayValue(
-				new StringValue(setting.getKey()),
-				defaultValue
-			)),
-			new ReloadPageAfterAction(100)));
+		reset.setOnClickAction(changeSettingAction(setting, defaultValue));
 		
-		addElement(t);
-		addElement(el);
-		addElement(reset);
+		WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
+		grp.getStyle().setProperty("grid-template-columns", oneLineLayout ? "50px auto" : "auto 50px");
+		grp.getMobileStyle().setProperty("grid-template-columns", oneLineLayout ? "50px auto" : "1fr");
 		
-		WebinterfaceVerticalSpacer sp = new WebinterfaceVerticalSpacer("10px");
-		sp.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
-		addElement(sp);
+		if(oneLineLayout) {
+			// No reset button, since this currently only exists for boolean settings
+			grp.addElement(el);
+			grp.addElement(t);
+		}else {
+			grp.addElement(t);
+			grp.addElement(el);
+			grp.addElement(reset);
+		}
+		
+//		addElement(t);
+//		addElement(el);
+//		addElement(reset);
+		addElement(grp);
+		
+//		WebinterfaceVerticalSpacer sp = new WebinterfaceVerticalSpacer("10px");
+//		sp.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+//		addElement(sp);
 	}
 	
 	private MultiAction changeSettingAction(WebinterfaceSetting<?> setting, WebinterfaceActionValue value) {

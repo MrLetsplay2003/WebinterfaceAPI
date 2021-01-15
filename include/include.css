@@ -347,14 +347,14 @@ img.element {
 /* Checkboxes */
 
 .checkbox-container {
-	display: inline-block;
+	display: flex;
 	position: relative;
 	cursor: pointer;
 	font-size: 22px;
-	width: 25px;
-	height: 25px;
-	margin-right: 5px;
-	margin-bottom: 5px;
+	width: 27px;
+	height: 27px;
+	/*margin-right: 2px;
+	margin-bottom: 2px;*/
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -385,7 +385,8 @@ img.element {
 }
 
 .checkbox-container input:checked ~ .checkbox-checkmark {
-	background-color: #394263;
+	background-color: var(--theme-color-accent);
+	border: var(--theme-checkbox-border-width) solid var(--theme-color-accent);
 }
 
 .checkbox-checkmark:after {
