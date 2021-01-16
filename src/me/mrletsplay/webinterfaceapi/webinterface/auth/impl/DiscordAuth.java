@@ -69,7 +69,8 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 				+ "&redirect_uri=" + HttpUtils.urlEncode(getAuthResponseUrl().toString()) // TODO: protocol
 				+ "&response_type=code"
 				+ "&scope=identify email"
-				+ "&state=" + (connect ? "connect~" : "") + HttpUtils.urlEncode(clientPath.getQueryParameterValue("from", "/")));
+				+ "&state=" + (connect ? "connect~" : "") + HttpUtils.urlEncode(clientPath.getQueryParameterValue("from", "/"))
+				+ "&prompt=none");
 	}
 
 	@Override
