@@ -6,7 +6,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceSettingsPane;
@@ -26,14 +26,14 @@ public class WebinterfaceSettingsPage extends WebinterfacePage {
 		btnRestart.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		btnRestart.setOnClickAction(new MultiAction(
 				new SendJSAction("webinterface", "restart", null),
-				new ReloadPageAfterAction(1000)));
+				new ReloadPageAction(false, 1000)));
 		sc2.addElement(btnRestart);
 		
 		WebinterfaceButton btnShutdown = new WebinterfaceButton("Shutdown");
 		btnShutdown.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		btnShutdown.setOnClickAction(new MultiAction(
 				new SendJSAction("webinterface", "shutdown", null),
-				new ReloadPageAfterAction(1000)));
+				new ReloadPageAction(false, 1000)));
 		sc2.addElement(btnShutdown);
 		
 		addSection(sc2);

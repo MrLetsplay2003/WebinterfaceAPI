@@ -11,8 +11,6 @@ import me.mrletsplay.webinterfaceapi.css.StyleSheet;
 import me.mrletsplay.webinterfaceapi.css.selector.CssSelector;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
-import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutProperty;
@@ -151,12 +149,7 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		if(height != null) style.setProperty("height", height);
 		
 		el.addClass("element");
-		if(onClickAction != null) {
-			JavaScriptScript sc = (JavaScriptScript) ctx.getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
-			JavaScriptFunction f = onClickAction.toJavaScript();
-			sc.addFunction(f);
-			el.setAttribute("onclick", f.getSignature());
-		}
+		if(onClickAction != null) el.setAttribute("onclick", onClickAction.createAttributeValue());
 		
 		StyleSheet st = (StyleSheet) ctx.getProperty(WebinterfacePage.CONTEXT_PROPERTY_STYLE);
 		if(!style.isEmpty()) {

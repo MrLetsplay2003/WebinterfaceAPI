@@ -82,7 +82,7 @@ public class WebinterfacePasswordLoginDocument implements HttpDocument {
 		
 		d.getBodyNode().appendChild(cont);
 		d.includeScript("https://code.jquery.com/jquery-3.5.1.min.js", false, true);
-		d.includeScript("/_internal/include.js", false, true);
+		d.includeScript("/_internal/js/base.js", false, true);
 		d.includeScript("/_internal/password-login-include.js", false, true);
 		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
 		d.addStyleSheet("/_internal/password-login-include.css");

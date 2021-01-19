@@ -13,7 +13,7 @@ import me.mrletsplay.mrcore.misc.NullableOptional;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
@@ -148,7 +148,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 				new StringValue(setting.getKey()),
 				value
 			)),
-			new ReloadPageAfterAction(100));
+			new ReloadPageAction(false, 100));
 	}
 	
 	public List<WebinterfaceSetting<?>> getSettings() {

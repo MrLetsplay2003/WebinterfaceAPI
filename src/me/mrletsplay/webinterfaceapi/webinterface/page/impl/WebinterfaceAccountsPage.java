@@ -12,7 +12,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ConfirmAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SetValueAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
@@ -99,7 +99,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				opVal.putValue("account_id", new StringValue(acc.getID()));
 				opVal.putValue("value", new CheckboxValue(cb));
 				
-				cb.setOnChangeAction(new MultiAction(new ConfirmAction(new SendJSAction("webinterface", "setOP", opVal)), new ReloadPageAfterAction(100, true)));
+				cb.setOnChangeAction(new MultiAction(new ConfirmAction(new SendJSAction("webinterface", "setOP", opVal)), new ReloadPageAction(true, 100)));
 				grp.addElement(cb);
 				
 				WebinterfaceElementGroup grp2 = new WebinterfaceElementGroup();
@@ -113,7 +113,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				addPVal.putValue("account_id", new StringValue(acc.getID()));
 				addPVal.putValue("permission", new ElementValue(addP));
 				
-				addP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "addPermission", addPVal), new SetValueAction(addP, new StringValue("")), new ReloadPageAfterAction(100)));
+				addP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "addPermission", addPVal), new SetValueAction(addP, new StringValue("")), new ReloadPageAction(false, 100)));
 				
 				grp2.addElement(addP);
 				
@@ -123,7 +123,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				remPVal.putValue("account_id", new StringValue(acc.getID()));
 				remPVal.putValue("permission", new ElementValue(remP));
 				
-				remP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "removePermission", remPVal), new SetValueAction(remP, new StringValue("")), new ReloadPageAfterAction(100)));
+				remP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "removePermission", remPVal), new SetValueAction(remP, new StringValue("")), new ReloadPageAction(false, 100)));
 				
 				grp2.addElement(remP);
 				
@@ -131,7 +131,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				delBtn.setWidth("auto");
 				delBtn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 				
-				delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "deleteAccount", new StringValue(acc.getID())), new ReloadPageAfterAction(100))));
+				delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "deleteAccount", new StringValue(acc.getID())), new ReloadPageAction(false, 100))));
 				
 				grp2.addElement(delBtn);
 				

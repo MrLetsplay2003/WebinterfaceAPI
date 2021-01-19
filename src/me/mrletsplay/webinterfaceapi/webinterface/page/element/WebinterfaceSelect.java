@@ -5,10 +5,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
-import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
-import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
-import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 
 public class WebinterfaceSelect extends AbstractWebinterfacePageElement {
@@ -44,12 +40,7 @@ public class WebinterfaceSelect extends AbstractWebinterfacePageElement {
 			oe.setAttribute("value", op.getValue());
 			b.appendChild(oe);
 		}
-		if(onChangeAction != null) {
-			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
-			JavaScriptFunction f = onChangeAction.toJavaScript();
-			sc.addFunction(f);
-			b.setAttribute("onchange", f.getSignature());
-		}
+		if(onChangeAction != null) b.setAttribute("onchange", onChangeAction.createAttributeValue());
 		return b;
 	}
 

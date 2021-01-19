@@ -3,10 +3,6 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
-import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
-import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
-import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
 
@@ -47,14 +43,7 @@ public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 		ch.setAttribute("type", "checkbox");
 		ch.setAttribute("aria-label", "Yes/No"); // TODO aria-label
 		if(initialState.get()) ch.setAttribute("checked");
-		if(onChangeAction != null) {
-			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
-			JavaScriptFunction f = onChangeAction.toJavaScript();
-			sc.addFunction(f);
-			ch.setAttribute("onchange", f.getSignature());
-		}
-//		getStyle().setProperty("display", "flex");
-//		getStyle().setProperty("align-items", "center");
+		if(onChangeAction != null) ch.setAttribute("onchange", onChangeAction.createAttributeValue());
 		label.appendChild(ch);
 		HtmlElement sp = new HtmlElement("span");
 		sp.addClass("checkbox-checkmark");

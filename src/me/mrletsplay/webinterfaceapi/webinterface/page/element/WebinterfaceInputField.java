@@ -3,10 +3,6 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
-import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
-import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
-import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 
 public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
@@ -76,12 +72,7 @@ public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
 			String v = initialValue.get();
 			if(v != null) b.setAttribute("value", v);
 		}
-		if(onChangeAction != null) {
-			JavaScriptScript sc = (JavaScriptScript) HttpRequestContext.getCurrentContext().getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
-			JavaScriptFunction f = onChangeAction.toJavaScript();
-			sc.addFunction(f);
-			b.setAttribute("onchange", f.getSignature());
-		}
+		if(onChangeAction != null) b.setAttribute("onchange", onChangeAction.createAttributeValue());
 		return b;
 	}
 

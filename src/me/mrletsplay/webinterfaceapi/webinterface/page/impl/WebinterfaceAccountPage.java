@@ -13,7 +13,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ConfirmAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.RedirectAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAfterAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
@@ -88,7 +88,7 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 					WebinterfaceButton delBtn = new WebinterfaceButton("Remove connection");
 					delBtn.setWidth("auto");
 					delBtn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-					delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getAuthMethod())), new ReloadPageAfterAction(100))));
+					delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getAuthMethod())), new ReloadPageAction(false, 100))));
 					
 					grp.addElement(delBtn);
 				}

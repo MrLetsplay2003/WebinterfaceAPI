@@ -1,6 +1,11 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.action;
 
-import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
+import java.util.Collections;
+import java.util.Set;
+
+import me.mrletsplay.mrcore.json.JSONObject;
+import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
+import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
 
 public class ConfirmAction implements WebinterfaceAction {
 	
@@ -11,15 +16,21 @@ public class ConfirmAction implements WebinterfaceAction {
 	}
 	
 	@Override
-	public JavaScriptFunction toJavaScript() {
-		JavaScriptFunction f = new JavaScriptFunction(randomFunctionName() + "()");
-		StringBuilder code = new StringBuilder();
-		code.append("if(confirm(\"Are you sure?\")) {");
-		JavaScriptFunction fc = action.toJavaScript();
-		code.append(fc.getCode().get());
-		code.append("}");
-		f.setCode(code.toString());
-		return f;
+	public String getHandlerName() {
+		return "WebinterfaceBaseActions.confirm";
+	}
+	
+	@Override
+	public JSONObject getParameters() {
+		JSONObject o = new JSONObject();
+		o.put("actionName", action.getHandlerName());
+		o.put("actionParameters", action.getParameters());
+		return o;
+	}
+	
+	@Override
+	public Set<WebinterfaceJSModule> getRequiredModules() {
+		return Collections.singleton(DefaultJSModule.BASE_ACTIONS);
 	}
 
 }

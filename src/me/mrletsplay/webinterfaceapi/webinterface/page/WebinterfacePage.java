@@ -2,13 +2,10 @@ package me.mrletsplay.webinterfaceapi.webinterface.page;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.webinterfaceapi.css.CssElement;
@@ -19,11 +16,12 @@ import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
+import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
+import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountPage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
@@ -32,7 +30,8 @@ public class WebinterfacePage implements HttpDocument {
 	public static final String
 		CONTEXT_PROPERTY_DOCUMENT = "webinterface-document",
 		CONTEXT_PROPERTY_SCRIPT = "webinterface-script",
-		CONTEXT_PROPERTY_STYLE = "webinterface-style";
+		CONTEXT_PROPERTY_STYLE = "webinterface-style",
+		CONTEXT_PROPERTY_REQUIRED_MODULES = "webinterface-required-modules";
 	
 	private static final Supplier<String> LOGIN_URL = () -> "/login?from=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().toString());
 	
@@ -126,7 +125,6 @@ public class WebinterfacePage implements HttpDocument {
 		d.setTitle(name);
 		d.setLanguage("en");
 		d.includeScript("https://code.jquery.com/jquery-3.5.1.min.js", false, true);
-		d.includeScript("/_internal/include.js", false, true);
 		JavaScriptScript sc = new JavaScriptScript();
 		StyleSheet st = new StyleSheet();
 		st.addElement(containerStyle);
@@ -136,6 +134,10 @@ public class WebinterfacePage implements HttpDocument {
 		ctx.setProperty(CONTEXT_PROPERTY_DOCUMENT, d);
 		ctx.setProperty(CONTEXT_PROPERTY_SCRIPT, sc);
 		ctx.setProperty(CONTEXT_PROPERTY_STYLE, st);
+		Set<WebinterfaceJSModule> requiredModules = new HashSet<>();
+		requiredModules.add(DefaultJSModule.BASE);
+		requiredModules.add(DefaultJSModule.TOAST);
+		ctx.setProperty(CONTEXT_PROPERTY_REQUIRED_MODULES, requiredModules);
 		
 		HtmlElement alertBox = new HtmlElement("div");
 		alertBox.setID("alert-box");
@@ -238,7 +240,7 @@ public class WebinterfacePage implements HttpDocument {
 		}
 		
 		// Script minify
-		if(Webinterface.getConfig().getSetting(DefaultSettings.MINIFY_SCRIPTS)) minifyScript();
+//		if(Webinterface.getConfig().getSetting(DefaultSettings.MINIFY_SCRIPTS)) minifyScript(); TODO: fix
 		
 		d.getBodyNode().appendChild(header);
 		d.getBodyNode().appendChild(main);
@@ -248,6 +250,9 @@ public class WebinterfacePage implements HttpDocument {
 		d.addStyleSheet("/_internal/include.css");
 		d.addStyleSheet("/_internal/alerts.css");
 		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
+		for(WebinterfaceJSModule m : requiredModules) {
+			d.includeScript("/_internal/js/module/" + m.getFileName(), true, true);
+		}
 		return d;
 	}
 	
@@ -267,51 +272,51 @@ public class WebinterfacePage implements HttpDocument {
 		}
 	}
 	
-	private void minifyScript() {
-		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
-		JavaScriptScript sc = (JavaScriptScript) ctx.getProperty(CONTEXT_PROPERTY_SCRIPT);
-		
-		Map<JavaScriptFunction, String> code = new HashMap<>();
-		Map<String, JavaScriptFunction> qFs = new HashMap<>();
-		int idx = 0;
-		for(JavaScriptFunction f : sc.getFunctions()) {
-			String cd = f.getCode().get();
-			Map.Entry<JavaScriptFunction, String> fo = code.entrySet().stream().filter(e -> e.getValue().equals(cd)).findFirst().orElse(null);
-			if(fo != null) {
-				f.setCode("return " + fo.getKey().getSignature() + ";");
-			}
-			
-			Pattern ebip = Pattern.compile("(?<method>(?:document|window|WebinterfaceUtils)\\.[^()\\[\\]]+)\\((?<params>[^\\)]*)\\)");
-			
-			String rest = cd;
-			Matcher m = ebip.matcher(rest);
-			StringBuilder nCode = new StringBuilder();
-			while(m.find()) {
-				JavaScriptFunction of = qFs.get(m.group("method"));
-				if(of == null) {
-					String sig = "q" + (idx++);
-					List<String> args = new ArrayList<>();
-					for(int i = 0; i < m.group("params").split(",").length; i++) {
-						args.add("arg" + i);
-					}
-					String aStr = args.stream().collect(Collectors.joining(",", "(", ")"));
-					sig += aStr;
-					of = new JavaScriptFunction(sig);
-					of.setCode("return " + m.group("method") + aStr + ";");
-					qFs.put(m.group("method"), of);
-				}
-				
-				nCode.append(rest.substring(0, m.start())); // Append preceding code
-				nCode.append(of.getSignature().get().replaceAll("\\([^)]+\\)", "(" + m.group("params") + ")"));
-				rest = rest.substring(m.end(), rest.length());
-				m = ebip.matcher(rest);
-			}
-			nCode.append(rest);
-			f.setCode(nCode.toString());
-		}
-		
-		qFs.values().forEach(sc::addFunction);
-	}
+//	private void minifyScript() {
+//		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
+//		JavaScriptScript sc = (JavaScriptScript) ctx.getProperty(CONTEXT_PROPERTY_SCRIPT);
+//		
+//		Map<JavaScriptFunction, String> code = new HashMap<>();
+//		Map<String, JavaScriptFunction> qFs = new HashMap<>();
+//		int idx = 0;
+//		for(JavaScriptFunction f : sc.getFunctions()) {
+//			String cd = f.getCode().get();
+//			Map.Entry<JavaScriptFunction, String> fo = code.entrySet().stream().filter(e -> e.getValue().equals(cd)).findFirst().orElse(null);
+//			if(fo != null) {
+//				f.setCode("return " + fo.getKey().getSignature() + ";");
+//			}
+//			
+//			Pattern ebip = Pattern.compile("(?<method>(?:document|window|WebinterfaceUtils)\\.[^()\\[\\]]+)\\((?<params>[^\\)]*)\\)");
+//			
+//			String rest = cd;
+//			Matcher m = ebip.matcher(rest);
+//			StringBuilder nCode = new StringBuilder();
+//			while(m.find()) {
+//				JavaScriptFunction of = qFs.get(m.group("method"));
+//				if(of == null) {
+//					String sig = "q" + (idx++);
+//					List<String> args = new ArrayList<>();
+//					for(int i = 0; i < m.group("params").split(",").length; i++) {
+//						args.add("arg" + i);
+//					}
+//					String aStr = args.stream().collect(Collectors.joining(",", "(", ")"));
+//					sig += aStr;
+//					of = new JavaScriptFunction(sig);
+//					of.setCode("return " + m.group("method") + aStr + ";");
+//					qFs.put(m.group("method"), of);
+//				}
+//				
+//				nCode.append(rest.substring(0, m.start())); // Append preceding code
+//				nCode.append(of.getSignature().get().replaceAll("\\([^)]+\\)", "(" + m.group("params") + ")"));
+//				rest = rest.substring(m.end(), rest.length());
+//				m = ebip.matcher(rest);
+//			}
+//			nCode.append(rest);
+//			f.setCode(nCode.toString());
+//		}
+//		
+//		qFs.values().forEach(sc::addFunction);
+//	}
 
 	@Override
 	public void createContent() {
