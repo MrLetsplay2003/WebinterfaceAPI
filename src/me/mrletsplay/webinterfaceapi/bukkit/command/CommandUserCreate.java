@@ -1,7 +1,7 @@
 package me.mrletsplay.webinterfaceapi.bukkit.command;
 
 import me.mrletsplay.mrcore.bukkitimpl.command.BukkitCommand;
-import me.mrletsplay.mrcore.command.CommandInvokedEvent;
+import me.mrletsplay.mrcore.command.event.CommandInvokedEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
