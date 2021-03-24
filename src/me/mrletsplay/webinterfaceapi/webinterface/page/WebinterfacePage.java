@@ -246,10 +246,10 @@ public class WebinterfacePage implements HttpDocument {
 		d.getBodyNode().appendChild(main);
 		d.getBodyNode().appendChild(sidenav);
 		d.getHeadNode().appendChild(HtmlElement.script(sc));
-		d.getHeadNode().appendChild(HtmlElement.style(st));
 		d.addStyleSheet("/_internal/include.css");
 		d.addStyleSheet("/_internal/alerts.css");
 		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
+		d.getHeadNode().appendChild(HtmlElement.style(st));
 		for(WebinterfaceJSModule m : requiredModules) {
 			d.includeScript("/_internal/js/module/" + m.getFileName(), true, true);
 		}
