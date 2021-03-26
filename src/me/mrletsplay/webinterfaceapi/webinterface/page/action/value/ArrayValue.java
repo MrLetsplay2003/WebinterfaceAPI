@@ -17,8 +17,13 @@ public class ArrayValue implements WebinterfaceActionValue {
 		this(new ArrayList<>(Arrays.asList(values)));
 	}
 	
-	public void addValue(WebinterfaceActionValue value) {
+	public void add(WebinterfaceActionValue value) {
 		values.add(value);
+	}
+	
+	@Deprecated
+	public void addValue(WebinterfaceActionValue value) {
+		add(value);
 	}
 	
 	@Override

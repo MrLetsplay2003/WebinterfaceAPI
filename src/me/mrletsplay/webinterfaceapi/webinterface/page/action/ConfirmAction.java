@@ -3,9 +3,10 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.action;
 import java.util.Collections;
 import java.util.Set;
 
-import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.RawValue;
 
 public class ConfirmAction implements WebinterfaceAction {
 	
@@ -21,9 +22,9 @@ public class ConfirmAction implements WebinterfaceAction {
 	}
 	
 	@Override
-	public JSONObject getParameters() {
-		JSONObject o = new JSONObject();
-		o.put("actionName", action.getHandlerName());
+	public ObjectValue getParameters() {
+		ObjectValue o = new ObjectValue();
+		o.put("action", new RawValue(action.getHandlerName()));
 		o.put("actionParameters", action.getParameters());
 		return o;
 	}

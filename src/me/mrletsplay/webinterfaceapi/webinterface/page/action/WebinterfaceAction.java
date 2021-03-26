@@ -2,19 +2,19 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.action;
 
 import java.util.Set;
 
-import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptFunction;
 import me.mrletsplay.webinterfaceapi.js.JavaScriptScript;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
 
 public interface WebinterfaceAction {
 	
 	public String getHandlerName();
 	
-	public JSONObject getParameters();
+	public ObjectValue getParameters();
 	
 	public Set<WebinterfaceJSModule> getRequiredModules();
 	
@@ -25,7 +25,7 @@ public interface WebinterfaceAction {
 		String functionName = WebinterfaceAction.randomFunctionName();
 		JavaScriptFunction f = new JavaScriptFunction(functionName + "(e,ev)");
 		f.addModifier("async");
-		f.setCode(String.format("%s(e,ev,%s);", getHandlerName(), getParameters().toString()));
+		f.setCode(String.format("%s(e,ev,%s);", getHandlerName(), getParameters().toJavaScript()));
 		sc.addFunction(f);
 		
 		Set<WebinterfaceJSModule> m = (Set<WebinterfaceJSModule>) ctx.getProperty(WebinterfacePage.CONTEXT_PROPERTY_REQUIRED_MODULES);

@@ -3,9 +3,9 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.action;
 import java.util.Collections;
 import java.util.Set;
 
-import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WebinterfaceActionValue;
 
@@ -27,9 +27,9 @@ public class RedirectAction implements WebinterfaceAction {
 	}
 	
 	@Override
-	public JSONObject getParameters() {
-		JSONObject o = new JSONObject();
-		o.put("url", url.toJavaScript());
+	public ObjectValue getParameters() {
+		ObjectValue o = new ObjectValue();
+		o.put("url", url);
 		return o;
 	}
 	

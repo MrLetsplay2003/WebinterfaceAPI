@@ -3,9 +3,10 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.action;
 import java.util.Collections;
 import java.util.Set;
 
-import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.RawValue;
 
 public class ReloadPageAction implements WebinterfaceAction {
 	
@@ -35,10 +36,10 @@ public class ReloadPageAction implements WebinterfaceAction {
 	}
 	
 	@Override
-	public JSONObject getParameters() {
-		JSONObject o = new JSONObject();
-		o.put("forceReload", forceReload);
-		o.put("delay", delay);
+	public ObjectValue getParameters() {
+		ObjectValue o = new ObjectValue();
+		o.put("forceReload", new RawValue(Boolean.toString(forceReload)));
+		o.put("delay", new RawValue(Integer.toString(delay)));
 		return o;
 	}
 	

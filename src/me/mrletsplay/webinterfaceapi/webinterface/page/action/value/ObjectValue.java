@@ -18,14 +18,19 @@ public class ObjectValue implements WebinterfaceActionValue {
 		this(new HashMap<>());
 	}
 	
-	public void putValue(String key, WebinterfaceActionValue value) {
+	public void put(String key, WebinterfaceActionValue value) {
 		values.put(key, value);
+	}
+	
+	@Deprecated
+	public void putValue(String key, WebinterfaceActionValue value) {
+		put(key, value);
 	}
 	
 	@Override
 	public String toJavaScript() {
 		return "{" + values.entrySet().stream()
-					.map(v -> "\"" + StringEscapeUtils.escapeEcmaScript(v.getKey()) + "\":" + v.getValue().toJavaScript())
+					.map(v -> "\"" + StringEscapeUtils.escapeEcmaScript(v.getKey()) + "\":" + (v.getValue() == null ? null : v.getValue().toJavaScript()))
 					.collect(Collectors.joining(",")) + "}";
 	}
 

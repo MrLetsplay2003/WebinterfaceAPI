@@ -1,11 +1,11 @@
 class WebinterfaceBaseActions {
 
     static setValue(element, event, parameters) {
-        document.getElementById(parameters.element).value = eval(parameters.value);
+        document.getElementById(parameters.element).value = parameters.value;
     }
 
     static sendJS(element, event, parameters) {
-        Webinterface.call(parameters.requestTarget, parameters.requestMethod, {value: parameters.value == null ? null : eval(parameters.value)});
+        Webinterface.call(parameters.requestTarget, parameters.requestMethod, {value: parameters.value == null ? null : parameters.value});
     }
 
     static reloadPage(element, event, parameters) {
@@ -25,18 +25,18 @@ class WebinterfaceBaseActions {
     }
 
     static redirect(element, event, parameters) {
-        window.location.href = eval(parameters.url);
+        window.location.href = parameters.url;
     }
 
     static multiAction(element, event, parameters) {
         for(let a of parameters.actions) {
-            eval(a.name)(element, event, a.parameters);
+            a.action(element, event, a.parameters);
         }
     }
 
     static confirm(element, event, parameters) {
         if(confirm("Are you sure?")) {
-            eval(parameters.actionName)(parameters.actionParameters);
+            parameters.action(parameters.actionParameters);
         }
     }
 
