@@ -96,8 +96,8 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				WebinterfaceCheckBox cb = new WebinterfaceCheckBox(acc.hasPermission("*"));
 				
 				ObjectValue opVal = new ObjectValue();
-				opVal.putValue("account_id", new StringValue(acc.getID()));
-				opVal.putValue("value", new CheckboxValue(cb));
+				opVal.put("account_id", new StringValue(acc.getID()));
+				opVal.put("value", new CheckboxValue(cb));
 				
 				cb.setOnChangeAction(new MultiAction(new ConfirmAction(new SendJSAction("webinterface", "setOP", opVal)), new ReloadPageAction(true, 100)));
 				grp.addElement(cb);
@@ -110,8 +110,8 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				WebinterfaceInputField addP = new WebinterfaceInputField("Add permission");
 				
 				ObjectValue addPVal = new ObjectValue();
-				addPVal.putValue("account_id", new StringValue(acc.getID()));
-				addPVal.putValue("permission", new ElementValue(addP));
+				addPVal.put("account_id", new StringValue(acc.getID()));
+				addPVal.put("permission", new ElementValue(addP));
 				
 				addP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "addPermission", addPVal), new SetValueAction(addP, new StringValue("")), new ReloadPageAction(false, 100)));
 				
@@ -120,8 +120,8 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				WebinterfaceInputField remP = new WebinterfaceInputField("Remove permission");
 				
 				ObjectValue remPVal = new ObjectValue();
-				remPVal.putValue("account_id", new StringValue(acc.getID()));
-				remPVal.putValue("permission", new ElementValue(remP));
+				remPVal.put("account_id", new StringValue(acc.getID()));
+				remPVal.put("permission", new ElementValue(remP));
 				
 				remP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "removePermission", remPVal), new SetValueAction(remP, new StringValue("")), new ReloadPageAction(false, 100)));
 				
