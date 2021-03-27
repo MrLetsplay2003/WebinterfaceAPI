@@ -30,7 +30,6 @@ public class DefaultSettings implements AutoSettings {
 	public static final BooleanSetting
 		ENABLE_INITIAL_SETUP = general.addBoolean("initial-setup.enable", true, "Enable initial setup"),
 		ALLOW_REGISTRATION = general.addBoolean("allow-registration", true, "Allow registration"),
-		ALLOW_ANONYMOUS = general.addBoolean("allow-anonymous", true, "Allow anonymous login"),
 		ENABLE_DEBUG_MODE = general.addBoolean("debug.enable", false, "Enable debug mode");
 	
 	public static final StringSetting
@@ -86,6 +85,7 @@ public class DefaultSettings implements AutoSettings {
 	//Auth
 	
 	public static final BooleanSetting
+		ALLOW_ANONYMOUS = auth.addBoolean("allow-anonymous", true, "Allow anonymous login"),
 		ENABLE_DISCORD_AUTH = auth.addBoolean("use-auth.discord", true, "Enable Discord auth"),
 		ENABLE_GITHUB_AUTH = auth.addBoolean("use-auth.github", true, "Enable GitHub auth"),
 		ENABLE_GOOGLE_AUTH = auth.addBoolean("use-auth.google", true, "Enable Google auth"),
