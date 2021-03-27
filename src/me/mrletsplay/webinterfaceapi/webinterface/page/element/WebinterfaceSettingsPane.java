@@ -1,8 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -11,6 +9,7 @@ import me.mrletsplay.mrcore.json.JSONArray;
 import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.misc.NullableOptional;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
+import me.mrletsplay.webinterfaceapi.webinterface.config.setting.SettingsCategory;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
@@ -29,14 +28,14 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLay
 public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
 	private Supplier<WebinterfaceConfig> config;
-	private List<WebinterfaceSetting<?>> settings;
+	private List<SettingsCategory> categories;
 	private String
 		requestTarget,
 		requestMethod;
 	
-	public WebinterfaceSettingsPane(Supplier<WebinterfaceConfig> config, List<WebinterfaceSetting<?>> settings, String requestTarget, String requestMethod) {
+	public WebinterfaceSettingsPane(Supplier<WebinterfaceConfig> config, List<SettingsCategory> settings, String requestTarget, String requestMethod) {
 		this.config = config;
-		this.settings = new ArrayList<>();
+		this.categories = new ArrayList<>();
 		this.requestTarget = requestTarget;
 		this.requestMethod = requestMethod;
 		
@@ -48,18 +47,27 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		addSettings(settings);
 	}
 	
-	public WebinterfaceSettingsPane(WebinterfaceConfig config, List<WebinterfaceSetting<?>> settings, String requestTarget, String requestMethod) {
+	public WebinterfaceSettingsPane(WebinterfaceConfig config, List<SettingsCategory> settings, String requestTarget, String requestMethod) {
 		this(() -> config, settings, requestTarget, requestMethod);
 	}
 	
-	public void addSettings(List<WebinterfaceSetting<?>> settings) {
-		List<WebinterfaceSetting<?>> sL = new ArrayList<>(settings);
-		Collections.sort(sL, Comparator.comparing(WebinterfaceSetting::getKey));
-		sL.forEach(this::addSetting);
+	public void addSettings(List<SettingsCategory> categories) {
+//		List<WebinterfaceSetting<?>> sL = new ArrayList<>(settings);
+//		Collections.sort(sL, Comparator.comparing(WebinterfaceSetting::getKey));
+//		sL.forEach(this::addSetting);
+		categories.forEach(c -> {
+			WebinterfaceHeading h = new WebinterfaceHeading(c.getName());
+			h.setLevel(3);
+			h.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+			h.getStyle().setProperty("margin", "0");
+			addElement(h);
+			c.getSettings().forEach(this::addSetting);
+			addElement(new WebinterfaceVerticalSpacer("30px"));
+		});
 	}
 	
-	public void addSetting(WebinterfaceSetting<?> setting) {
-		settings.add(setting);
+	private void addSetting(WebinterfaceSetting<?> setting) {
+//		settings.add(setting);
 		
 		WebinterfacePageElement el = null;
 		WebinterfaceActionValue defaultValue = null;
@@ -151,8 +159,8 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			new ReloadPageAction(false, 100));
 	}
 	
-	public List<WebinterfaceSetting<?>> getSettings() {
-		return settings;
+	public List<SettingsCategory> getSettingsCategories() {
+		return categories;
 	}
 	
 	public static WebinterfaceResponse handleSetSettingRequest(WebinterfaceConfig config, WebinterfaceRequestEvent event) {

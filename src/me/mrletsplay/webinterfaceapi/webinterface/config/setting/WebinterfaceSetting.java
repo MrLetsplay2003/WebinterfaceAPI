@@ -14,4 +14,6 @@ public interface WebinterfaceSetting<T> {
 	
 	public String getFriendlyName();
 	
+	public SettingsCategory getCategory();
+	
 }

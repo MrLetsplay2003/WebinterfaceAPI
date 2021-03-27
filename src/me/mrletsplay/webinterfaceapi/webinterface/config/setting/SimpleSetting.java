@@ -4,22 +4,17 @@ import me.mrletsplay.mrcore.misc.Complex;
 
 public class SimpleSetting<T> implements WebinterfaceSetting<T> {
 
+	private SettingsCategory category;
 	private String key;
 	private T defaultValue;
 	private Complex<T> type;
 	private String friendlyName;
 	
-	public SimpleSetting(String key, T defaultValue, Complex<T> type) {
+	public SimpleSetting(SettingsCategory category, String key, T defaultValue, Complex<T> type) {
+		this.category = category;
 		this.key = key;
 		this.defaultValue = defaultValue;
 		this.type = type;
-	}
-	
-	public SimpleSetting(String key, T defaultValue, Complex<T> type, String friendlyName) {
-		this.key = key;
-		this.defaultValue = defaultValue;
-		this.type = type;
-		this.friendlyName = friendlyName;
 	}
 	
 	@Override
@@ -42,9 +37,18 @@ public class SimpleSetting<T> implements WebinterfaceSetting<T> {
 		return type;
 	}
 	
+	public void setFriendlyName(String friendlyName) {
+		this.friendlyName = friendlyName;
+	}
+	
 	@Override
 	public String getFriendlyName() {
 		return friendlyName;
+	}
+	
+	@Override
+	public SettingsCategory getCategory() {
+		return category;
 	}
 	
 }

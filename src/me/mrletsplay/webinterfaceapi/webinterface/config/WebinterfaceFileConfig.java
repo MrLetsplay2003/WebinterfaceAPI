@@ -6,18 +6,19 @@ import java.util.List;
 
 import me.mrletsplay.mrcore.config.ConfigLoader;
 import me.mrletsplay.mrcore.config.FileCustomConfig;
+import me.mrletsplay.webinterfaceapi.webinterface.config.setting.SettingsCategory;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 
 public class WebinterfaceFileConfig implements WebinterfaceConfig {
 	
 	private File file;
 	private FileCustomConfig config;
-	private List<WebinterfaceSetting<?>> settings;
+	private List<SettingsCategory> categories;
 	
 	public WebinterfaceFileConfig(File file) {
 		this.file = file;
 		this.config = ConfigLoader.loadFileConfig(file);
-		this.settings = new ArrayList<>();
+		this.categories = new ArrayList<>();
 	}
 	
 	public File getFile() {
@@ -37,9 +38,7 @@ public class WebinterfaceFileConfig implements WebinterfaceConfig {
 		config.saveToFile();
 	}
 	
-	@Override
-	public void registerSetting(WebinterfaceSetting<?> setting) {
-		settings.add(setting);
+	private void initSetting(WebinterfaceSetting<?> setting) {
 		if(!config.isSet(setting.getKey())) {
 			config.set(setting.getKey(), setting.getDefaultValue());
 			config.saveToFile();
@@ -47,8 +46,14 @@ public class WebinterfaceFileConfig implements WebinterfaceConfig {
 	}
 	
 	@Override
-	public List<WebinterfaceSetting<?>> getSettings() {
-		return settings;
+	public void registerSettings(SettingsCategory category) {
+		categories.add(category);
+		category.getSettings().forEach(this::initSetting);
+	}
+	
+	@Override
+	public List<SettingsCategory> getSettingsCategories() {
+		return categories;
 	}
 	
 	@Override
