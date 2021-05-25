@@ -10,6 +10,7 @@ import me.mrletsplay.mrcore.bukkitimpl.ui.UIElement;
 import me.mrletsplay.mrcore.bukkitimpl.ui.UILayout;
 import me.mrletsplay.mrcore.bukkitimpl.ui.event.UIBuildEvent;
 import me.mrletsplay.mrcore.misc.QuickMap;
+import me.mrletsplay.webinterfaceapi.bukkit.command.CommandWebinterfaceAPI;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
@@ -19,6 +20,8 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRespon
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.HoverEvent.Action;
 
 public class BukkitHandler implements WebinterfaceActionHandler {
 	
@@ -29,8 +32,8 @@ public class BukkitHandler implements WebinterfaceActionHandler {
 				public BaseComponent[] getLayout(UIBuildEvent e) {
 					WebinterfaceAccount acc = (WebinterfaceAccount) e.getUIInstance().getProperty(WebinterfacePlugin.pl, "account");
 					return new ComponentBuilder("Connect to "
-							+ acc.getPrimaryEmail()
-							+ "?").create();
+							+ acc.getName()
+							+ "?").event(new HoverEvent(Action.SHOW_TEXT, CommandWebinterfaceAPI.createHoverText(acc))).create();
 				}
 			})
 			.addElement("accept", new StaticUIElement("§a[Yes]")

@@ -45,6 +45,12 @@ public class CommandUserPermissionAdd extends BukkitCommand {
 			return;
 		}
 		
+		if(account.hasPermissionExactly(permission)) {
+			event.getSender().sendMessage("That account already has the specified permission");
+			return;
+		}
+		
+		account.addPermission(permission);
 		CommandSender s = ((BukkitCommandSender) event.getSender()).getBukkitSender();
 		s.spigot().sendMessage(new ComponentBuilder()
 				.append("Granted permission ").color(ChatColor.GREEN)
