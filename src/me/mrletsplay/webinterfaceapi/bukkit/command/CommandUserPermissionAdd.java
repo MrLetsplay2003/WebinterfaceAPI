@@ -40,6 +40,11 @@ public class CommandUserPermissionAdd extends BukkitCommand {
 			account = Webinterface.getAccountStorage().getAccountByID(userID);
 		}
 		
+		if(account == null) {
+			event.getSender().sendMessage("That account doesn't exist");
+			return;
+		}
+		
 		CommandSender s = ((BukkitCommandSender) event.getSender()).getBukkitSender();
 		s.spigot().sendMessage(new ComponentBuilder()
 				.append("Granted permission ").color(ChatColor.GREEN)
