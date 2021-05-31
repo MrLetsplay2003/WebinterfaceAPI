@@ -34,11 +34,11 @@ public class WebinterfaceAuthResponseDocument implements HttpDocument {
 			
 			WebinterfaceSession sess = WebinterfaceSession.getCurrentSession();
 			if(sess != null && !acc.isTemporary() && method.getShouldConnect()) {
-				WebinterfaceAccount other = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(acc.getAuthMethod(), acc.getUserID());
+				WebinterfaceAccount other = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(acc.getConnectionName(), acc.getUserID());
 				
 				if(other == null) {
 					WebinterfaceAccount account = sess.getAccount();
-					if(account.getConnection(acc.getAuthMethod()) == null) account.addConnection(acc);
+					if(account.getConnection(acc.getConnectionName()) == null) account.addConnection(acc);
 				}
 			}else {
 				WebinterfaceSession.stopSession();

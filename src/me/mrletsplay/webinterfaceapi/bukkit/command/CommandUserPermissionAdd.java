@@ -18,7 +18,7 @@ public class CommandUserPermissionAdd extends BukkitCommand {
 		super("add");
 		
 		setDescription("Add a permission to a user on the webinterface");
-		setUsage("wiapi user permission add <account id | auth method:user id> <permission>");
+		setUsage("wiapi user permission add <account id | connection name:user id> <permission>");
 	}
 	
 	@Override

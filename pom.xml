@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.mrletsplay</groupId>
 	<artifactId>WebinterfaceAPI</artifactId>
-	<version>2.2</version>
+	<version>2.3</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -105,6 +105,10 @@
 			<id>graphite-official</id>
 			<url>http://graphite-official.com/repo/</url>
 		</repository>
+		<repository>
+			<id>placeholderapi</id>
+			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -140,6 +144,12 @@
 			<groupId>org.java-websocket</groupId>
 			<artifactId>Java-WebSocket</artifactId>
 			<version>1.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.10.9</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

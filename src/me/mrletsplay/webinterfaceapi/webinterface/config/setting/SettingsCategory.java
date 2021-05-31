@@ -30,32 +30,52 @@ public class SettingsCategory {
 		settings.add(setting);
 	}
 	
-	public BooleanSetting addBoolean(String path, boolean defaultValue, String friendlyName) {
+	public BooleanSetting addBoolean(String path, boolean defaultValue, String friendlyName, String description) {
 		BooleanSetting s = new BooleanSetting(this, path, defaultValue);
 		s.setFriendlyName(friendlyName);
+		if(description != null) s.setDescription(description);
+		addSetting(s);
+		return s;
+	}
+	
+	public BooleanSetting addBoolean(String path, boolean defaultValue, String friendlyName) {
+		return addBoolean(path, defaultValue, friendlyName, null);
+	}
+	
+	public StringSetting addString(String path, String defaultValue, String friendlyName, String description) {
+		StringSetting s = new StringSetting(this, path, defaultValue);
+		s.setFriendlyName(friendlyName);
+		if(description != null) s.setDescription(description);
 		addSetting(s);
 		return s;
 	}
 	
 	public StringSetting addString(String path, String defaultValue, String friendlyName) {
-		StringSetting s = new StringSetting(this, path, defaultValue);
+		return addString(path, defaultValue, friendlyName, null);
+	}
+	
+	public StringListSetting addStringList(String path, List<String> defaultValue, String friendlyName, String description) {
+		StringListSetting s = new StringListSetting(this, path, defaultValue);
 		s.setFriendlyName(friendlyName);
+		if(description != null) s.setDescription(description);
 		addSetting(s);
 		return s;
 	}
 	
 	public StringListSetting addStringList(String path, List<String> defaultValue, String friendlyName) {
-		StringListSetting s = new StringListSetting(this, path, defaultValue);
+		return addStringList(path, defaultValue, friendlyName, null);
+	}
+	
+	public IntSetting addInt(String path, int defaultValue, String friendlyName, String description) {
+		IntSetting s = new IntSetting(this, path, defaultValue);
 		s.setFriendlyName(friendlyName);
+		if(description != null) s.setDescription(description);
 		addSetting(s);
 		return s;
 	}
 	
 	public IntSetting addInt(String path, int defaultValue, String friendlyName) {
-		IntSetting s = new IntSetting(this, path, defaultValue);
-		s.setFriendlyName(friendlyName);
-		addSetting(s);
-		return s;
+		return addInt(path, defaultValue, friendlyName, null);
 	}
 	
 }

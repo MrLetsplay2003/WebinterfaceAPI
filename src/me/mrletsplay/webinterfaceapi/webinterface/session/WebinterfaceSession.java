@@ -68,7 +68,7 @@ public class WebinterfaceSession {
 		String sID = UUID.randomUUID().toString();
 		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
 		
-		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(accountData.getAuthMethod(), accountData.getUserID());
+		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(accountData.getConnectionName(), accountData.getUserID());
 		
 //		if(acc == null && accountData.getUserEmail() != null) { FIXME
 //			acc = Webinterface.getAccountStorage().getAccountByPrimaryEmail(accountData.getUserEmail());
@@ -82,7 +82,7 @@ public class WebinterfaceSession {
 			acc = Webinterface.getAccountStorage().createAccount();
 			acc.addConnection(accountData);
 		}
-		if(acc.getConnection(accountData.getAuthMethod()) == null) acc.addConnection(accountData);
+		if(acc.getConnection(accountData.getConnectionName()) == null) acc.addConnection(accountData);
 		WebinterfaceSession s = new WebinterfaceSession(sID, acc.getID(), expiresAt, new HashMap<>());
 		Webinterface.getSessionStorage().storeSession(s);
 		return s;

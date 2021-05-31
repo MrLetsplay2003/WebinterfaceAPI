@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.mrletsplay.webinterfaceapi.bukkit.command.CommandWebinterfaceAPI;
 import me.mrletsplay.webinterfaceapi.bukkit.page.BukkitPage;
+import me.mrletsplay.webinterfaceapi.bukkit.page.BukkitSettingsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
@@ -23,14 +24,18 @@ public class WebinterfacePlugin extends JavaPlugin {
 		MrCoreBukkitImpl.loadMrCore(this);
 		
 		getCommand("webinterfaceapi").setExecutor(new CommandWebinterfaceAPI());
+		
 		Webinterface.setRootDirectory(getDataFolder());
 		
 		WebinterfacePageCategory cat = Webinterface.createCategory("Bukkit");
 		cat.addPage(new BukkitPage());
+		cat.addPage(new BukkitSettingsPage());
 		
 		Webinterface.registerActionHandler(new BukkitHandler());
 		
 		Webinterface.start();
+		Webinterface.getConfig().registerSettings(BukkitSettings.INSTANCE);
+		
 		getLogger().info("WebinterfaceAPI loaded");
 	}
 	

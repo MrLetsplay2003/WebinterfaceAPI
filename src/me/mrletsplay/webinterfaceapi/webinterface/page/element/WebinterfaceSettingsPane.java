@@ -24,6 +24,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WebinterfaceActionValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WrapperValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 
 public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	
@@ -40,8 +41,6 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		this.requestMethod = requestMethod;
 		
 		addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-//		getStyle().setProperty("grid-template-columns", "auto 50px");
-//		getMobileStyle().setProperty("grid-template-columns", "1fr");
 		getStyle().setProperty("grid-template-columns", "1fr");
 		
 		addSettings(settings);
@@ -52,9 +51,6 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	}
 	
 	public void addSettings(List<SettingsCategory> categories) {
-//		List<WebinterfaceSetting<?>> sL = new ArrayList<>(settings);
-//		Collections.sort(sL, Comparator.comparing(WebinterfaceSetting::getKey));
-//		sL.forEach(this::addSetting);
 		categories.forEach(c -> {
 			WebinterfaceHeading h = new WebinterfaceHeading(c.getName());
 			h.setLevel(3);
@@ -67,8 +63,6 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 	}
 	
 	private void addSetting(WebinterfaceSetting<?> setting) {
-//		settings.add(setting);
-		
 		WebinterfacePageElement el = null;
 		WebinterfaceActionValue defaultValue = null;
 		
@@ -124,6 +118,19 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		t.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.CENTER_VERTICALLY);
 		if(!oneLineLayout) t.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
 		
+		WebinterfacePageElement tEl = t;
+		if(setting.getDescription() != null) {
+			WebinterfaceElementGroup tGrp = new WebinterfaceElementGroup();
+			tGrp.addInnerLayoutProperties(new GridLayout("1fr"));
+			tGrp.addElement(t);
+			WebinterfaceText tDesc = new WebinterfaceText(setting.getDescription());
+			tDesc.getStyle().setProperty("font-size", "0.8em");
+			tDesc.getStyle().setProperty("color", "var(--theme-color-content-text-secondary)");
+			tDesc.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.CENTER_VERTICALLY);
+			tGrp.addElement(tDesc);
+			tEl = tGrp;
+		}
+		
 		WebinterfaceButton reset = new WebinterfaceButton("X");
 		reset.setOnClickAction(changeSettingAction(setting, defaultValue));
 		
@@ -134,21 +141,14 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		if(oneLineLayout) {
 			// No reset button, since this currently only exists for boolean settings
 			grp.addElement(el);
-			grp.addElement(t);
+			grp.addElement(tEl);
 		}else {
-			grp.addElement(t);
+			grp.addElement(tEl);
 			grp.addElement(el);
 			grp.addElement(reset);
 		}
 		
-//		addElement(t);
-//		addElement(el);
-//		addElement(reset);
 		addElement(grp);
-		
-//		WebinterfaceVerticalSpacer sp = new WebinterfaceVerticalSpacer("10px");
-//		sp.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
-//		addElement(sp);
 	}
 	
 	private MultiAction changeSettingAction(WebinterfaceSetting<?> setting, WebinterfaceActionValue value) {

@@ -3,6 +3,7 @@ package me.mrletsplay.webinterfaceapi.webinterface.document;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import me.mrletsplay.webinterfaceapi.http.document.DefaultDocumentProvider;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
@@ -22,15 +23,14 @@ public class WebinterfaceDocumentProvider extends DefaultDocumentProvider {
 	}
 
 	@Override
-	public void registerFileDocument(String path, File file, boolean appendFileName) {
-		if(appendFileName
-				&& file.isFile()
+	public void registerFileDocument(String path, File file) {
+		if(file.isFile()
 				&& Webinterface.getConfig()
 				.getSetting(DefaultSettings.INDEX_FILES)
 				.contains(file.getName().toLowerCase())) {
-			super.registerFileDocument(path, file, false);
+			super.registerFileDocument(Paths.get(path).getParent().toString(), file);
 		}
-		super.registerFileDocument(path, file, appendFileName);
+		super.registerFileDocument(path, file);
 	}
 	
 	@Override

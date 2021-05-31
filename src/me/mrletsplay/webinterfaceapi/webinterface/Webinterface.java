@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
-import me.mrletsplay.mrcore.misc.MiscUtils;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
 import me.mrletsplay.webinterfaceapi.http.HttpsServer;
 import me.mrletsplay.webinterfaceapi.http.document.FileDocument;
@@ -77,7 +76,7 @@ public class Webinterface {
 	private static List<WebinterfacePageCategory> categories;
 	private static List<WebinterfaceActionHandler> handlers;
 	private static List<WebinterfaceAuthMethod> authMethods;
-	private static Map<String, Map.Entry<File, Boolean>> includedFiles;
+	private static Map<String, File> includedFiles;
 	private static WebinterfaceHomePage homePage;
 	
 	private static boolean initialized = false;
@@ -354,21 +353,17 @@ public class Webinterface {
 		return markdownRenderer;
 	}
 	
-	public static void includeFile(String path, File file, boolean includeFileName) {
-		includedFiles.put(path, MiscUtils.newMapEntry(file, includeFileName));
-	}
-	
 	public static void includeFile(String path, File file) {
-		includeFile(path, file, false);
+		includedFiles.put(path, file);
 	}
 	
 	public static void loadIncludedFiles() {
-		for(Map.Entry<String, Map.Entry<File, Boolean>> v : includedFiles.entrySet()) {
-			documentProvider.registerFileDocument(v.getKey(), v.getValue().getKey(), v.getValue().getValue());
+		for(Map.Entry<String, File> v : includedFiles.entrySet()) {
+			documentProvider.registerFileDocument(v.getKey(), v.getValue());
 		}
 	}
 	
-	public static Map<String, Map.Entry<File, Boolean>> getIncludedFiles() {
+	public static Map<String, File> getIncludedFiles() {
 		return includedFiles;
 	}
 	

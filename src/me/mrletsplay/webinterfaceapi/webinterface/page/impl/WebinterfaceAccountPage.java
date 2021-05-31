@@ -1,7 +1,9 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.impl;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
@@ -45,12 +47,16 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 			
 			WebinterfaceAccount account = WebinterfaceSession.getCurrentSession().getAccount();
 			
+			Map<WebinterfaceAccountConnection, WebinterfaceAuthMethod> loginCons = new LinkedHashMap<>();
 			for(WebinterfaceAccountConnection con : account.getConnections()) {
 				WebinterfaceAuthMethod mth = Webinterface.getAuthMethods().stream()
-						.filter(m -> m.getID().equals(con.getAuthMethod()))
+						.filter(m -> m.getID().equals(con.getConnectionName()))
 						.findFirst().orElse(null);
-				
-				if(mth == null) continue;
+				if(mth != null) loginCons.put(con, mth);
+			}
+			
+			for(WebinterfaceAccountConnection con : account.getConnections()) {
+				WebinterfaceAuthMethod mth = loginCons.get(con);
 				
 				WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
 				grp.addInnerLayoutProperties(new GridLayout("min-content", "auto"));
@@ -61,13 +67,15 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 				title.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.FULL_WIDTH);
 				grp.addElement(title);
 				
-				WebinterfaceTitleText tt = new WebinterfaceTitleText("Auth method");
-				tt.getStyle().setProperty("white-space", "nowrap");
-				tt.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
-				grp.addElement(tt);
-				WebinterfaceText un = new WebinterfaceText(mth.getName());
-				un.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
-				grp.addElement(un);
+				if(mth != null) {
+					WebinterfaceTitleText tt = new WebinterfaceTitleText("Auth method");
+					tt.getStyle().setProperty("white-space", "nowrap");
+					tt.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+					grp.addElement(tt);
+					WebinterfaceText un = new WebinterfaceText(mth.getName());
+					un.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+					grp.addElement(un);
+				}
 				
 				WebinterfaceTitleText tx2 = new WebinterfaceTitleText("Email");
 				tx2.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
@@ -84,11 +92,11 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 				temp.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
 				grp.addElement(temp);
 				
-				if(account.getConnections().size() > 1) {
+				if(loginCons.size() > 1) {
 					WebinterfaceButton delBtn = new WebinterfaceButton("Remove connection");
 					delBtn.setWidth("auto");
 					delBtn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
-					delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getAuthMethod())), new ReloadPageAction(false, 100))));
+					delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getConnectionName())), new ReloadPageAction(false, 100))));
 					
 					grp.addElement(delBtn);
 				}

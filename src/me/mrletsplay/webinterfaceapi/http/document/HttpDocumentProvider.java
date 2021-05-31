@@ -11,14 +11,14 @@ public interface HttpDocumentProvider {
 	
 	public void registerDocument(String path, HttpDocument document);
 	
-	public default void registerFileDocument(String path, File file, boolean appendFileName) {
+	public default void registerFileDocument(String path, File file) {
 		if(file.isDirectory()) {
 			for(File fl : file.listFiles()) {
-				registerFileDocument(appendFileName ? (path + "/" + file.getName()) : path, fl, true);
+				registerFileDocument(path + "/" + fl.getName(), fl);
 			}
 			return;
 		}
-		registerDocument(path + (appendFileName ? "/" + file.getName() : ""), createFileDocument(file));
+		registerDocument(path, createFileDocument(file));
 	}
 	
 	public default HttpDocument createFileDocument(File file) {
@@ -31,10 +31,6 @@ public interface HttpDocumentProvider {
 		} catch (IOException e) {
 			return new FileDocument(file);
 		}
-	}
-	
-	public default void registerFileDocument(String path, File file) {
-		registerFileDocument(path, file, false);
 	}
 	
 	public HttpDocument getDocument(String path);

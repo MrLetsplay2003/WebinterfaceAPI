@@ -46,7 +46,7 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 		JSONArray arr = new JSONArray();
 		for(WebinterfaceAccountConnection c : account.getConnections()) {
 			JSONObject accCon = new JSONObject();
-			accCon.set("method", c.getAuthMethod());
+			accCon.set("connection", c.getConnectionName());
 			accCon.set("id", c.getUserID());
 			accCon.set("name", c.getUserName());
 			accCon.set("email", c.getUserEmail());
@@ -71,7 +71,7 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 		List<WebinterfaceAccountConnection> connections = new ArrayList<>();
 		for(ConfigSection s : config.getComplex(id + ".connections", Complex.list(ConfigSection.class), new ArrayList<>(), false)) {
 			WebinterfaceAccountConnection con = new WebinterfaceAccountConnection(
-					s.getString("method"),
+					s.getString("connection"),
 					s.getString("id"),
 					s.getString("name"),
 					s.getString("email"),
@@ -107,12 +107,12 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	}
 	
 	@Override
-	public WebinterfaceAccount getAccountByConnectionSpecificID(String authMethod, String id, boolean caseInsensitive) {
+	public WebinterfaceAccount getAccountByConnectionSpecificID(String connectionName, String id, boolean caseInsensitive) {
 		if(id == null) return null;
 		for(String aID : config.getKeys()) {
 			WebinterfaceAccount acc = getAccountByID(aID);
 			if(acc == null) continue;
-			WebinterfaceAccountConnection con = acc.getConnection(authMethod);
+			WebinterfaceAccountConnection con = acc.getConnection(connectionName);
 			if(con == null) continue;
 			String tID = con.getUserID();
 			if(tID != null && (caseInsensitive ? tID.equalsIgnoreCase(id) : tID.equals(id))) return acc;

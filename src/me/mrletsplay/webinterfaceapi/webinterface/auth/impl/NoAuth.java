@@ -34,7 +34,7 @@ public class NoAuth implements WebinterfaceAuthMethod {
 
 	@Override
 	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException {
-		return new WebinterfaceAccountConnection("no_auth", "0", "Anonymous", null, null, true);
+		return new WebinterfaceAccountConnection(getID(), "0", "Anonymous", null, null, true);
 	}
 
 }

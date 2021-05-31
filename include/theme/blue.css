@@ -20,6 +20,7 @@ body {
 	--theme-color-content-shadow: lightgray;
 	--theme-color-content-border: lightgray;
 	--theme-color-content-text: black;
+	--theme-color-content-text-secondary: rgb(120, 120, 120);
 	--theme-color-content-hover-bg: #efefef;
 
 	--theme-button-font-weight: normal;

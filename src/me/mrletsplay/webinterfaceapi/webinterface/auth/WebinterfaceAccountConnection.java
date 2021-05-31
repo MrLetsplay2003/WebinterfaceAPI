@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 public class WebinterfaceAccountConnection {
 
 	private String
-		authMethod,
+		connectionName,
 		userID,
 		userName,
 		userEmail,
@@ -14,8 +14,8 @@ public class WebinterfaceAccountConnection {
 	
 	private boolean isTemporary;
 	
-	public WebinterfaceAccountConnection(String authMethod, String userID, String userName, String userEmail, String userAvatar, boolean isTemporary) {
-		this.authMethod = authMethod;
+	public WebinterfaceAccountConnection(String connectionName, String userID, String userName, String userEmail, String userAvatar, boolean isTemporary) {
+		this.connectionName = connectionName;
 		this.userID = userID;
 		this.userName = userName;
 		this.userEmail = userEmail;
@@ -23,13 +23,13 @@ public class WebinterfaceAccountConnection {
 		this.isTemporary = isTemporary;
 	}
 	
-	public WebinterfaceAccountConnection(String authMethod, String userID, String userName, String userEmail, String userAvatar) {
-		this(authMethod, userID, userName, userEmail, userAvatar, false);
+	public WebinterfaceAccountConnection(String connectionName, String userID, String userName, String userEmail, String userAvatar) {
+		this(connectionName, userID, userName, userEmail, userAvatar, false);
 	}
 	
 	@NotNull
-	public String getAuthMethod() {
-		return authMethod;
+	public String getConnectionName() {
+		return connectionName;
 	}
 	
 	@NotNull

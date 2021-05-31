@@ -9,6 +9,7 @@ public class SimpleSetting<T> implements WebinterfaceSetting<T> {
 	private T defaultValue;
 	private Complex<T> type;
 	private String friendlyName;
+	private String description;
 	
 	public SimpleSetting(SettingsCategory category, String key, T defaultValue, Complex<T> type) {
 		this.category = category;
@@ -44,6 +45,15 @@ public class SimpleSetting<T> implements WebinterfaceSetting<T> {
 	@Override
 	public String getFriendlyName() {
 		return friendlyName;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	@Override
+	public String getDescription() {
+		return description;
 	}
 	
 	@Override

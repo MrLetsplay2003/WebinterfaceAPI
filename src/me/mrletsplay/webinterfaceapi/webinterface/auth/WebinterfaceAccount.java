@@ -73,8 +73,8 @@ public class WebinterfaceAccount implements Permissible {
 		Webinterface.getAccountStorage().storeAccount(this);
 	}
 	
-	public void removeConnection(String authMethod) {
-		WebinterfaceAccountConnection con = getConnection(authMethod);
+	public void removeConnection(String connectionName) {
+		WebinterfaceAccountConnection con = getConnection(connectionName);
 		if(con == null) return;
 		removeConnection(con);
 	}
@@ -83,10 +83,10 @@ public class WebinterfaceAccount implements Permissible {
 		return connections;
 	}
 	
-	public WebinterfaceAccountConnection getConnection(String authMethod) {
-		return connections.stream().filter(c -> c.getAuthMethod().equals(authMethod)).findFirst().orElse(null);
+	public WebinterfaceAccountConnection getConnection(String connectionName) {
+		return connections.stream().filter(c -> c.getConnectionName().equals(connectionName)).findFirst().orElse(null);
 	}
-
+	
 	@Override
 	public void addPermission(Permission permission) {
 		permissions.add(permission);
