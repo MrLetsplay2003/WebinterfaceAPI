@@ -36,7 +36,7 @@ class WebinterfaceBaseActions {
 
     static confirm(element, event, parameters) {
         if(confirm("Are you sure?")) {
-            parameters.action(parameters.actionParameters);
+            parameters.action(element, event, parameters.actionParameters);
         }
     }
 
