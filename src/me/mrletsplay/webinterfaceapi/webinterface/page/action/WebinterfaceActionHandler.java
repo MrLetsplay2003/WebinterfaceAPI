@@ -3,7 +3,6 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.action;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.logging.Level;
 
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
@@ -23,7 +22,7 @@ public interface WebinterfaceActionHandler {
 						return response;
 					}catch(InvocationTargetException | IllegalAccessException | IllegalArgumentException e2) {
 						e2.printStackTrace();
-						Webinterface.getLogger().log(Level.FINE, "Malformed request", e2);
+						Webinterface.getLogger().debug("Malformed request", e2);
 						return WebinterfaceResponse.error("Malformed request");
 					}
 				}

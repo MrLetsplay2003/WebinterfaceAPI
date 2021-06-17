@@ -45,7 +45,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 		} catch (Exception e) {
 			available = false;
 		}
-		if(!available) Webinterface.getLogger().warning("Google auth needs to be configured");
+		if(!available) Webinterface.getLogger().warn("Google auth needs to be configured");
 	}
 	
 	@Override

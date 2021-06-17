@@ -44,6 +44,7 @@ public class HttpClientHeader {
 	public static HttpClientHeader parse(InputStream data) {
 		try {
 			String reqLine = readLine(data);
+			if(reqLine == null) return null;
 			String[] fs = reqLine.split(" ");
 			String method = fs[0];
 			HttpURLPath path = HttpURLPath.parse(fs[1]);

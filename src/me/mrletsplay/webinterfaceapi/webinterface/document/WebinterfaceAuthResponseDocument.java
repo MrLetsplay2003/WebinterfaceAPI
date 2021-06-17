@@ -1,7 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface.document;
 
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
 
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
@@ -51,7 +50,7 @@ public class WebinterfaceAuthResponseDocument implements HttpDocument {
 		} catch(AuthException e) {
 			c.getServerHeader().setContent("text/plain", ("Auth failed: " + e.getMessage()).getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 		}catch(Exception e) {
-			Webinterface.getLogger().log(Level.FINE, "Unexpected authentication error", e);
+			Webinterface.getLogger().debug("Unexpected authentication error", e);
 			c.getServerHeader().setContent("text/plain", "Auth error".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 		}
 	}

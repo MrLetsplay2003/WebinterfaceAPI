@@ -9,7 +9,6 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,6 +25,7 @@ import me.mrletsplay.webinterfaceapi.http.header.HttpServerHeader;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.server.ServerException;
 import me.mrletsplay.webinterfaceapi.server.connection.impl.AbstractConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
 public class HttpConnection extends AbstractConnection {
 
@@ -34,7 +34,7 @@ public class HttpConnection extends AbstractConnection {
 		try {
 			socket.setSoTimeout(10000);
 		} catch (SocketException e) {
-			HttpServer.getLogger().log(Level.FINE, "Error while intializing connection", e);
+			Webinterface.getLogger().debug("Error while intializing connection", e);
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class HttpConnection extends AbstractConnection {
 					// Client probably just disconnected
 				}catch(Exception e) {
 					close();
-					HttpServer.getLogger().log(Level.FINE, "Error in client receive loop", e);
+					Webinterface.getLogger().debug("Error in client receive loop", e);
 					throw new ServerException("Error in client receive loop", e);
 				}
 			}
@@ -87,7 +87,7 @@ public class HttpConnection extends AbstractConnection {
 			if(sh.isAllowByteRanges()) applyRanges(sh);
 			if(sh.isCompressionEnabled()) applyCompression(sh);
 		}catch(Exception e) {
-			HttpServer.getLogger().log(Level.FINE, "Error while creating page content", e);
+			Webinterface.getLogger().debug("Error while creating page content", e);
 
 			// Reset all of the context-related fields to ensure a clean environment
 			sh = new HttpServerHeader(getServer().getProtocolVersion(), HttpStatusCodes.OK_200, new HttpHeaderFields());
@@ -110,7 +110,7 @@ public class HttpConnection extends AbstractConnection {
 		
 		InputStream in = sh.getContent();
 		long skipped = in.skip(sh.getContentOffset());
-		if(skipped < sh.getContentOffset()) HttpServer.getLogger().fine("Could not skip to content offset (skipped " + skipped + " of " + sh.getContentOffset() + " bytes)");
+		if(skipped < sh.getContentOffset()) Webinterface.getLogger().debug("Could not skip to content offset (skipped " + skipped + " of " + sh.getContentOffset() + " bytes)");
 		
 		byte[] buf = new byte[4096];
 		int len;

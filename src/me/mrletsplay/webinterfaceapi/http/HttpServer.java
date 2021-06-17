@@ -2,7 +2,6 @@ package me.mrletsplay.webinterfaceapi.http;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import me.mrletsplay.webinterfaceapi.http.compression.DeflateCompression;
 import me.mrletsplay.webinterfaceapi.http.compression.GZIPCompression;
@@ -12,8 +11,6 @@ import me.mrletsplay.webinterfaceapi.http.document.HttpDocumentProvider;
 import me.mrletsplay.webinterfaceapi.server.impl.AbstractServer;
 
 public class HttpServer extends AbstractServer {
-	
-	private static final Logger LOGGER = Logger.getLogger(HttpServer.class.getPackage().getName());
 	
 	private HttpDocumentProvider documentProvider;
 	private HttpProtocolVersion protocolVersion;
@@ -69,10 +66,6 @@ public class HttpServer extends AbstractServer {
 	
 	public HttpProtocolVersion getProtocolVersion() {
 		return protocolVersion;
-	}
-	
-	public static Logger getLogger() {
-		return LOGGER;
 	}
 	
 	public static HttpServerConfiguration.Builder newConfigurationBuilder() {

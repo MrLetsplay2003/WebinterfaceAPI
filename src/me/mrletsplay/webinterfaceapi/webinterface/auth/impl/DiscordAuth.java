@@ -43,7 +43,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 		} catch (Exception e) {
 			available = false;
 		}
-		if(!available) Webinterface.getLogger().warning("Discord auth needs to be configured");
+		if(!available) Webinterface.getLogger().warn("Discord auth needs to be configured");
 	}
 	
 	@Override

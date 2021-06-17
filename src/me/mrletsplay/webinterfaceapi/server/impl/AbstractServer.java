@@ -9,18 +9,15 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import me.mrletsplay.webinterfaceapi.server.Server;
 import me.mrletsplay.webinterfaceapi.server.ServerException;
 import me.mrletsplay.webinterfaceapi.server.connection.Connection;
 import me.mrletsplay.webinterfaceapi.server.connection.ConnectionAcceptor;
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
 public abstract class AbstractServer implements Server {
 	
-	private static final Logger LOGGER = Logger.getLogger(AbstractServer.class.getPackage().getName());
-
 	private AbstractServerConfiguration configuration;
 	private ServerSocket socket;
 	private ConnectionAcceptor acceptor;
@@ -46,7 +43,7 @@ public abstract class AbstractServer implements Server {
 						acceptConnection();
 					}catch(SocketTimeoutException ignored) {
 					}catch(Exception e) {
-						AbstractServer.getLogger().log(Level.FINE, "Error while accepting connection", e);
+						Webinterface.getLogger().debug("Error while accepting connection", e);
 					}
 				}
 			});
@@ -129,8 +126,4 @@ public abstract class AbstractServer implements Server {
 		}
 	}
 	
-	public static Logger getLogger() {
-		return LOGGER;
-	}
-
 }

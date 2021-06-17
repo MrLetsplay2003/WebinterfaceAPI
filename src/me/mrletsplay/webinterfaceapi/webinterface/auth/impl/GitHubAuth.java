@@ -46,7 +46,7 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 		} catch (Exception e) {
 			available = false;
 		}
-		if(!available) Webinterface.getLogger().warning("GitHub auth needs to be configured");
+		if(!available) Webinterface.getLogger().warn("GitHub auth needs to be configured");
 	}
 	
 	@Override

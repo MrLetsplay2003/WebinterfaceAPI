@@ -57,7 +57,7 @@ public class BukkitPage extends WebinterfacePage {
 				
 				if(Webinterface.getConfig().getSetting(BukkitSettings.SHOW_STATS)) {
 					if(!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-						Webinterface.getLogger().warning("Statistics are enabled on Bukkit Home page but PlaceholderAPI is missing");
+						Webinterface.getLogger().warn("Statistics are enabled on Bukkit Home page but PlaceholderAPI is missing");
 					}else {
 						WebinterfaceElementGroup stats = new WebinterfaceElementGroup();
 						stats.addInnerLayoutProperties(new GridLayout("auto", "auto"));
@@ -65,7 +65,7 @@ public class BukkitPage extends WebinterfacePage {
 						for(String el : Webinterface.getConfig().getSetting(BukkitSettings.STATS_ELEMENTS)) {
 							String[] spl = el.split(":");
 							if(spl.length != 2) {
-								Webinterface.getLogger().warning("Invalid statistics element for Bukkit Home page configured in config.yml: \"" + el + "\"");
+								Webinterface.getLogger().warn("Invalid statistics element for Bukkit Home page configured in config.yml: \"" + el + "\"");
 								continue;
 							}
 							

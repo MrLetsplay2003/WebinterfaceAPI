@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
@@ -63,7 +63,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSessionSto
 
 public class Webinterface {
 	
-	private static final Logger LOGGER = Logger.getLogger(Webinterface.class.getPackage().getName());
+	private static Logger logger;
 	
 	private static WebinterfaceService service;
 	
@@ -115,6 +115,10 @@ public class Webinterface {
 		
 		service.fire(WebinterfaceService.EVENT_PRE_INIT);
 		
+		if(System.getProperty("webinterface.log-dir") == null)
+			System.setProperty("webinterface.log-dir", new File(rootDirectory, "logs").getAbsolutePath());
+		logger = LoggerFactory.getLogger(Webinterface.class);
+		
 		includeFile("/_internal", new File(rootDirectory, "include"));
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
@@ -146,7 +150,7 @@ public class Webinterface {
 			String certKeyPath = config.getSetting(DefaultSettings.HTTPS_CERTIFICATE_KEY_PATH);
 			
 			if(certPath == null || certKeyPath == null) {
-				LOGGER.warning("Both certificate and certificate key need to be configured to use HTTPS");
+				logger.warn("Both certificate and certificate key need to be configured to use HTTPS");
 			}else {
 				File certFile = new File(certPath);
 				File certKeyFile = new File(certKeyPath);
@@ -189,8 +193,14 @@ public class Webinterface {
 		accountStorage.initialize();
 		sessionStorage.initialize();
 		credentialsStorage.initialize();
-		httpServer.start();
-		if(httpsServer != null) httpsServer.start();
+		
+		try {
+			httpServer.start();
+			if(httpsServer != null) httpsServer.start();
+		}catch(Exception e) {
+			logger.error("Failed to start http(s) server", e);
+			return;
+		}
 		
 		httpServer.getExecutor().execute(() -> {
 			Supplier<Boolean> keepRunning = () -> httpServer.isRunning() && !httpServer.getExecutor().isShutdown() && !Thread.interrupted();
@@ -223,7 +233,7 @@ public class Webinterface {
 					if(!e.isDirectory() && e.getName().startsWith("include/")) {
 						File ofl = new File(getRootDirectory(), e.getName());
 						if(ofl.exists()) continue;
-						Webinterface.getLogger().log(Level.FINE, "Extracting " + e.getName() + "...");
+						Webinterface.getLogger().debug("Extracting " + e.getName() + "...");
 						IOUtils.createFile(ofl);
 						try (InputStream in = fl.getInputStream(e);
 								OutputStream out = new FileOutputStream(ofl)) {
@@ -232,10 +242,10 @@ public class Webinterface {
 					}
 				}
 			}catch(IOException e) {
-				Webinterface.getLogger().log(Level.FINE, "Error while extracting required files", e);
+				Webinterface.getLogger().error("Error while extracting required files", e);
 			}
 		} catch (Exception e) {
-			Webinterface.getLogger().log(Level.FINE, "Error while locating required files", e);
+			Webinterface.getLogger().error("Error while locating required files", e);
 		}
 	}
 	
@@ -374,7 +384,7 @@ public class Webinterface {
 	}
 	
 	public static Logger getLogger() {
-		return LOGGER;
+		return logger;
 	}
 
 }
