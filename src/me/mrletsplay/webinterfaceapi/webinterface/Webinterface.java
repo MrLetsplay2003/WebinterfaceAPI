@@ -49,6 +49,8 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentP
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfacePasswordLoginDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceSetupDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceSetupSubmitDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
@@ -109,10 +111,7 @@ public class Webinterface {
 		MrCoreServiceRegistry.registerService("WebinterfaceAPI", service);
 	}
 	
-	public static void initialize() {
-		if(initialized) return;
-		initialized = true;
-		
+	private static void initialize() {
 		service.fire(WebinterfaceService.EVENT_PRE_INIT);
 		
 		if(System.getProperty("webinterface.log-dir") == null)
@@ -127,11 +126,11 @@ public class Webinterface {
 		config = new WebinterfaceFileConfig(new File(getConfigurationDirectory(), "config.yml"));
 		config.registerSettings(DefaultSettings.INSTANCE);
 		
-		if(config.getSetting(DefaultSettings.ALLOW_ANONYMOUS)) registerAuthMethod(new NoAuth());
-		if(config.getSetting(DefaultSettings.ENABLE_DISCORD_AUTH)) registerAuthMethod(new DiscordAuth());
-		if(config.getSetting(DefaultSettings.ENABLE_GOOGLE_AUTH)) registerAuthMethod(new GoogleAuth());
-		if(config.getSetting(DefaultSettings.ENABLE_GITHUB_AUTH)) registerAuthMethod(new GitHubAuth());
-		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) registerAuthMethod(new PasswordAuth());
+		registerAuthMethod(new NoAuth());
+		registerAuthMethod(new DiscordAuth());
+		registerAuthMethod(new GoogleAuth());
+		registerAuthMethod(new GitHubAuth());
+		registerAuthMethod(new PasswordAuth());
 		
 		PHP.setEnabled(config.getSetting(DefaultSettings.ENABLE_PHP));
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
@@ -176,19 +175,23 @@ public class Webinterface {
 		pages.forEach(page -> documentProvider.registerDocument(page.getUrl(), page));
 		categories.forEach(category -> category.getPages().forEach(page -> documentProvider.registerDocument(page.getUrl(), page)));
 		
-		authMethods.forEach(method -> {
-			documentProvider.registerDocument("/auth/" + method.getID(), new WebinterfaceAuthRequestDocument(method));
-			documentProvider.registerDocument("/auth/" + method.getID() + "/response", new WebinterfaceAuthResponseDocument(method));
-		});
+		authMethods.forEach(Webinterface::registerAuthPages);
 		
+		Integer setupStep = config.getOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
+		if(config.getSetting(DefaultSettings.ENABLE_INITIAL_SETUP) && setupStep == null || setupStep < WebinterfaceSetupDocument.SETUP_STEP_DONE) {
+			documentProvider.registerDocument("/setup", new WebinterfaceSetupDocument());
+			documentProvider.registerDocument("/setup/submit", new WebinterfaceSetupSubmitDocument());
+		}
+		
+		initialized = true;
 		service.fire(WebinterfaceService.EVENT_POST_INIT);
 	}
 	
 	public static void start() {
 		service.fire(WebinterfaceService.EVENT_PRE_START);
 		
-		extractFiles();
 		initialize();
+		extractFiles();
 		
 		accountStorage.initialize();
 		sessionStorage.initialize();
@@ -249,9 +252,8 @@ public class Webinterface {
 		}
 	}
 	
-	@Deprecated
-	public static HttpServer getServer() {
-		return httpServer;
+	public static boolean isInitialized() {
+		return initialized;
 	}
 	
 	@NotNull
@@ -286,6 +288,7 @@ public class Webinterface {
 	
 	public static void registerPage(WebinterfacePage page) {
 		pages.add(page);
+		if(initialized) documentProvider.registerDocument(page.getUrl(), page);
 	}
 	
 	public static List<WebinterfacePage> getPages() {
@@ -321,10 +324,22 @@ public class Webinterface {
 	public static void registerAuthMethod(WebinterfaceAuthMethod method) {
 		if(authMethods.stream().anyMatch(a -> a.getID().equals(method.getID()))) return;
 		authMethods.add(method);
+		if(initialized) registerAuthPages(method);
+	}
+	
+	private static void registerAuthPages(WebinterfaceAuthMethod method) {
+		documentProvider.registerDocument("/auth/" + method.getID(), new WebinterfaceAuthRequestDocument(method));
+		documentProvider.registerDocument("/auth/" + method.getID() + "/response", new WebinterfaceAuthResponseDocument(method));
 	}
 	
 	public static List<WebinterfaceAuthMethod> getAuthMethods() {
 		return authMethods;
+	}
+	
+	public static WebinterfaceAuthMethod getAuthMethodByID(String id) {
+		return authMethods.stream()
+				.filter(a -> a.getID().equals(id))
+				.findFirst().orElse(null);
 	}
 	
 	public static List<WebinterfaceAuthMethod> getAvailableAuthMethods() {

@@ -1,6 +1,9 @@
 package me.mrletsplay.webinterfaceapi.webinterface.auth.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import me.mrletsplay.mrcore.http.HttpGet;
@@ -9,6 +12,7 @@ import me.mrletsplay.mrcore.http.HttpRequest;
 import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
+import me.mrletsplay.mrcore.misc.FriendlyException;
 import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
 import me.mrletsplay.webinterfaceapi.http.header.HttpURLPath;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
@@ -16,6 +20,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class GoogleAuth implements WebinterfaceAuthMethod {
 
@@ -27,7 +32,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 		TOKEN_ENDPOINT = "https://www.googleapis.com/oauth2/v4/token",
 		USERINFO_ENDPOINT = "https://www.googleapis.com/oauth2/v2/userinfo";
 	
-	private boolean available;
+	private boolean configured;
 	
 	private String
 		clientID,
@@ -41,11 +46,26 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 			JSONObject obj = new JSONObject(cont).getJSONObject("web");
 			clientID = obj.getString("client_id");
 			clientSecret = obj.getString("client_secret");
-			if(clientID != null && clientSecret != null) available = true;
+			if(clientID != null && clientSecret != null) configured = true;
 		} catch (Exception e) {
-			available = false;
+			configured = false;
 		}
-		if(!available) Webinterface.getLogger().warn("Google auth needs to be configured");
+		if(Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_GOOGLE_AUTH) && !configured) Webinterface.getLogger().warn("Google auth needs to be configured");
+	}
+	
+	public void setup(String clientID, String clientSecret) {
+		this.clientID = clientID;
+		this.clientSecret = clientSecret;
+		File cfgFile = new File(getConfigurationDirectory(), "credentials.json");
+		try(FileOutputStream fOut = new FileOutputStream(cfgFile)) {
+			JSONObject o = new JSONObject();
+			o.put("client_id", clientID);
+			o.put("client_secret", clientSecret);
+			fOut.write(o.toString().getBytes(StandardCharsets.UTF_8));
+		}catch(IOException e) {
+			throw new FriendlyException("Failed to set up Google auth");
+		}
+		configured = true;
 	}
 	
 	@Override
@@ -122,7 +142,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 	
 	@Override
 	public boolean isAvailable() {
-		return available;
+		return configured && Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_GOOGLE_AUTH);
 	}
 
 }

@@ -1,6 +1,6 @@
 if(window.location.search.length > 1) {
 	let b64 = window.location.search.substr(1);
-	WebinterfaceUtils.notifyError(atob(b64));
+	WebinterfaceToast.showErrorToast(atob(b64));
 }
 
 function login(register) {
@@ -8,7 +8,7 @@ function login(register) {
 	let pEl = document.getElementById("password-input");
 
 	if(uEl.value.trim() === "" || pEl.value.trim() === "") {
-		WebinterfaceUtils.notifyError("You need to input both username and password");
+		WebinterfaceToast.showErrorToast("You need to input both username and password");
 		return;
 	}
 

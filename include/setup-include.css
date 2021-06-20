@@ -7,10 +7,9 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	overflow-y: hidden;
 }
 
-.login-container {
+.setup-container {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -22,36 +21,28 @@ body {
 	padding-top: 20px;
 	padding-bottom: 20px;
 	border-radius: 5px;
+    overflow-y: auto;
 }
 
-.login-list {
+.setup-list {
 	padding: 0;
 	list-style-type: none;
 	justify-content: space-between;
-	display: block;
 	margin: 0;
 }
 
-.login-title {
+.setup-title {
 	font-family: 'Open Sans', sans-serif;
 	text-decoration: none;
-	color: var(--theme-color-content-text);
 	display: block;
 	margin-bottom: 20px;
 }
 
-.login-title > a {
-	color: rgb(95, 95, 95);
+.setup-title > a {
+	color: #757575;
 }
 
-.login-list-item {
-	position: relative;
-	text-align: center;
-	width: 100%;
-	margin-top: 5px;
-}
-
-.login-list-item > input, .login-list-item > a {
+.setup-list input, .setup-list a, .setup-list b {
 	font-family: 'Open Sans', sans-serif;
 	text-decoration: none;
 	color: var(--theme-color-content-text);
@@ -62,49 +53,73 @@ body {
 	display: block;
 	border: 0;
 	width: 100%;
+    margin-top: 10px;
 }
 
-.login-list-item > input {
+.setup-label {
+    text-align: left;
+}
+
+.confirm-button > a:hover {
+	background-color: rgba(46, 46, 46, 0.2);
+	cursor: pointer;
+}
+
+.setup-list a:visited, .setup-list a:hover, .setup-list a:active {
+	color: var(--theme-color-content-text);
+	text-decoration: none;
+}
+
+.setup-list input {
 	border-bottom: 1px solid rgb(95, 95, 95);
 	margin: 0;
-	margin-left: 10px;
-	width: calc(100% - 20px);
+    margin-top: 10px;
 }
 
-.login-button > input, .register-button > input {
-	border: 0;
-	margin: 0;
-	margin-left: 10px;
-	width: calc(100% - 20px);
+.setup-heading, .setup-description, .setup-button, .setup-sub-heading {
+    grid-column: 1 / -1;
 }
 
-.login-button {
-	margin-top: 10px;
+.setup-sub-heading {
+    text-align: left;
+    margin-top: 30px !important;
 }
 
-.register-button {
-	margin-top: 0;
+.setup-description {
+    margin-top: 0 !important;
+    margin-bottom: 10px;
 }
 
-.login-button:hover, .register-button:hover {
+.setup-button:hover {
 	background-color: rgba(128, 128, 128, 0.5);
 	cursor: pointer;
 }
 
-.login-list-item > a:visited, .login-list-item > a:hover, .login-list-item > a:active {
-	color: var(--theme-color-content-text);
-	text-decoration: none;
+.checkbox-container {
+    margin-top: 20px;
+}
+
+#setup-form-container {
+    display: grid;
+    padding-left: 30px;
+    padding-right: 30px;
+    grid-template-columns: 1fr;
 }
 
 /* Non-mobile styles for side nav responsiveness, 750px breakpoint */
 @media only screen and (min-width: 46.875em) {
 
-	.login-container {
+	.setup-container {
 		position: absolute;
-		left: calc(50% - 200px);
+		left: calc(50% - 450px);
 		top: auto;
-		width: 400px;
+		width: 900px;
 		height: auto;
+		max-height: 80%;
 	}
+	
+	#setup-form-container {
+        grid-template-columns: 33fr 66fr;
+    }
 
 }

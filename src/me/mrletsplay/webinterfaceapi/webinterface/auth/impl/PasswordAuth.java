@@ -15,6 +15,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class PasswordAuth implements WebinterfaceAuthMethod {
 
@@ -64,6 +65,7 @@ public class PasswordAuth implements WebinterfaceAuthMethod {
 				if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) throw new AuthException("Invalid password/password");
 				return con;
 			}else {
+				if(!Webinterface.getConfig().getSetting(DefaultSettings.ALLOW_REGISTRATION)) throw new AuthException("Registration is disabled");
 				if(!isValidUsername(username)) throw new AuthException("Username contains invalid characters or is too long/short");
 				if(acc != null) throw new AuthException("An account with that username already exists");
 				Webinterface.getCredentialsStorage().storeCredentials(username, password);
@@ -78,6 +80,11 @@ public class PasswordAuth implements WebinterfaceAuthMethod {
 	
 	public static boolean isValidUsername(String username) {
 		return VALID_USERNAME.matcher(username).matches();
+	}
+	
+	@Override
+	public boolean isAvailable() {
+		return Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH);
 	}
 
 }

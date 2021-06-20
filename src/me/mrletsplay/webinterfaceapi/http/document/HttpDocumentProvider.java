@@ -11,6 +11,8 @@ public interface HttpDocumentProvider {
 	
 	public void registerDocument(String path, HttpDocument document);
 	
+	public void unregisterDocument(String path);
+	
 	public default void registerFileDocument(String path, File file) {
 		if(file.isDirectory()) {
 			for(File fl : file.listFiles()) {

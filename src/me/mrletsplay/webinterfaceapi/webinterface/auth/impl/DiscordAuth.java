@@ -16,6 +16,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class DiscordAuth implements WebinterfaceAuthMethod {
 
@@ -26,7 +27,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 		AUTH_ENDPOINT = "https://discordapp.com/api/oauth2/authorize",
 		TOKEN_ENDPOINT = "https://discordapp.com/api/oauth2/token";
 	
-	private boolean available;
+	private boolean configured;
 	
 	private String
 		clientID,
@@ -39,11 +40,22 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 			clientID = cfg.getString("client-id", null, true);
 			clientSecret = cfg.getString("client-secret", null, true);
 			cfg.saveToFile();
-			if(clientID != null && clientSecret != null) available = true;
+			if(clientID != null && clientSecret != null) configured = true;
 		} catch (Exception e) {
-			available = false;
+			configured = false;
 		}
-		if(!available) Webinterface.getLogger().warn("Discord auth needs to be configured");
+		if(Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_DISCORD_AUTH) && !configured) Webinterface.getLogger().warn("Discord auth needs to be configured");
+	}
+	
+	public void setup(String clientID, String clientSecret) {
+		this.clientID = clientID;
+		this.clientSecret = clientSecret;
+		File cfgFile = new File(getConfigurationDirectory(), "credentials.yml");
+		FileCustomConfig cfg = ConfigLoader.loadFileConfig(cfgFile);
+		cfg.set("client-id", clientID);
+		cfg.set("client-secret", clientSecret);
+		cfg.saveToFile();
+		configured = true;
 	}
 	
 	@Override
@@ -129,7 +141,7 @@ public class DiscordAuth implements WebinterfaceAuthMethod {
 	
 	@Override
 	public boolean isAvailable() {
-		return available;
+		return configured && Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_DISCORD_AUTH);
 	}
 	
 }

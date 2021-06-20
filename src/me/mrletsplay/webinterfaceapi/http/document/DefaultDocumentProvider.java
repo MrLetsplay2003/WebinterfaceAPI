@@ -20,6 +20,11 @@ public class DefaultDocumentProvider implements HttpDocumentProvider {
 	public void registerDocument(String path, HttpDocument document) {
 		documents.put(path, document);
 	}
+	
+	@Override
+	public void unregisterDocument(String path) {
+		documents.remove(path);
+	}
 
 	@Override
 	public HttpDocument getDocument(String path) {

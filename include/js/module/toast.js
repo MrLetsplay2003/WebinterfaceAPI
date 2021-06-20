@@ -1,7 +1,4 @@
-let wiData = {
-	alerts: [],
-	alertWaiting: false
-};
+
 
 class WebinterfaceToast {
 
@@ -18,17 +15,17 @@ class WebinterfaceToast {
 	}
 
 	static showToast(message, isError = true) {
-		wiData.alerts.push({
+		WebinterfaceToast.wiData.alerts.push({
 			msg: message,
 			isError: isError
 		});
 	}
 
 	static updateToasts() {
-		if(wiData.alertWaiting) return;
-		if(wiData.alerts.length == 0) return;
-		wiData.alertWaiting = true;
-		let alert = wiData.alerts.shift();
+		if(WebinterfaceToast.wiData.alertWaiting) return;
+		if(WebinterfaceToast.wiData.alerts.length == 0) return;
+		WebinterfaceToast.wiData.alertWaiting = true;
+		let alert = WebinterfaceToast.wiData.alerts.shift();
 		let alertBox = $("#alert-box");
 
 		alertBox.html(alert.msg);
@@ -47,16 +44,20 @@ class WebinterfaceToast {
 		});
 		
 		alertBox.delay(2500).animate({
-			//opacity: 0,
 			bottom: "-100%"
 		}, 500, function() {
 			// Finished
 			alertBox.css({bottom: "-100%"});
-			wiData.alertWaiting = false;
+			WebinterfaceToast.wiData.alertWaiting = false;
 		});
 	}
 
 }
+
+WebinterfaceToast.wiData = {
+	alerts: [],
+	alertWaiting: false
+};
 
 setInterval(function() {
     WebinterfaceToast.updateToasts();

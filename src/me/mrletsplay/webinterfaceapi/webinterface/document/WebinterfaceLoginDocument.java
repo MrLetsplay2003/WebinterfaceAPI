@@ -14,7 +14,6 @@ public class WebinterfaceLoginDocument implements HttpDocument {
 
 	@Override
 	public void createContent() {
-		
 		HtmlDocument d = new HtmlDocument();
 		
 		HtmlElement cont = new HtmlElement("div");

@@ -3,6 +3,8 @@ package me.mrletsplay.webinterfaceapi.webinterface.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
+
 public class WebinterfacePageCategory {
 	
 	private String name;
@@ -19,6 +21,7 @@ public class WebinterfacePageCategory {
 	
 	public void addPage(WebinterfacePage page) {
 		pages.add(page);
+		if(Webinterface.isInitialized()) Webinterface.getDocumentProvider().registerDocument(page.getUrl(), page);
 	}
 	
 	public List<WebinterfacePage> getPages() {

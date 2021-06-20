@@ -17,6 +17,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class GitHubAuth implements WebinterfaceAuthMethod {
 
@@ -29,7 +30,7 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 		USERINFO_ENDPOINT = "https://api.github.com/user",
 		USER_EMAILS_ENDPOINT = "https://api.github.com/user/emails";
 	
-	private boolean available;
+	private boolean configured;
 	
 	private String
 		clientID,
@@ -42,11 +43,22 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 			clientID = cfg.getString("client-id", null, true);
 			clientSecret = cfg.getString("client-secret", null, true);
 			cfg.saveToFile();
-			if(clientID != null && clientSecret != null) available = true;
+			if(clientID != null && clientSecret != null) configured = true;
 		} catch (Exception e) {
-			available = false;
+			configured = false;
 		}
-		if(!available) Webinterface.getLogger().warn("GitHub auth needs to be configured");
+		if(Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_GITHUB_AUTH) && !configured) Webinterface.getLogger().warn("GitHub auth needs to be configured");
+	}
+	
+	public void setup(String clientID, String clientSecret) {
+		this.clientID = clientID;
+		this.clientSecret = clientSecret;
+		File cfgFile = new File(getConfigurationDirectory(), "credentials.yml");
+		FileCustomConfig cfg = ConfigLoader.loadFileConfig(cfgFile);
+		cfg.set("client-id", clientID);
+		cfg.set("client-secret", clientSecret);
+		cfg.saveToFile();
+		configured = true;
 	}
 	
 	@Override
@@ -131,7 +143,7 @@ public class GitHubAuth implements WebinterfaceAuthMethod {
 	
 	@Override
 	public boolean isAvailable() {
-		return available;
+		return configured && Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_GITHUB_AUTH);
 	}
 
 }
