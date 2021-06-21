@@ -46,6 +46,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceAuthReque
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceAuthResponseDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceCallbackDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentProvider;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceHomeDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfacePasswordLoginDocument;
@@ -57,8 +58,8 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountsPage;
-import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceHomePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceSettingsPage;
+import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceWelcomePage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.FileSessionStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSessionStorage;
@@ -79,7 +80,6 @@ public class Webinterface {
 	private static List<WebinterfaceActionHandler> handlers;
 	private static List<WebinterfaceAuthMethod> authMethods;
 	private static Map<String, File> includedFiles;
-	private static WebinterfaceHomePage homePage;
 	
 	private static boolean initialized = false;
 	private static File rootDirectory;
@@ -99,8 +99,7 @@ public class Webinterface {
 		markdownRenderer = new MarkdownRenderer();
 		
 		WebinterfacePageCategory cat = createCategory("WebinterfaceAPI");
-		homePage = new WebinterfaceHomePage();
-		cat.addPage(homePage);
+		cat.addPage(new WebinterfaceWelcomePage());
 		cat.addPage(new WebinterfaceSettingsPage());
 		cat.addPage(new WebinterfaceAccountsPage());
 		cat.addPage(new WebinterfaceAccountPage());
@@ -168,6 +167,7 @@ public class Webinterface {
 		
 		documentProvider.registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/icon.png")));
 		documentProvider.registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
+		documentProvider.registerDocument("/", new WebinterfaceHomeDocument());
 		documentProvider.registerDocument("/login", new WebinterfaceLoginDocument());
 		documentProvider.registerDocument("/logout", new WebinterfaceLogoutDocument());
 		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) documentProvider.registerDocument("/auth/password/login", new WebinterfacePasswordLoginDocument());
@@ -178,7 +178,7 @@ public class Webinterface {
 		authMethods.forEach(Webinterface::registerAuthPages);
 		
 		Integer setupStep = config.getOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
-		if(config.getSetting(DefaultSettings.ENABLE_INITIAL_SETUP) && setupStep == null || setupStep < WebinterfaceSetupDocument.SETUP_STEP_DONE) {
+		if(config.getSetting(DefaultSettings.ENABLE_INITIAL_SETUP) && (setupStep == null || setupStep < WebinterfaceSetupDocument.SETUP_STEP_DONE)) {
 			documentProvider.registerDocument("/setup", new WebinterfaceSetupDocument());
 			documentProvider.registerDocument("/setup/submit", new WebinterfaceSetupSubmitDocument());
 		}
@@ -293,10 +293,6 @@ public class Webinterface {
 	
 	public static List<WebinterfacePage> getPages() {
 		return pages;
-	}
-	
-	public static WebinterfaceHomePage getHomePage() {
-		return homePage;
 	}
 	
 	public static void registerCategory(WebinterfacePageCategory category) {

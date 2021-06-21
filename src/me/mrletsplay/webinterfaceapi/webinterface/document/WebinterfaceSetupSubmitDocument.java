@@ -119,6 +119,8 @@ public class WebinterfaceSetupSubmitDocument implements HttpDocument {
 				Webinterface.getConfig().setOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, WebinterfaceSetupDocument.SETUP_STEP_DONE);
 				ctx.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 				ctx.getServerHeader().getFields().setFieldValue("Location", "/");
+				Webinterface.getDocumentProvider().unregisterDocument("/setup");
+				Webinterface.getDocumentProvider().unregisterDocument("/setup/submit");
 				return;
 			}
 		}

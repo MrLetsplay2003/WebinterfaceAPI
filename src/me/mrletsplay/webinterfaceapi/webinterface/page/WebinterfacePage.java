@@ -229,6 +229,7 @@ public class WebinterfacePage implements HttpDocument {
 		}
 		
 		for(WebinterfacePageCategory category : Webinterface.getCategories()) {
+			if(category.getPages().stream().allMatch(p -> p.isHidden() || (p.getPermission() != null && !account.hasPermission(p.getPermission())))) continue;
 			HtmlElement catEl = new HtmlElement("li");
 			catEl.addClass("sidenav-list-category");
 			catEl.setText(category.getName());

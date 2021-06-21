@@ -6,24 +6,18 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
-public class WebinterfaceHomePage extends WebinterfacePage {
+public class WebinterfaceWelcomePage extends WebinterfacePage {
 	
-	public WebinterfaceHomePage() {
-		super("Home", "/");
+	public WebinterfaceWelcomePage() {
+		super("Welcome", "/wiapi/welcome");
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());
-		WebinterfaceText tx = new WebinterfaceText("Hello World!");
+		WebinterfaceText tx = new WebinterfaceText("Set up a custom home page using the \"Home page path\" setting");
 		tx.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY, DefaultLayoutProperty.CENTER_TEXT);
 		sc.addElement(tx);
 		sc.addInnerLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
 		addSection(sc);
 	}
 	
-	public WebinterfacePageSection createSection() {
-		WebinterfacePageSection sec = new WebinterfacePageSection();
-		addSection(sec);
-		return sec;
-	}
-
 }
