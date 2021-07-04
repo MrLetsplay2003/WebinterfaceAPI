@@ -13,7 +13,7 @@ import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutOption;
 
 public abstract class AbstractWebinterfacePageElement implements WebinterfacePageElement {
 
@@ -22,9 +22,7 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		width,
 		height;
 	
-	private List<ElementLayoutProperty>
-		layoutProperties,
-		innerLayoutProperties;
+	private List<ElementLayoutOption> layoutOptions;
 	
 	private WebinterfaceAction onClickAction;
 	
@@ -37,8 +35,7 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		mobileStyle;
 	
 	public AbstractWebinterfacePageElement() {
-		this.layoutProperties = new ArrayList<>();
-		this.innerLayoutProperties = new ArrayList<>();
+		this.layoutOptions = new ArrayList<>();
 		this.attributes = new HashMap<>();
 		this.containerAttributes = new HashMap<>();
 		this.style = new CssElement(new CssSelector(() -> "#" + getOrGenerateID()));
@@ -76,23 +73,13 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 	}
 	
 	@Override
-	public void addLayoutProperties(ElementLayoutProperty... layouts) {
-		this.layoutProperties.addAll(Arrays.asList(layouts));
+	public void addLayoutOptions(ElementLayoutOption... layouts) {
+		this.layoutOptions.addAll(Arrays.asList(layouts));
 	}
 	
 	@Override
-	public List<ElementLayoutProperty> getLayoutProperties() {
-		return layoutProperties;
-	}
-	
-	@Override
-	public void addInnerLayoutProperties(ElementLayoutProperty... layouts) {
-		this.innerLayoutProperties.addAll(Arrays.asList(layouts));
-	}
-	
-	@Override
-	public List<ElementLayoutProperty> getInnerLayoutProperties() {
-		return innerLayoutProperties;
+	public List<ElementLayoutOption> getLayoutOptions() {
+		return layoutOptions;
 	}
 	
 	@Override
@@ -164,8 +151,7 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		
 		attributes.forEach(el::setAttribute);
 		containerAttributes.forEach(elContainer::setAttribute);
-		layoutProperties.forEach(p -> p.apply(elContainer));
-		innerLayoutProperties.forEach(p -> p.apply(el));
+		layoutOptions.forEach(p -> p.apply(elContainer, el));
 		elContainer.appendChild(el);
 		return elContainer;
 	}

@@ -6,7 +6,7 @@ import me.mrletsplay.webinterfaceapi.css.CssElement;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutOption;
 
 public interface WebinterfacePageElement {
 	
@@ -27,13 +27,9 @@ public interface WebinterfacePageElement {
 	
 	public String getHeight();
 	
-	public void addLayoutProperties(ElementLayoutProperty... layouts);
+	public void addLayoutOptions(ElementLayoutOption... layouts);
 	
-	public List<ElementLayoutProperty> getLayoutProperties();
-	
-	public void addInnerLayoutProperties(ElementLayoutProperty... layouts);
-	
-	public List<ElementLayoutProperty> getInnerLayoutProperties();
+	public List<ElementLayoutOption> getLayoutOptions();
 	
 	public void setOnClickAction(WebinterfaceAction onClickAction);
 	

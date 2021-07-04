@@ -2,7 +2,7 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.element.builder;
 
 import me.mrletsplay.mrcore.misc.Builder;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
 
 public abstract class AbstractElementBuilder<T extends WebinterfacePageElement, S extends AbstractElementBuilder<T, S>> implements Builder<T, S> {
 	
@@ -13,27 +13,27 @@ public abstract class AbstractElementBuilder<T extends WebinterfacePageElement, 
 	}
 	
 	public S centered() {
-		element.addLayoutProperties(DefaultLayoutProperty.CENTER_TEXT);
+		element.addLayoutOptions(DefaultLayoutOption.CENTER_TEXT);
 		return getSelf();
 	}
 	
 	public S centeredVertically() {
-		element.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
+		element.addLayoutOptions(DefaultLayoutOption.CENTER_VERTICALLY);
 		return getSelf();
 	}
 	
 	public S leftbound() {
-		element.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+		element.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
 		return getSelf();
 	}
 	
 	public S rightbound() {
-		element.addLayoutProperties(DefaultLayoutProperty.RIGHTBOUND);
+		element.addLayoutOptions(DefaultLayoutOption.RIGHTBOUND);
 		return getSelf();
 	}
 	
 	public S fullWidth() {
-		element.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+		element.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 		return getSelf();
 	}
 	

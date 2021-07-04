@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 
-public class GridLayout implements ElementLayoutProperty {
+public class GridLayout implements ElementLayoutOption {
 
 	private String[] columns;
 	
@@ -14,7 +14,7 @@ public class GridLayout implements ElementLayoutProperty {
 	}
 	
 	@Override
-	public void apply(HtmlElement element) {
+	public void apply(HtmlElement elementContainer, HtmlElement element) {
 		element.appendAttribute("style", "grid-template-columns: " + Arrays.stream(columns).collect(Collectors.joining(" ")) + ";");
 	}
 	

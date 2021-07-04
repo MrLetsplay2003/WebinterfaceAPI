@@ -22,7 +22,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInput
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
@@ -40,7 +40,7 @@ public class BukkitPage extends WebinterfacePage {
 			
 			if(mcAcc != null) {
 				WebinterfacePageSection yourAccount = new WebinterfacePageSection();
-				yourAccount.addInnerLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+				yourAccount.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 				yourAccount.addTitle("Your Profile");
 				
 				yourAccount.addElement(WebinterfaceImage.builder()
@@ -60,7 +60,7 @@ public class BukkitPage extends WebinterfacePage {
 						Webinterface.getLogger().warn("Statistics are enabled on Bukkit Home page but PlaceholderAPI is missing");
 					}else {
 						WebinterfaceElementGroup stats = new WebinterfaceElementGroup();
-						stats.addInnerLayoutProperties(new GridLayout("auto", "auto"));
+						stats.addLayoutOptions(new GridLayout("auto", "auto"));
 						
 						for(String el : Webinterface.getConfig().getSetting(BukkitSettings.STATS_ELEMENTS)) {
 							String[] spl = el.split(":");
@@ -86,7 +86,7 @@ public class BukkitPage extends WebinterfacePage {
 		
 		WebinterfacePageSection sets = new WebinterfacePageSection();
 		sets.addTitle("Settings");
-		sets.addInnerLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+		sets.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 		
 		sets.addDynamicElements(() -> {
 			List<WebinterfacePageElement> els = new ArrayList<>();
@@ -96,15 +96,15 @@ public class BukkitPage extends WebinterfacePage {
 			
 			if(mcAcc != null) {
 				WebinterfaceText txt = new WebinterfaceText("Connected Minecraft account");
-				txt.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
+				txt.addLayoutOptions(DefaultLayoutOption.CENTER_VERTICALLY);
 				els.add(txt);
 				
 				WebinterfaceText txt2 = new WebinterfaceText(mcAcc.getUserName() + " (" + mcAcc.getUserID() + ")");
-				txt2.addLayoutProperties(DefaultLayoutProperty.SECOND_TO_LAST_COLUMN);
+				txt2.addLayoutOptions(DefaultLayoutOption.SECOND_TO_LAST_COLUMN);
 				els.add(txt2);
 			}else {
 				WebinterfaceText txt = new WebinterfaceText("Connect to Minecraft account");
-				txt.addLayoutProperties(DefaultLayoutProperty.CENTER_VERTICALLY);
+				txt.addLayoutOptions(DefaultLayoutOption.CENTER_VERTICALLY);
 				els.add(txt);
 				
 				WebinterfaceInputField f = new WebinterfaceInputField("Minecraft name");

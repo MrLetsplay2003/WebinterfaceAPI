@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
 
 public class WebinterfaceElementGroup extends AbstractWebinterfacePageElement {
 
@@ -18,7 +18,7 @@ public class WebinterfaceElementGroup extends AbstractWebinterfacePageElement {
 	public void addTitle(Supplier<String> title) {
 		WebinterfaceTitleText t = new WebinterfaceTitleText(title);
 		t.setText(title);
-		t.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+		t.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 		addElement(t);
 	}
 	

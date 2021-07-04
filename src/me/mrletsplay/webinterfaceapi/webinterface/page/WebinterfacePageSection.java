@@ -15,8 +15,8 @@ import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceHeading;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutOption;
 
 public class WebinterfacePageSection {
 	
@@ -24,8 +24,8 @@ public class WebinterfacePageSection {
 	
 	private Supplier<List<WebinterfacePageElement>> elements;
 	
-	private List<ElementLayoutProperty>
-		innerLayoutProperties;
+	private List<ElementLayoutOption>
+		layoutOptions;
 	
 	private CssElement
 		style,
@@ -33,7 +33,7 @@ public class WebinterfacePageSection {
 	
 	public WebinterfacePageSection() {
 		this.elements = () -> new ArrayList<>();
-		this.innerLayoutProperties = new ArrayList<>();
+		this.layoutOptions = new ArrayList<>();
 		this.style = new CssElement(new CssSelector(() -> "#" + getOrGenerateID()));
 		this.mobileStyle = new CssElement(new CssSelector(() -> "#" + getOrGenerateID()));
 	}
@@ -66,7 +66,7 @@ public class WebinterfacePageSection {
 	
 	public void addTitle(Supplier<String> title) {
 		WebinterfaceTitleText tt = new WebinterfaceTitleText(title);
-		tt.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY, DefaultLayoutProperty.CENTER_TEXT);
+		tt.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH, DefaultLayoutOption.CENTER_VERTICALLY, DefaultLayoutOption.CENTER_TEXT);
 		addElement(tt);
 	}
 	
@@ -76,7 +76,7 @@ public class WebinterfacePageSection {
 	
 	public void addHeading(Supplier<String> title, int level) {
 		WebinterfaceHeading h = new WebinterfaceHeading(title);
-		h.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH, DefaultLayoutProperty.CENTER_VERTICALLY);
+		h.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH, DefaultLayoutOption.CENTER_VERTICALLY);
 		h.setLevel(level);
 		addElement(h);
 	}
@@ -85,12 +85,12 @@ public class WebinterfacePageSection {
 		addHeading(() -> title, level);
 	}
 	
-	public void addInnerLayoutProperties(ElementLayoutProperty... layouts) {
-		this.innerLayoutProperties.addAll(Arrays.asList(layouts));
+	public void addLayoutOptions(ElementLayoutOption... layouts) {
+		this.layoutOptions.addAll(Arrays.asList(layouts));
 	}
 	
-	public List<ElementLayoutProperty> getInnerLayoutProperties() {
-		return innerLayoutProperties;
+	public List<ElementLayoutOption> getLayoutOptions() {
+		return layoutOptions;
 	}
 	
 	public CssElement getStyle() {
@@ -122,7 +122,7 @@ public class WebinterfacePageSection {
 			st.addMobileElement(mobileStyle);
 		}
 		
-		innerLayoutProperties.forEach(p -> p.apply(el));
+		layoutOptions.forEach(p -> p.apply(null, el));
 		return el;
 	}
 

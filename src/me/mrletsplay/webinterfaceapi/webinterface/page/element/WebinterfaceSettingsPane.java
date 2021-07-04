@@ -23,7 +23,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.RawValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WebinterfaceActionValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.WrapperValue;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 
 public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
@@ -40,7 +40,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		this.requestTarget = requestTarget;
 		this.requestMethod = requestMethod;
 		
-		addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+		addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 		getStyle().setProperty("grid-template-columns", "1fr");
 		
 		addSettings(settings);
@@ -54,7 +54,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		categories.forEach(c -> {
 			WebinterfaceHeading h = new WebinterfaceHeading(c.getName());
 			h.setLevel(3);
-			h.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+			h.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
 			h.getStyle().setProperty("margin", "0");
 			addElement(h);
 			c.getSettings().forEach(this::addSetting);
@@ -83,7 +83,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			defaultValue = new RawValue(setting.getDefaultValue().toString());
 		}else if(setting.getType().equals(Complex.value(Boolean.class))) {
 			WebinterfaceCheckBox in = new WebinterfaceCheckBox(() -> (Boolean) config.get().getSetting(setting));
-			in.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+			in.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
 			in.setOnChangeAction(changeSettingAction(setting, new CheckboxValue(in)));
 			el = in;
 			defaultValue = new RawValue(setting.getDefaultValue().toString());
@@ -112,21 +112,21 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		}
 
 		if(el == null || defaultValue == null) return;
-		if(!oneLineLayout) el.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+		if(!oneLineLayout) el.addLayoutOptions(DefaultLayoutOption.NEW_LINE);
 		
 		WebinterfaceText t = new WebinterfaceText(setting.getFriendlyName() != null ? setting.getFriendlyName() : setting.getKey());
-		t.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.CENTER_VERTICALLY);
-		if(!oneLineLayout) t.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+		t.addLayoutOptions(DefaultLayoutOption.LEFTBOUND, DefaultLayoutOption.CENTER_VERTICALLY);
+		if(!oneLineLayout) t.addLayoutOptions(DefaultLayoutOption.NEW_LINE);
 		
 		WebinterfacePageElement tEl = t;
 		if(setting.getDescription() != null) {
 			WebinterfaceElementGroup tGrp = new WebinterfaceElementGroup();
-			tGrp.addInnerLayoutProperties(new GridLayout("1fr"));
+			tGrp.addLayoutOptions(new GridLayout("1fr"));
 			tGrp.addElement(t);
 			WebinterfaceText tDesc = new WebinterfaceText(setting.getDescription());
 			tDesc.getStyle().setProperty("font-size", "0.8em");
 			tDesc.getStyle().setProperty("color", "var(--theme-color-content-text-secondary)");
-			tDesc.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.CENTER_VERTICALLY);
+			tDesc.addLayoutOptions(DefaultLayoutOption.LEFTBOUND, DefaultLayoutOption.CENTER_VERTICALLY);
 			tGrp.addElement(tDesc);
 			tEl = tGrp;
 		}

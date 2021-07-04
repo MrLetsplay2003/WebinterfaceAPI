@@ -27,7 +27,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageE
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceVerticalSpacer;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 
 public class WebinterfaceAccountsPage extends WebinterfacePage {
@@ -47,7 +47,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 			
 			for(WebinterfaceAccount acc : Webinterface.getAccountStorage().getAccounts()) {
 				WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
-				grp.addInnerLayoutProperties(new GridLayout("min-content", "auto"));
+				grp.addLayoutOptions(new GridLayout("min-content", "auto"));
 				
 				WebinterfaceTitleText tt = WebinterfaceTitleText.builder()
 						.text(acc.getName())
@@ -62,7 +62,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 						.noLineBreaks()
 						.leftbound()
 						.create();
-				tx2.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
+				tx2.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
 				grp.addElement(tx2);
 				grp.addElement(WebinterfaceText.builder()
 						.text(acc.getPrimaryEmail() == null ? "-" : acc.getPrimaryEmail())
@@ -70,7 +70,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 						.create());
 				
 				WebinterfaceTitleText tx3 = new WebinterfaceTitleText("Permissions");
-				tx3.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
+				tx3.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
 				grp.addElement(tx3);
 				grp.addElement(WebinterfaceText.builder()
 						.text(acc.getPermissions().isEmpty() ? "-" : acc.getPermissions().stream().map(Permission::getPermission).collect(Collectors.joining(", ")))
@@ -82,7 +82,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 						.noLineBreaks()
 						.leftbound()
 						.create();
-				tx4.addLayoutProperties(DefaultLayoutProperty.NEW_LINE);
+				tx4.addLayoutOptions(DefaultLayoutOption.NEW_LINE);
 				grp.addElement(tx4);
 				grp.addElement(WebinterfaceText.builder()
 						.text(acc.isTemporary() ? "yes" : "no")
@@ -90,7 +90,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 						.create());
 				
 				WebinterfaceTitleText tx = new WebinterfaceTitleText("Is Admin");
-				tx.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
+				tx.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
 				grp.addElement(tx);
 				
 				WebinterfaceCheckBox cb = new WebinterfaceCheckBox(acc.hasPermission("*"));
@@ -103,9 +103,9 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				grp.addElement(cb);
 				
 				WebinterfaceElementGroup grp2 = new WebinterfaceElementGroup();
-				grp2.addInnerLayoutProperties(new GridLayout("1fr", "1fr"));
+				grp2.addLayoutOptions(new GridLayout("1fr", "1fr"));
 				grp2.addTitle("Account Actions");
-				grp2.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+				grp2.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 				
 				WebinterfaceInputField addP = new WebinterfaceInputField("Add permission");
 				
@@ -129,7 +129,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				
 				WebinterfaceButton delBtn = new WebinterfaceButton("Delete account");
 				delBtn.setWidth("auto");
-				delBtn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+				delBtn.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 				
 				delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "deleteAccount", new StringValue(acc.getID())), new ReloadPageAction(false, 100))));
 				

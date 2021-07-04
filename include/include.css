@@ -453,6 +453,10 @@ img.element {
 	.content-container, .grid-layout {
 		grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
 	}
+
+	.el-maximize-columns {
+		grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+	}
 }
 
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');

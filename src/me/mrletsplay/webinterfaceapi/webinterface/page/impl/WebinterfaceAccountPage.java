@@ -24,7 +24,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageE
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceVerticalSpacer;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutProperty;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
@@ -59,43 +59,43 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 				WebinterfaceAuthMethod mth = loginCons.get(con);
 				
 				WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
-				grp.addInnerLayoutProperties(new GridLayout("min-content", "auto"));
+				grp.addLayoutOptions(new GridLayout("min-content", "auto"));
 				
 //				grp.addTitle("Auth method: " + mth.getName());
 				WebinterfaceTitleText title = new WebinterfaceTitleText(con.getUserName());
 				title.getStyle().setProperty("font-size", "24px");
-				title.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND, DefaultLayoutProperty.FULL_WIDTH);
+				title.addLayoutOptions(DefaultLayoutOption.LEFTBOUND, DefaultLayoutOption.FULL_WIDTH);
 				grp.addElement(title);
 				
 				if(mth != null) {
 					WebinterfaceTitleText tt = new WebinterfaceTitleText("Auth method");
 					tt.getStyle().setProperty("white-space", "nowrap");
-					tt.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+					tt.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
 					grp.addElement(tt);
 					WebinterfaceText un = new WebinterfaceText(mth.getName());
-					un.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+					un.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
 					grp.addElement(un);
 				}
 				
 				WebinterfaceTitleText tx2 = new WebinterfaceTitleText("Email");
-				tx2.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
+				tx2.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
 				grp.addElement(tx2);
 				WebinterfaceText em = new WebinterfaceText(con.getUserEmail() == null ? "-" : con.getUserEmail());
-				em.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+				em.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
 				grp.addElement(em);
 				
 				WebinterfaceTitleText tx4 = new WebinterfaceTitleText("Is Temporary");
 				tx4.getStyle().setProperty("white-space", "nowrap");
-				tx4.addLayoutProperties(DefaultLayoutProperty.NEW_LINE, DefaultLayoutProperty.LEFTBOUND);
+				tx4.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
 				grp.addElement(tx4);
 				WebinterfaceText temp = new WebinterfaceText(con.isTemporary() ? "yes" : "no");
-				temp.addLayoutProperties(DefaultLayoutProperty.LEFTBOUND);
+				temp.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
 				grp.addElement(temp);
 				
 				if(loginCons.size() > 1) {
 					WebinterfaceButton delBtn = new WebinterfaceButton("Remove connection");
 					delBtn.setWidth("auto");
-					delBtn.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+					delBtn.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 					delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getConnectionName())), new ReloadPageAction(false, 100))));
 					
 					grp.addElement(delBtn);
@@ -107,7 +107,7 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 			}
 			
 			WebinterfaceButton btnConnect = new WebinterfaceButton("Connect another auth method");
-			btnConnect.addLayoutProperties(DefaultLayoutProperty.FULL_WIDTH);
+			btnConnect.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 			btnConnect.setOnClickAction(new RedirectAction("/login?from=" + HttpUtils.urlEncode(URL) + "&connect=true"));
 			els.add(btnConnect);
 			
