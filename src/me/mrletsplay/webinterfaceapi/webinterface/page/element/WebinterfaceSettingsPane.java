@@ -11,6 +11,7 @@ import me.mrletsplay.mrcore.misc.NullableOptional;
 import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.SettingsCategory;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
+import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfaceSettingsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
@@ -163,6 +164,13 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		return categories;
 	}
 	
+	/**
+	 * @deprecated Use {@link WebinterfaceSettingsPage#handleSetSettingRequest(WebinterfaceConfig, WebinterfaceRequestEvent)} instead
+	 * @param config
+	 * @param event
+	 * @return
+	 */
+	@Deprecated
 	public static WebinterfaceResponse handleSetSettingRequest(WebinterfaceConfig config, WebinterfaceRequestEvent event) {
 		JSONArray keyAndValue = event.getRequestData().getJSONArray("value");
 		WebinterfaceSetting<?> set = config.getSetting(keyAndValue.getString(0));
@@ -170,10 +178,12 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		return WebinterfaceResponse.success();
 	}
 	
+	@Deprecated
 	private static <T> void setSetting(WebinterfaceConfig config, WebinterfaceSetting<T> setting, Object value) {
 		config.setSetting(setting, setting.getType().cast(value, WebinterfaceSettingsPane::jsonCast).get());
 	}
 	
+	@Deprecated
 	private static <T> NullableOptional<T> jsonCast(Object o, Class<T> typeClass, Complex<?> exactClass) {
 		if(o == null) return NullableOptional.of(null);
 		if(typeClass.isInstance(o)) return NullableOptional.of(typeClass.cast(o));

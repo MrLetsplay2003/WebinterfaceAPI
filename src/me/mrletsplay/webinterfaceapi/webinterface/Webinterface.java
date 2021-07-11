@@ -58,7 +58,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountsPage;
-import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceSettingsPage;
+import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceDefaultSettingsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceWelcomePage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.FileSessionStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
@@ -100,7 +100,7 @@ public class Webinterface {
 		
 		WebinterfacePageCategory cat = createCategory("WebinterfaceAPI");
 		cat.addPage(new WebinterfaceWelcomePage());
-		cat.addPage(new WebinterfaceSettingsPage());
+		cat.addPage(new WebinterfaceDefaultSettingsPage());
 		cat.addPage(new WebinterfaceAccountsPage());
 		cat.addPage(new WebinterfaceAccountPage());
 		

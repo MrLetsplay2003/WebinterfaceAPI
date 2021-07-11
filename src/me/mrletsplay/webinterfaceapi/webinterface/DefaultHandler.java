@@ -1,11 +1,11 @@
 package me.mrletsplay.webinterfaceapi.webinterface;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfaceSettingsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceSettingsPane;
 
 public class DefaultHandler implements WebinterfaceActionHandler {
 	
@@ -37,7 +37,7 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 	public WebinterfaceResponse setSetting(WebinterfaceRequestEvent event) {
 		if(!event.getAccount().hasPermission(DefaultPermissions.SETTINGS))
 			return WebinterfaceResponse.error("No permission");
-		return WebinterfaceSettingsPane.handleSetSettingRequest(Webinterface.getConfig(), event);
+		return WebinterfaceSettingsPage.handleSetSettingRequest(Webinterface.getConfig(), event);
 	}
 	
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "setOP")
