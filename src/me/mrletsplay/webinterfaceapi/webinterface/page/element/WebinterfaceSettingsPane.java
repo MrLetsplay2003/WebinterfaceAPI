@@ -12,9 +12,9 @@ import me.mrletsplay.webinterfaceapi.webinterface.config.WebinterfaceConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.SettingsCategory;
 import me.mrletsplay.webinterfaceapi.webinterface.config.setting.WebinterfaceSetting;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfaceSettingsPage;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ArrayValue;
@@ -152,12 +152,11 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		addElement(grp);
 	}
 	
-	private MultiAction changeSettingAction(WebinterfaceSetting<?> setting, WebinterfaceActionValue value) {
-		return new MultiAction(new SendJSAction(requestTarget, requestMethod, new ArrayValue(
+	private WebinterfaceAction changeSettingAction(WebinterfaceSetting<?> setting, WebinterfaceActionValue value) {
+		return new SendJSAction(requestTarget, requestMethod, new ArrayValue(
 				new StringValue(setting.getKey()),
 				value
-			)),
-			new ReloadPageAction(false, 100));
+			)).onSuccess(new ReloadPageAction(false, 100));
 	}
 	
 	public List<SettingsCategory> getSettingsCategories() {

@@ -22,11 +22,6 @@ public class ObjectValue implements WebinterfaceActionValue {
 		values.put(key, value);
 	}
 	
-	@Deprecated
-	public void putValue(String key, WebinterfaceActionValue value) {
-		put(key, value);
-	}
-	
 	@Override
 	public String toJavaScript() {
 		return "{" + values.entrySet().stream()

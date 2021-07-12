@@ -7,7 +7,7 @@ class Webinterface {
 				method: "POST",
 				contentType: "application/json",
 				data: JSON.stringify({target: target, method: method, data: data}),
-				timeout: 10000,
+				timeout: 120000,
 				cache: false,
 				success: function(response, status) {
 					let r = new WebinterfaceResponse(true, response, null);

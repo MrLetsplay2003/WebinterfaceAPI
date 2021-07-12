@@ -23,18 +23,6 @@ public class MultiAction implements WebinterfaceAction {
 		this(Arrays.asList(actions));
 	}
 	
-//	@Override
-//	public JavaScriptFunction toJavaScript() {
-//		JavaScriptFunction f = new JavaScriptFunction(randomFunctionName() + "()");
-//		StringBuilder code = new StringBuilder();
-//		for(WebinterfaceAction ac : actions) {
-//			JavaScriptFunction fc = ac.toJavaScript();
-//			code.append(fc.getCode().get());
-//		}
-//		f.setCode(code.toString());
-//		return f;
-//	}
-	
 	@Override
 	public String getHandlerName() {
 		return "WebinterfaceBaseActions.multiAction";
