@@ -6,7 +6,6 @@ body {
 
 	--theme-color-page-bg: #fafafa;
 	--theme-color-page-text: white;
-	--theme-color-page-text-secondary: white;
 	--theme-color-page-shadow: gray;
 
 	--theme-color-section-background: white;
@@ -22,6 +21,8 @@ body {
 	--theme-color-content-text: black;
 	--theme-color-content-text-secondary: rgb(120, 120, 120);
 	--theme-color-content-hover-bg: #efefef;
+	
+	--theme-color-loading: #394263;
 
 	--theme-button-font-weight: normal;
 

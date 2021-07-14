@@ -7,9 +7,9 @@ class WebinterfaceBaseActions {
 	static async sendJS(element, event, parameters) {
 		let response = await Webinterface.call(parameters.requestTarget, parameters.requestMethod, {value: parameters.value == null ? null : parameters.value});
 		if(response.isSuccess() && parameters.onSuccess != null) {
-			parameters.onSuccess.action(parameters.onSuccess.parameters);
+			parameters.onSuccess.action(element, event, parameters.onSuccess.parameters);
 		}else if(!response.isSuccess() && parameters.onError != null) {
-			parameters.onError.action(parameters.onError.parameters);
+			parameters.onError.action(element, event, parameters.onError.parameters);
 		}
 	}
 
@@ -35,7 +35,6 @@ class WebinterfaceBaseActions {
 
     static multiAction(element, event, parameters) {
 		for(let a of parameters.actions) {
-			console.log(a);
 			a.action(element, event, a.parameters);
 		}
 	}
@@ -44,6 +43,14 @@ class WebinterfaceBaseActions {
 		if(confirm("Are you sure?")) {
 			parameters.action(element, event, parameters.actionParameters);
 		}
+	}
+	
+	static showLoadingScreen(element, event, parameters) {
+		document.getElementById("loading-box").style.display = "flex";
+	}
+	
+	static hideLoadingScreen(element, event, parameters) {
+		document.getElementById("loading-box").style.display = "none";
 	}
 
 }

@@ -143,6 +143,21 @@ public class WebinterfacePage implements HttpDocument {
 		alertBox.setID("alert-box");
 		d.getBodyNode().appendChild(alertBox);
 		
+		HtmlElement loadingBox = new HtmlElement("div");
+		loadingBox.setID("loading-box");
+		
+		HtmlElement b1 = new HtmlElement("div");
+		b1.addClass("bounce1");
+		loadingBox.appendChild(b1);
+		HtmlElement b2 = new HtmlElement("div");
+		b2.addClass("bounce2");
+		loadingBox.appendChild(b2);
+		HtmlElement b3 = new HtmlElement("div");
+		b3.addClass("bounce3");
+		loadingBox.appendChild(b3);
+		
+		d.getBodyNode().appendChild(loadingBox);
+		
 		HtmlElement header = new HtmlElement("header");
 		header.addClass("header");
 
