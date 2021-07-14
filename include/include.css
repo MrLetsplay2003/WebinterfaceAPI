@@ -241,6 +241,8 @@ select {
 	cursor: pointer;
 	font-family: 'Open Sans', sans-serif;
 	border-radius: 5px;
+	padding: 8px;
+	padding-left: 4px;
 }
 
 select > option {
