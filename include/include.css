@@ -57,7 +57,7 @@ body {
 	grid-gap: 15px;
 	grid-auto-flow: row;
 	grid-template-columns: 1fr;
-	grid-template-rows: min-content;
+	grid-template-rows: repeat(auto-fit, minmax(0, min-content));
 	padding-bottom: 10px;
 }
 
@@ -278,7 +278,7 @@ img.element {
 .grid-layout {
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-template-rows: min-content;
+	grid-template-rows: repeat(auto-fit, minmax(0, min-content));
 	grid-auto-flow: row;
 }
 
