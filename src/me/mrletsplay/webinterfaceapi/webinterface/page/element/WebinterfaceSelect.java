@@ -16,13 +16,17 @@ public class WebinterfaceSelect extends AbstractWebinterfacePageElement {
 		this.options = ArrayList::new;
 	}
 	
-	public void addOption(String name, String value, boolean selected) {
+	public void addOption(String name, String value, boolean selected, boolean enabled) {
 		Supplier<List<Option>> o = this.options;
 		this.options = () -> {
 			List<Option> ops = o.get();
-			ops.add(new Option(name, value, selected));
+			ops.add(new Option(name, value, selected, enabled));
 			return ops;
 		};
+	}
+	
+	public void addOption(String name, String value, boolean selected) {
+		addOption(name, value, selected, true);
 	}
 	
 	public void addOption(String name, String value) {
@@ -41,6 +45,7 @@ public class WebinterfaceSelect extends AbstractWebinterfacePageElement {
 			oe.setText(op.getName());
 			oe.setAttribute("value", op.getValue());
 			if(op.isSelected()) oe.setAttribute("selected");
+			if(!op.isEnabled()) oe.setAttribute("disabled");
 			b.appendChild(oe);
 		}
 		if(onChangeAction != null) b.setAttribute("onchange", onChangeAction.createAttributeValue());
@@ -52,11 +57,13 @@ public class WebinterfaceSelect extends AbstractWebinterfacePageElement {
 		private String name;
 		private String value;
 		private boolean selected;
+		private boolean enabled;
 		
-		public Option(String name, String value, boolean selected) {
+		public Option(String name, String value, boolean selected, boolean enabled) {
 			this.name = name;
 			this.value = value;
 			this.selected = selected;
+			this.enabled = enabled;
 		}
 		
 		public String getName() {
@@ -73,6 +80,14 @@ public class WebinterfaceSelect extends AbstractWebinterfacePageElement {
 		
 		public boolean isSelected() {
 			return selected;
+		}
+		
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+		
+		public boolean isEnabled() {
+			return enabled;
 		}
 		
 	}
