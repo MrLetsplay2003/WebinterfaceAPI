@@ -42,6 +42,8 @@ public class WebinterfacePage implements HttpDocument {
 	
 	private boolean hidden;
 	
+	private String icon;
+	
 	private Supplier<List<WebinterfacePageSection>> sections;
 	
 	private CssElement
@@ -86,6 +88,14 @@ public class WebinterfacePage implements HttpDocument {
 		return hidden;
 	}
 	
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+	
+	public String getIcon() {
+		return icon;
+	}
+	
 	public CssElement getContainerStyle() {
 		return containerStyle;
 	}
@@ -125,6 +135,7 @@ public class WebinterfacePage implements HttpDocument {
 		d.setTitle(name);
 		d.setLanguage("en");
 		d.includeScript("https://code.jquery.com/jquery-3.5.1.min.js", false, true);
+		d.includeScript("https://code.iconify.design/1/1.0.7/iconify.min.js", false, true);
 		JavaScriptScript sc = new JavaScriptScript();
 		StyleSheet st = new StyleSheet();
 		st.addElement(containerStyle);
@@ -279,10 +290,28 @@ public class WebinterfacePage implements HttpDocument {
 			HtmlElement sideNavListItem = new HtmlElement("li");
 			sideNavListItem.addClass("sidenav-list-item");
 			
-			HtmlElement a = new HtmlElement("a");
-			a.setText(page.getName());
-			a.setAttribute("href", page.getUrl());
-			sideNavListItem.appendChild(a);
+			HtmlElement wrapper = new HtmlElement("a");
+			wrapper.addClass("sidenav-wrapper");
+			wrapper.setAttribute("href", page.getUrl());
+			
+			HtmlElement iconDiv = new HtmlElement("div");
+			iconDiv.addClass("sidenav-icon");
+			
+			String iconName = page.getIcon();
+			if(iconName == null) iconName = "mdi:chevron-right";
+			HtmlElement icon = new HtmlElement("span");
+			icon.addClass("iconify");
+			icon.setAttribute("data-icon", iconName);
+			iconDiv.appendChild(icon);
+			
+			wrapper.appendChild(iconDiv);
+			
+			HtmlElement label = new HtmlElement("div");
+			label.addClass("sidenav-label");
+			label.setText(page.getName());
+			wrapper.appendChild(label);
+			
+			sideNavListItem.appendChild(wrapper);
 			
 			sideNavList.appendChild(sideNavListItem);
 		}
