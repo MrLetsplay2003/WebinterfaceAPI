@@ -10,6 +10,7 @@ public class WebinterfaceDefaultSettingsPage extends WebinterfaceSettingsPage {
 	
 	public WebinterfaceDefaultSettingsPage() {
 		super("Settings", "/wiapi/settings", DefaultPermissions.SETTINGS, new WebinterfaceSettingsPane(() -> Webinterface.getConfig(), DefaultSettings.INSTANCE.getSettingsCategories(), "webinterface", "setSetting"));
+		setIcon("mdi:cog");
 	}
 
 }

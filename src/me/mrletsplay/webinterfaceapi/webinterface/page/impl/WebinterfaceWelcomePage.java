@@ -10,6 +10,7 @@ public class WebinterfaceWelcomePage extends WebinterfacePage {
 	
 	public WebinterfaceWelcomePage() {
 		super("Welcome", "/wiapi/welcome");
+		setIcon("mdi:party-popper");
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());

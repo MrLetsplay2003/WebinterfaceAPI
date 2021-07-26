@@ -34,6 +34,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 	
 	public WebinterfaceAccountsPage() {
 		super("Accounts", "/wiapi/accounts", DefaultPermissions.MODIFY_USERS);
+		setIcon("mdi:account");
 		getContainerStyle().setProperty("max-width", "900px");
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
