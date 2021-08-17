@@ -250,7 +250,7 @@ public class HtmlElement {
 		return img;
 	}
 	
-	public static HtmlElement img(String src, String alt) {
+	public static HtmlImg img(String src, String alt) {
 		return img(() -> src, () -> alt);
 	}
 	
