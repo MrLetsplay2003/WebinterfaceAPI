@@ -62,7 +62,7 @@ public class PasswordAuth implements WebinterfaceAuthMethod {
 			if(!register) {
 				if(acc == null) throw new AuthException("Invalid username/password");
 				WebinterfaceAccountConnection con = acc.getConnection(ID);
-				if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) throw new AuthException("Invalid password/password");
+				if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) throw new AuthException("Invalid username/password");
 				return con;
 			}else {
 				if(!Webinterface.getConfig().getSetting(DefaultSettings.ALLOW_REGISTRATION)) throw new AuthException("Registration is disabled");
