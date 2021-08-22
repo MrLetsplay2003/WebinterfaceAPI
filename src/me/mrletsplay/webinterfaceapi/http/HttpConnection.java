@@ -23,11 +23,14 @@ import me.mrletsplay.webinterfaceapi.http.header.HttpClientHeader;
 import me.mrletsplay.webinterfaceapi.http.header.HttpHeaderFields;
 import me.mrletsplay.webinterfaceapi.http.header.HttpServerHeader;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.http.websocket.WebSocketConnection;
 import me.mrletsplay.webinterfaceapi.server.ServerException;
 import me.mrletsplay.webinterfaceapi.server.connection.impl.AbstractConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
 public class HttpConnection extends AbstractConnection {
+	
+	private WebSocketConnection websocketConnection;
 
 	public HttpConnection(HttpServer server, Socket socket) {
 		super(server, socket);
@@ -68,7 +71,20 @@ public class HttpConnection extends AbstractConnection {
 		return (HttpServer) super.getServer();
 	}
 	
+	public void setWebsocketConnection(WebSocketConnection websocketConnection) {
+		this.websocketConnection = websocketConnection;
+	}
+	
+	public WebSocketConnection getWebsocketConnection() {
+		return websocketConnection;
+	}
+	
 	private boolean receive() throws IOException {
+		if(websocketConnection != null) {
+			websocketConnection.receive();
+			return true;
+		}
+		
 		HttpClientHeader h = HttpClientHeader.parse(getSocket().getInputStream());
 		if(h == null) return false;
 		
@@ -168,6 +184,8 @@ public class HttpConnection extends AbstractConnection {
 	
 	private void applyCompression(HttpServerHeader sh) throws IOException {
 		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
+		
+		if(ctx.getClientHeader().getFields().getFieldValue("Accept-Encoding") == null) return;
 		
 		List<String> supCs = Arrays.stream(ctx.getClientHeader().getFields().getFieldValue("Accept-Encoding").split(","))
 				.map(String::trim)

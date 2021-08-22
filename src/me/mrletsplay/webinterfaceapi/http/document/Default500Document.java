@@ -56,7 +56,7 @@ public class Default500Document implements HttpDocument {
 	public void createContent() {
 		HttpServerHeader h = HttpRequestContext.getCurrentContext().getServerHeader();
 		doc.createContent();
-		h.setStatusCode(HttpStatusCodes.NOT_FOUND_404);
+		h.setStatusCode(HttpStatusCodes.INTERNAL_SERVER_ERROR_500);
 	}
 
 }

@@ -2,6 +2,7 @@ package me.mrletsplay.webinterfaceapi.http;
 
 public enum HttpStatusCodes implements HttpStatusCode {
 	
+	SWITCHING_PROTOCOLS_101(101, "Switching Protocols"),
 	OK_200(200, "OK"),
 	PARTIAL_CONTENT_206(206, "Partial Content"),
 	MOVED_PERMANENTLY_301(301, "Moved Permanently"),
