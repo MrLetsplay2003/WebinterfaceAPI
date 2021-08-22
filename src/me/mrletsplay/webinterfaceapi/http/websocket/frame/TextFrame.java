@@ -17,7 +17,7 @@ public class TextFrame extends WebSocketFrame {
 	
 	@Override
 	public WebSocketFrame[] split() {
-		if(getPayload().length < 65536) return new WebSocketFrame[] {this};
+		if(getPayload().length < MAX_FRAME_SIZE) return new WebSocketFrame[] {this};
 		int count = (int) Math.ceil((float) getPayload().length / MAX_FRAME_SIZE);
 		WebSocketFrame[] frames = new WebSocketFrame[count];
 		byte[] payload = getPayload();
