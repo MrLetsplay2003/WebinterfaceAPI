@@ -86,10 +86,10 @@ public class WebinterfaceSetupSubmitDocument implements HttpDocument {
 			}
 			case WebinterfaceSetupDocument.SETUP_STEP_AUTH:
 			{
-				boolean noAuth = !params.get("no-auth").isEmpty() && params.get("no-auth").get(0).equals("on");
+				boolean noAuth = params.containsKey("no-auth") && !params.get("no-auth").isEmpty() && params.get("no-auth").get(0).equals("on");
 				Webinterface.getConfig().setSetting(DefaultSettings.ALLOW_ANONYMOUS, noAuth);
 				
-				boolean discordAuth = params.containsKey("discord-auth") && params.get("discord-auth").get(0).equals("on");
+				boolean discordAuth = params.containsKey("discord-auth") && !params.get("discord-auth").isEmpty() && params.get("discord-auth").get(0).equals("on");
 				Webinterface.getConfig().setSetting(DefaultSettings.ENABLE_DISCORD_AUTH, discordAuth);
 				if(discordAuth) {
 					String clientID = params.get("discord-client-id").get(0).trim();
@@ -98,7 +98,7 @@ public class WebinterfaceSetupSubmitDocument implements HttpDocument {
 					a.setup(clientID, clientSecret);
 				}
 				
-				boolean googleAuth = params.containsKey("google-auth") && params.get("google-auth").get(0).equals("on");
+				boolean googleAuth = params.containsKey("google-auth") && !params.get("google-auth").isEmpty() && params.get("google-auth").get(0).equals("on");
 				Webinterface.getConfig().setSetting(DefaultSettings.ENABLE_GOOGLE_AUTH, googleAuth);
 				if(googleAuth) {
 					String clientID = params.get("google-client-id").get(0).trim();
@@ -107,7 +107,7 @@ public class WebinterfaceSetupSubmitDocument implements HttpDocument {
 					a.setup(clientID, clientSecret);
 				}
 				
-				boolean githubAuth = params.containsKey("github-auth") && params.get("github-auth").get(0).equals("on");
+				boolean githubAuth = params.containsKey("github-auth") && !params.get("github-auth").isEmpty() && params.get("github-auth").get(0).equals("on");
 				Webinterface.getConfig().setSetting(DefaultSettings.ENABLE_GITHUB_AUTH, githubAuth);
 				if(githubAuth) {
 					String clientID = params.get("github-client-id").get(0).trim();
