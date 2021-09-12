@@ -7,6 +7,7 @@ import org.commonmark.parser.Parser;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownElementPostProcessor;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.builder.AbstractElementBuilder;
 
 public class WebinterfaceText extends AbstractWebinterfacePageElement {
@@ -53,6 +54,10 @@ public class WebinterfaceText extends AbstractWebinterfacePageElement {
 		return markdownPostProcessor;
 	}
 	
+	public ElementValue getValue() {
+		return new ElementValue(this);
+	}
+	
 	@Override
 	public HtmlElement createElement() {
 		HtmlElement b = new HtmlElement("a");
@@ -88,6 +93,16 @@ public class WebinterfaceText extends AbstractWebinterfacePageElement {
 		
 		public Builder noLineBreaks() {
 			element.getStyle().setProperty("white-space", "nowrap");
+			return this;
+		}
+		
+		public Builder enableMarkdown(boolean enableMarkdown) {
+			element.setEnableMarkdown(enableMarkdown);
+			return this;
+		}
+		
+		public Builder markdownPostProcessor(MarkdownElementPostProcessor markdownPostProcessor) {
+			element.setMarkdownPostProcessor(markdownPostProcessor);
 			return this;
 		}
 		

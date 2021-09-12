@@ -1,9 +1,12 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ElementValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.builder.AbstractElementBuilder;
 
 public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
 	
@@ -62,6 +65,10 @@ public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
 		this.onChangeAction = onChangeAction;
 	}
 	
+	public ElementValue getValue() {
+		return new ElementValue(this);
+	}
+	
 	@Override
 	public HtmlElement createElement() {
 		HtmlElement b = new HtmlElement("input");
@@ -74,6 +81,53 @@ public class WebinterfaceInputField extends AbstractWebinterfacePageElement {
 		}
 		if(onChangeAction != null) b.setAttribute("onchange", onChangeAction.createAttributeValue());
 		return b;
+	}
+	
+	public static Builder builder() {
+		return new Builder(new WebinterfaceInputField());
+	}
+	
+	public static class Builder extends AbstractElementBuilder<WebinterfaceInputField, Builder> {
+
+		private Builder(WebinterfaceInputField element) {
+			super(element);
+		}
+		
+		public Builder placeholder(String placeholder) {
+			element.setPlaceholder(placeholder);
+			return this;
+		}
+		
+		public Builder placeholder(Supplier<String> placeholder) {
+			element.setPlaceholder(placeholder);
+			return this;
+		}
+		
+		public Builder initialValue(String placeholder) {
+			element.setInitialValue(placeholder);
+			return this;
+		}
+		
+		public Builder initialValue(Supplier<String> placeholder) {
+			element.setInitialValue(placeholder);
+			return this;
+		}
+		
+		public Builder onChange(WebinterfaceAction onChange) {
+			element.setOnChangeAction(onChange);
+			return this;
+		}
+		
+		public Builder onChange(Function<WebinterfaceInputField, WebinterfaceAction> onChange) {
+			element.setOnChangeAction(onChange.apply(element));
+			return this;
+		}
+		
+		@Override
+		public WebinterfaceInputField create() throws IllegalStateException {
+			return super.create();
+		}
+		
 	}
 
 }

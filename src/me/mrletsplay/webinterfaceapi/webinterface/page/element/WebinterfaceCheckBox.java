@@ -1,10 +1,12 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.CheckboxValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.builder.AbstractElementBuilder;
 
 public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 	
@@ -49,6 +51,33 @@ public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 		sp.addClass("checkbox-checkmark");
 		label.appendChild(sp);
 		return label;
+	}
+	
+	public static Builder builder() {
+		return new Builder(new WebinterfaceCheckBox());
+	}
+	
+	public static class Builder extends AbstractElementBuilder<WebinterfaceCheckBox, Builder> {
+
+		private Builder(WebinterfaceCheckBox element) {
+			super(element);
+		}
+		
+		public Builder onChange(WebinterfaceAction onChange) {
+			element.setOnChangeAction(onChange);
+			return this;
+		}
+		
+		public Builder onChange(Function<WebinterfaceCheckBox, WebinterfaceAction> onChange) {
+			element.setOnChangeAction(onChange.apply(element));
+			return this;
+		}
+		
+		@Override
+		public WebinterfaceCheckBox create() throws IllegalStateException {
+			return super.create();
+		}
+		
 	}
 
 }

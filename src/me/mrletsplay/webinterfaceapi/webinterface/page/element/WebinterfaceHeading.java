@@ -3,6 +3,7 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.element;
 import java.util.function.Supplier;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.builder.AbstractElementBuilder;
 
 public class WebinterfaceHeading extends AbstractWebinterfacePageElement {
 	
@@ -17,6 +18,8 @@ public class WebinterfaceHeading extends AbstractWebinterfacePageElement {
 	public WebinterfaceHeading(String text) {
 		this(() -> text);
 	}
+	
+	private WebinterfaceHeading() {}
 	
 	public void setText(Supplier<String> text) {
 		this.text = text;
@@ -41,6 +44,39 @@ public class WebinterfaceHeading extends AbstractWebinterfacePageElement {
 		b.setText(text);
 		h.appendChild(b);
 		return h;
+	}
+	
+	public static Builder builder() {
+		return new Builder(new WebinterfaceHeading());
+	}
+	
+	public static class Builder extends AbstractElementBuilder<WebinterfaceHeading, Builder> {
+
+		private Builder(WebinterfaceHeading element) {
+			super(element);
+		}
+		
+		public Builder text(String text) {
+			element.setText(text);
+			return this;
+		}
+		
+		public Builder text(Supplier<String> text) {
+			element.setText(text);
+			return this;
+		}
+		
+		public Builder level(int level) {
+			element.setLevel(level);
+			return this;
+		}
+		
+		@Override
+		public WebinterfaceHeading create() throws IllegalStateException {
+			if(element.getText() == null) throw new IllegalStateException("No text set");
+			return super.create();
+		}
+		
 	}
 
 }

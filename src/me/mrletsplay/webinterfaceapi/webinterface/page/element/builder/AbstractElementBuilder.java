@@ -1,6 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.element.builder;
 
 import me.mrletsplay.mrcore.misc.Builder;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.ElementLayoutOption;
@@ -60,6 +61,11 @@ public abstract class AbstractElementBuilder<T extends WebinterfacePageElement, 
 	
 	public S withLayoutOptions(ElementLayoutOption... layoutOptions) {
 		element.addLayoutOptions(layoutOptions);
+		return getSelf();
+	}
+	
+	public S onClick(WebinterfaceAction action) {
+		element.setOnClickAction(action);
 		return getSelf();
 	}
 	
