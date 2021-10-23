@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.webinterfaceapi.css.CssElement;
 import me.mrletsplay.webinterfaceapi.css.StyleSheet;
 import me.mrletsplay.webinterfaceapi.css.selector.CssSelector;
@@ -32,8 +31,6 @@ public class WebinterfacePage implements HttpDocument {
 		CONTEXT_PROPERTY_SCRIPT = "webinterface-script",
 		CONTEXT_PROPERTY_STYLE = "webinterface-style",
 		CONTEXT_PROPERTY_REQUIRED_MODULES = "webinterface-required-modules";
-	
-	private static final Supplier<String> LOGIN_URL = () -> "/login?from=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().toString());
 	
 	private String
 		name,
@@ -225,7 +222,7 @@ public class WebinterfacePage implements HttpDocument {
 		po.appendChild(loc2);
 		
 		HtmlElement lo2 = new HtmlElement("a");
-		lo2.setAttribute("href", LOGIN_URL);
+		lo2.setAttribute("href", WebinterfaceSession.LOGIN_URL);
 		lo2.setText("Switch accounts");
 		loc2.appendChild(lo2);
 		
@@ -365,12 +362,7 @@ public class WebinterfacePage implements HttpDocument {
 
 	@Override
 	public void createContent() {
-		if(WebinterfaceSession.getCurrentSession() == null || WebinterfaceSession.getCurrentSession().getAccount() == null) {
-			HttpRequestContext c = HttpRequestContext.getCurrentContext();
-			c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
-			c.getServerHeader().getFields().setFieldValue("Location", LOGIN_URL.get());
-			return;
-		}
+		if(!WebinterfaceSession.requireSession()) return;
 		toHtml().createContent();
 	}
 

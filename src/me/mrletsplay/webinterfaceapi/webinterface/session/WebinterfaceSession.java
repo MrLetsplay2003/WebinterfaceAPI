@@ -5,7 +5,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
+import me.mrletsplay.mrcore.http.HttpUtils;
+import me.mrletsplay.webinterfaceapi.http.HttpStatusCodes;
+import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
@@ -16,6 +20,8 @@ import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 public class WebinterfaceSession {
 	
 	public static final String COOKIE_NAME = "wi_sessid";
+	
+	public static final Supplier<String> LOGIN_URL = () -> "/login?from=" + HttpUtils.urlEncode(HttpRequestContext.getCurrentContext().getClientHeader().getPath().toString());
 	
 	private String
 		sessionID,
@@ -102,6 +108,33 @@ public class WebinterfaceSession {
 		String sID = HttpRequestContext.getCurrentContext().getClientHeader().getFields().getCookie(COOKIE_NAME);
 		if(sID == null) return null;
 		return getSession(sID);
+	}
+	
+	/**
+	 * Checks whether there is currently a session active and redirects the user to the login page if not.<br>
+	 * Can only be called inside HTTP contexts (e.g. {@link HttpDocument#createContent()}).<br>
+	 * This method should be called as the first method (before creating any content).<br>
+	 * The calling method should not modify the HTTP server header afterwards if this method returns <code>false</code> and instead just return.<br>
+	 * <br>
+	 * Example code:<br>
+	 * <code>
+	 * public void createContent() {<br>
+	 * &nbsp;&nbsp;if(!WebinterfaceSession.requireSession()) return;<br>
+	 * <br>
+	 * &nbsp;&nbsp;// ... Create the content of the page ...<br>
+	 * }
+	 * </code>
+	 * @return <code>true</code> if the current user is logged in, <code>false</code> otherwise
+	 */
+	public static boolean requireSession() {
+		if(WebinterfaceSession.getCurrentSession() == null || WebinterfaceSession.getCurrentSession().getAccount() == null) {
+			HttpRequestContext c = HttpRequestContext.getCurrentContext();
+			c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
+			c.getServerHeader().getFields().setFieldValue("Location", LOGIN_URL.get());
+			return false;
+		}
+		
+		return true;
 	}
 
 }
