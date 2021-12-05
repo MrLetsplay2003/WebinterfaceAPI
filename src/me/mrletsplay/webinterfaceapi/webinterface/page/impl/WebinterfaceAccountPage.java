@@ -62,43 +62,54 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 				grp.addLayoutOptions(new GridLayout("min-content", "auto"));
 				
 //				grp.addTitle("Auth method: " + mth.getName());
-				WebinterfaceTitleText title = new WebinterfaceTitleText(con.getUserName());
+				WebinterfaceTitleText title = WebinterfaceTitleText.builder()
+						.text(con.getUserName())
+						.fullWidth()
+						.leftboundText()
+						.create();
 				title.getStyle().setProperty("font-size", "24px");
-				title.addLayoutOptions(DefaultLayoutOption.LEFTBOUND, DefaultLayoutOption.FULL_WIDTH);
 				grp.addElement(title);
 				
 				if(mth != null) {
-					WebinterfaceTitleText tt = new WebinterfaceTitleText("Auth method");
-					tt.getStyle().setProperty("white-space", "nowrap");
-					tt.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
-					grp.addElement(tt);
-					WebinterfaceText un = new WebinterfaceText(mth.getName());
-					un.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
-					grp.addElement(un);
+					grp.addElement(WebinterfaceTitleText.builder()
+							.text("Auth method")
+							.noLineBreaks()
+							.leftboundText()
+							.create());
+					grp.addElement(WebinterfaceText.builder()
+							.text(mth.getName())
+							.leftboundText()
+							.create());
 				}
 				
-				WebinterfaceTitleText tx2 = new WebinterfaceTitleText("Email");
-				tx2.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
-				grp.addElement(tx2);
-				WebinterfaceText em = new WebinterfaceText(con.getUserEmail() == null ? "-" : con.getUserEmail());
-				em.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
-				grp.addElement(em);
+				grp.addElement(WebinterfaceTitleText.builder()
+						.text("Email")
+						.leftboundText()
+						.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
+						.create());
+				grp.addElement(WebinterfaceText.builder()
+						.text(con.getUserEmail() == null ? "-" : con.getUserEmail())
+						.leftboundText()
+						.create());
 				
-				WebinterfaceTitleText tx4 = new WebinterfaceTitleText("Is Temporary");
-				tx4.getStyle().setProperty("white-space", "nowrap");
-				tx4.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
-				grp.addElement(tx4);
-				WebinterfaceText temp = new WebinterfaceText(con.isTemporary() ? "yes" : "no");
-				temp.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
-				grp.addElement(temp);
+				grp.addElement(WebinterfaceTitleText.builder()
+						.text("Is Temporary")
+						.noLineBreaks()
+						.leftboundText()
+						.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
+						.create());
+				grp.addElement(WebinterfaceText.builder()
+						.text(con.isTemporary() ? "yes" : "no")
+						.leftboundText()
+						.create());
 				
 				if(loginCons.size() > 1) {
-					WebinterfaceButton delBtn = new WebinterfaceButton("Remove connection");
-					delBtn.setWidth("auto");
-					delBtn.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
-					delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getConnectionName())), new ReloadPageAction(false, 100))));
-					
-					grp.addElement(delBtn);
+					grp.addElement(WebinterfaceButton.builder()
+							.text("Remove connection")
+							.fullWidth()
+							.onClick(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getConnectionName())), new ReloadPageAction(false, 100))))
+							.width("auto")
+							.create());
 				}
 				
 				grp.addElement(new WebinterfaceVerticalSpacer("30px"));
@@ -106,10 +117,11 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 				els.add(grp);
 			}
 			
-			WebinterfaceButton btnConnect = new WebinterfaceButton("Connect another auth method");
-			btnConnect.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
-			btnConnect.setOnClickAction(new RedirectAction("/login?from=" + HttpUtils.urlEncode(URL) + "&connect=true"));
-			els.add(btnConnect);
+			els.add(WebinterfaceButton.builder()
+					.text("Connect another auth method")
+					.withLayoutOptions(DefaultLayoutOption.FULL_WIDTH)
+					.onClick(new RedirectAction("/login?from=" + HttpUtils.urlEncode(URL) + "&connect=true"))
+					.create());
 			
 			return els;
 		});

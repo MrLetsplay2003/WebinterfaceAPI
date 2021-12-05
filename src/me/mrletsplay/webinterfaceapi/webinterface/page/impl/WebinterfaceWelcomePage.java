@@ -14,9 +14,11 @@ public class WebinterfaceWelcomePage extends WebinterfacePage {
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());
-		WebinterfaceText tx = new WebinterfaceText("You can set up a custom home page using the \"Home page path\" setting");
-		tx.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH, DefaultLayoutOption.CENTER_VERTICALLY, DefaultLayoutOption.CENTER_TEXT);
-		sc.addElement(tx);
+		sc.addElement(WebinterfaceText.builder()
+				.text("You can set up a custom home page using the \"Home page path\" setting")
+				.fullWidth()
+				.centerText()
+				.create());
 		sc.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 		addSection(sc);
 	}

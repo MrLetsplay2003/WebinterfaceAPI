@@ -14,23 +14,60 @@ public abstract class AbstractElementBuilder<T extends WebinterfacePageElement, 
 		this.element = element;
 	}
 	
+	public S align(Align align) {
+		element.addLayoutOptions(align.getLayoutOptions());
+		return getSelf();
+	}
+	
+	/**
+	 * Use {@link #align(Align)} instead
+	 * @return
+	 */
+	@Deprecated
 	public S centered() {
+		return align(Align.CENTER);
+	}
+	
+	/**
+	 * Use {@link #align(Align)} instead
+	 * @return
+	 */
+	@Deprecated
+	public S leftbound() {
+		return align(Align.LEFT_CENTER);
+	}
+
+	/**
+	 * Use {@link #align(Align)} instead
+	 * @return
+	 */
+	@Deprecated
+	public S rightbound() {
+		return align(Align.RIGHT_CENTER);
+	}
+	
+	public S leftboundText() {
+		element.addLayoutOptions(DefaultLayoutOption.LEFTBOUND_TEXT);
+		return getSelf();
+	}
+
+	public S rightboundText() {
+		element.addLayoutOptions(DefaultLayoutOption.RIGHTBOUND_TEXT);
+		return getSelf();
+	}
+
+	public S justifyText() {
+		element.addLayoutOptions(DefaultLayoutOption.JUSTIFY_TEXT);
+		return getSelf();
+	}
+
+	public S centerText() {
 		element.addLayoutOptions(DefaultLayoutOption.CENTER_TEXT);
 		return getSelf();
 	}
 	
-	public S centeredVertically() {
-		element.addLayoutOptions(DefaultLayoutOption.CENTER_VERTICALLY);
-		return getSelf();
-	}
-	
-	public S leftbound() {
-		element.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
-		return getSelf();
-	}
-	
-	public S rightbound() {
-		element.addLayoutOptions(DefaultLayoutOption.RIGHTBOUND);
+	public S noPadding() {
+		element.addLayoutOptions(DefaultLayoutOption.NO_PADDING);
 		return getSelf();
 	}
 	

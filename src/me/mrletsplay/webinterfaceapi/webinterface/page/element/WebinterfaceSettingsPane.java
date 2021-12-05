@@ -55,7 +55,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		categories.forEach(c -> {
 			WebinterfaceHeading h = new WebinterfaceHeading(c.getName());
 			h.setLevel(3);
-			h.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
+			h.addLayoutOptions(DefaultLayoutOption.LEFTBOUND_TEXT);
 			h.getStyle().setProperty("margin", "0");
 			addElement(h);
 			c.getSettings().forEach(this::addSetting);
@@ -84,7 +84,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			defaultValue = new RawValue(setting.getDefaultValue().toString());
 		}else if(setting.getType().equals(Complex.value(Boolean.class))) {
 			WebinterfaceCheckBox in = new WebinterfaceCheckBox(() -> (Boolean) config.get().getSetting(setting));
-			in.addLayoutOptions(DefaultLayoutOption.LEFTBOUND);
+			in.addLayoutOptions(DefaultLayoutOption.LEFTBOUND_TEXT);
 			in.setOnChangeAction(changeSettingAction(setting, new CheckboxValue(in)));
 			el = in;
 			defaultValue = new RawValue(setting.getDefaultValue().toString());
@@ -116,7 +116,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		if(!oneLineLayout) el.addLayoutOptions(DefaultLayoutOption.NEW_LINE);
 		
 		WebinterfaceText t = new WebinterfaceText(setting.getFriendlyName() != null ? setting.getFriendlyName() : setting.getKey());
-		t.addLayoutOptions(DefaultLayoutOption.LEFTBOUND, DefaultLayoutOption.CENTER_VERTICALLY);
+		t.addLayoutOptions(DefaultLayoutOption.LEFTBOUND_TEXT);
 		if(!oneLineLayout) t.addLayoutOptions(DefaultLayoutOption.NEW_LINE);
 		
 		WebinterfacePageElement tEl = t;
@@ -127,7 +127,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			WebinterfaceText tDesc = new WebinterfaceText(setting.getDescription());
 			tDesc.getStyle().setProperty("font-size", "0.8em");
 			tDesc.getStyle().setProperty("color", "var(--theme-color-content-text-secondary)");
-			tDesc.addLayoutOptions(DefaultLayoutOption.LEFTBOUND, DefaultLayoutOption.CENTER_VERTICALLY);
+			tDesc.addLayoutOptions(DefaultLayoutOption.LEFTBOUND_TEXT);
 			tGrp.addElement(tDesc);
 			tEl = tGrp;
 		}

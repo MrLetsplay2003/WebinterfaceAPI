@@ -27,6 +27,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageE
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceVerticalSpacer;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.builder.Align;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
 
@@ -52,49 +53,54 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				
 				WebinterfaceTitleText tt = WebinterfaceTitleText.builder()
 						.text(acc.getName())
-						.leftbound()
+						.leftboundText()
 						.noLineBreaks()
 						.create();
 				tt.getStyle().setProperty("font-size", "24px");
 				grp.addElement(tt);
 				
-				WebinterfaceTitleText tx2 = WebinterfaceTitleText.builder()
+				grp.addElement(WebinterfaceTitleText.builder()
 						.text("Primary Email")
 						.noLineBreaks()
-						.leftbound()
-						.create();
-				tx2.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
-				grp.addElement(tx2);
+						.leftboundText()
+						.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
+						.create());
 				grp.addElement(WebinterfaceText.builder()
 						.text(acc.getPrimaryEmail() == null ? "-" : acc.getPrimaryEmail())
-						.leftbound()
+						.leftboundText()
 						.create());
 				
-				WebinterfaceTitleText tx3 = new WebinterfaceTitleText("Permissions");
-				tx3.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
-				grp.addElement(tx3);
+				grp.addElement(WebinterfaceTitleText.builder()
+						.text("Permissions")
+						.leftboundText()
+						.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
+						.create());
 				grp.addElement(WebinterfaceText.builder()
 						.text(acc.getPermissions().isEmpty() ? "-" : acc.getPermissions().stream().map(Permission::getPermission).collect(Collectors.joining(", ")))
-						.leftbound()
+						.leftboundText()
 						.create());
 				
-				WebinterfaceTitleText tx4 = WebinterfaceTitleText.builder()
+				grp.addElement(WebinterfaceTitleText.builder()
 						.text("Is Temporary")
 						.noLineBreaks()
-						.leftbound()
-						.create();
-				tx4.addLayoutOptions(DefaultLayoutOption.NEW_LINE);
-				grp.addElement(tx4);
+						.leftboundText()
+						.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
+						.create());
 				grp.addElement(WebinterfaceText.builder()
 						.text(acc.isTemporary() ? "yes" : "no")
-						.leftbound()
+						.leftboundText()
 						.create());
 				
-				WebinterfaceTitleText tx = new WebinterfaceTitleText("Is Admin");
-				tx.addLayoutOptions(DefaultLayoutOption.NEW_LINE, DefaultLayoutOption.LEFTBOUND);
-				grp.addElement(tx);
+				grp.addElement(WebinterfaceTitleText.builder()
+						.text("Is Admin")
+						.leftboundText()
+						.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
+						.create());
 				
-				WebinterfaceCheckBox cb = new WebinterfaceCheckBox(acc.hasPermission("*"));
+				WebinterfaceCheckBox cb = WebinterfaceCheckBox.builder()
+						.align(Align.LEFT_CENTER)
+						.initialState(acc.hasPermission("*"))
+						.create();
 				
 				ObjectValue opVal = new ObjectValue();
 				opVal.put("account_id", new StringValue(acc.getID()));

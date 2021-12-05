@@ -66,7 +66,7 @@ public class WebinterfacePageSection {
 	
 	public void addTitle(Supplier<String> title) {
 		WebinterfaceTitleText tt = new WebinterfaceTitleText(title);
-		tt.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH, DefaultLayoutOption.CENTER_VERTICALLY, DefaultLayoutOption.CENTER_TEXT);
+		tt.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH, DefaultLayoutOption.CENTER_TEXT);
 		addElement(tt);
 	}
 	
@@ -76,7 +76,7 @@ public class WebinterfacePageSection {
 	
 	public void addHeading(Supplier<String> title, int level) {
 		WebinterfaceHeading h = new WebinterfaceHeading(title);
-		h.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH, DefaultLayoutOption.CENTER_VERTICALLY);
+		h.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 		h.setLevel(level);
 		addElement(h);
 	}

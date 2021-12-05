@@ -60,15 +60,17 @@ public class WebinterfaceText extends AbstractWebinterfacePageElement {
 	
 	@Override
 	public HtmlElement createElement() {
-		HtmlElement b = new HtmlElement("a");
 		if(enableMarkdown) {
+			HtmlElement b = new HtmlElement("div");
 			MarkdownRenderer r = new MarkdownRenderer();
 			if(markdownPostProcessor != null) r.setPostProcessor(markdownPostProcessor);
 			b.appendChild(r.render(Parser.builder().build().parse(text.get())));
+			return b;
 		}else {
+			HtmlElement b = new HtmlElement("a");
 			b.setText(text);
+			return b;
 		}
-		return b;
 	}
 	
 	public static Builder builder() {

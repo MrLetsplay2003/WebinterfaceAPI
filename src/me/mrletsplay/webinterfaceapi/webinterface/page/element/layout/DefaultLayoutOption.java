@@ -5,17 +5,46 @@ import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 public enum DefaultLayoutOption implements ElementLayoutOption {
 
 	FULL_WIDTH("el-full-width", true),
-	LEFTBOUND("el-leftbound", true),
-	RIGHTBOUND("el-rightbound", true),
 	JUSTIFY_TEXT("el-justify-text", true),
-	CENTER_VERTICALLY("el-center-vertically", true),
+	LEFTBOUND_TEXT("el-leftbound-text", true),
+	RIGHTBOUND_TEXT("el-leftbound-text", true),
 	CENTER_TEXT("el-center-text", true),
 	FULL_NOT_LAST_COLUMN("el-full-not-last-column", true),
 	SECOND_TO_LAST_COLUMN("el-second-to-last-column", true),
 	SECOND_NOT_LAST_COLUMN("el-second-not-last-column", true),
 	NEW_LINE("el-new-line", true),
 	MAXIMIZE_COLUMNS("el-maximize-columns", false),
-//	REMAINING_SPACE("el-remainingspace"),
+	NO_PADDING("el-no-padding", true),
+	ALIGN_LEFT("el-align-left", true),
+	ALIGN_RIGHT("el-align-right", true),
+	ALIGN_CENTER_HORIZONTALLY("el-align-center-horizontally", true),
+	ALIGN_TOP("el-align-top", true),
+	ALIGN_BOTTOM("el-align-bottom", true),
+	ALIGN_CENTER_VERTICALLY("el-align-center-vertically", true),
+	
+	/**
+	 * Use {@link #ALIGN_LEFT} instead
+	 */
+	@Deprecated
+	LEFTBOUND("el-align-left", true),
+	
+	/**
+	 * Use {@link #ALIGN_RIGHT} instead
+	 */
+	@Deprecated
+	RIGHTBOUND("el-align-right", true),
+	
+	/**
+	 * Use {@link #ALIGN_CENTER_HORIZONTALLY} instead
+	 */
+	@Deprecated
+	CENTER_HORIZONTALLY("el-align-center-horizontally", true),
+	
+	/**
+	 * Use {@link #ALIGN_CENTER_VERTICALLY} instead
+	 */
+	@Deprecated
+	CENTER_VERTICALLY("el-align-center-vertically", true),
 	;
 	
 	private final String className;

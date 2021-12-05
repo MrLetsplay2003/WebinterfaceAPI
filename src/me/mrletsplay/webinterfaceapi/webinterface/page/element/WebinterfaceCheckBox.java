@@ -25,6 +25,14 @@ public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 		this(() -> false);
 	}
 	
+	public void setInitialState(Supplier<Boolean> initialState) {
+		this.initialState = initialState;
+	}
+	
+	public void setInitialState(boolean initialState) {
+		setInitialState(() -> initialState);
+	}
+	
 	public void setOnChangeAction(WebinterfaceAction onChangeAction) {
 		this.onChangeAction = onChangeAction;
 	}
@@ -61,6 +69,16 @@ public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 
 		private Builder(WebinterfaceCheckBox element) {
 			super(element);
+		}
+		
+		public Builder initialState(Supplier<Boolean> initialState) {
+			element.setInitialState(initialState);
+			return this;
+		}
+		
+		public Builder initialState(boolean initialState) {
+			element.setInitialState(initialState);
+			return this;
 		}
 		
 		public Builder onChange(WebinterfaceAction onChange) {

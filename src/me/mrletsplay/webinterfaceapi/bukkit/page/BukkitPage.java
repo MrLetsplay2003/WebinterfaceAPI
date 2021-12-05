@@ -69,8 +69,8 @@ public class BukkitPage extends WebinterfacePage {
 								continue;
 							}
 							
-							stats.addElement(WebinterfaceTitleText.builder().text(spl[0]).leftbound().create());
-							stats.addElement(WebinterfaceText.builder().text(PlaceholderAPI.setPlaceholders(Bukkit.getOfflinePlayer(UUID.fromString(mcAcc.getUserID())), spl[1])).leftbound().create());
+							stats.addElement(WebinterfaceTitleText.builder().text(spl[0]).leftboundText().create());
+							stats.addElement(WebinterfaceText.builder().text(PlaceholderAPI.setPlaceholders(Bukkit.getOfflinePlayer(UUID.fromString(mcAcc.getUserID())), spl[1])).leftboundText().create());
 						}
 						g.addElement(stats);
 					}
@@ -95,21 +95,23 @@ public class BukkitPage extends WebinterfacePage {
 			WebinterfaceAccountConnection mcAcc = acc.getConnection(WebinterfacePlugin.MINECRAFT_ACCOUNT_CONNECTION_NAME);
 			
 			if(mcAcc != null) {
-				WebinterfaceText txt = new WebinterfaceText("Connected Minecraft account");
-				txt.addLayoutOptions(DefaultLayoutOption.CENTER_VERTICALLY);
-				els.add(txt);
+				els.add(WebinterfaceText.builder()
+						.text("Connected Minecraft account")
+						.create());
 				
-				WebinterfaceText txt2 = new WebinterfaceText(mcAcc.getUserName() + " (" + mcAcc.getUserID() + ")");
-				txt2.addLayoutOptions(DefaultLayoutOption.SECOND_TO_LAST_COLUMN);
-				els.add(txt2);
+				els.add(WebinterfaceText.builder()
+						.text(mcAcc.getUserName() + " (" + mcAcc.getUserID() + ")")
+						.withLayoutOptions(DefaultLayoutOption.SECOND_TO_LAST_COLUMN)
+						.create());
 			}else {
-				WebinterfaceText txt = new WebinterfaceText("Connect to Minecraft account");
-				txt.addLayoutOptions(DefaultLayoutOption.CENTER_VERTICALLY);
-				els.add(txt);
+				els.add(WebinterfaceText.builder()
+						.text("Connect to Minecraft account")
+						.create());
 				
-				WebinterfaceInputField f = new WebinterfaceInputField("Minecraft name");
-				f.setOnChangeAction(new SendJSAction("bukkit", "connectMinecraftAccount", new ElementValue(f)));
-				els.add(f);
+				els.add(WebinterfaceInputField.builder()
+						.placeholder("Minecraft name")
+						.onChange(f -> new SendJSAction("bukkit", "connectMinecraftAccount", new ElementValue(f)))
+						.create());
 			}
 			return els;
 		});
