@@ -332,7 +332,6 @@ img.element {
 
 .el-no-padding > .element {
 	margin: 0;
-	width: 100%;
 }
 
 .el-align-left {

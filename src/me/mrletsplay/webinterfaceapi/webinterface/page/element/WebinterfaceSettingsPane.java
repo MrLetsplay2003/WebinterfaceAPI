@@ -136,8 +136,8 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		reset.setOnClickAction(changeSettingAction(setting, defaultValue));
 		
 		WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
-		grp.getStyle().setProperty("grid-template-columns", oneLineLayout ? "50px auto" : "auto 50px");
-		grp.getMobileStyle().setProperty("grid-template-columns", oneLineLayout ? "50px auto" : "1fr");
+		grp.getStyle().setProperty("grid-template-columns", oneLineLayout ? "min-content auto" : "auto 50px");
+		grp.getMobileStyle().setProperty("grid-template-columns", oneLineLayout ? "min-content auto" : "auto 50px");
 		
 		if(oneLineLayout) {
 			// No reset button, since this currently only exists for boolean settings
