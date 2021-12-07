@@ -15,7 +15,7 @@ public class WebinterfaceWelcomePage extends WebinterfacePage {
 		WebinterfacePageSection sc = new WebinterfacePageSection();
 		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + WebinterfaceSession.getCurrentSession().getAccount().getName());
 		sc.addElement(WebinterfaceText.builder()
-				.text("You can set up a custom home page using the \"Home page path\" setting")
+				.text("You can set a custom home page using the \"Home page path\" setting")
 				.fullWidth()
 				.centerText()
 				.create());

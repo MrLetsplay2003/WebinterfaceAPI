@@ -8,7 +8,7 @@ import me.mrletsplay.webinterfaceapi.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.http.header.HttpClientContentTypes;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandlers;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
@@ -23,6 +23,7 @@ public class WebinterfaceCallbackDocument implements HttpDocument {
 				setResponse(WebinterfaceResponse.error("Invalid request target or method, not a string"));
 				return;
 			}
+			
 			if(!req.isOfType("data", JSONType.OBJECT)) {
 				setResponse(WebinterfaceResponse.error("Invalid data payload, not an object"));
 				return;
@@ -35,20 +36,7 @@ public class WebinterfaceCallbackDocument implements HttpDocument {
 			}
 			
 			WebinterfaceRequestEvent e = new WebinterfaceRequestEvent(sess, req.getString("target"), req.getString("method"), req.getJSONObject("data"));
-			for(WebinterfaceActionHandler h : Webinterface.getActionHandlers()) {
-				try {
-					WebinterfaceResponse r = h.handle(e);
-					if(r != null) {
-						setResponse(r);
-						return;
-					}
-				}catch(Exception ex) {
-					Webinterface.getLogger().debug("Failed to handle request, error at handler", ex);
-					setResponse(WebinterfaceResponse.error("Failed to handle request, error at handler"));
-					return;
-				}
-			}
-			setResponse(WebinterfaceResponse.error("No handler available"));
+			setResponse(WebinterfaceActionHandlers.handle(e));
 		}catch(Exception e) {
 			Webinterface.getLogger().debug("Failed to handle request", e);
 			setResponse(WebinterfaceResponse.error("Failed to handle request"));

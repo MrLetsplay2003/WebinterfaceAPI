@@ -20,6 +20,8 @@ public class WebSocketConnection {
 	
 	private WebSocketFrame incompleteFrame;
 	
+	private Object attachment;
+	
 	public WebSocketConnection(HttpConnection httpConnection, WebSocketEndpoint endpoint) {
 		this.httpConnection = httpConnection;
 		this.endpoint = endpoint;
@@ -31,6 +33,15 @@ public class WebSocketConnection {
 	
 	public WebSocketEndpoint getEndpoint() {
 		return endpoint;
+	}
+	
+	public void setAttachment(Object attachment) {
+		this.attachment = attachment;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getAttachment() {
+		return (T) attachment;
 	}
 	
 	public void send(WebSocketFrame frame) {
@@ -58,13 +69,16 @@ public class WebSocketConnection {
 		httpConnection.close();
 	}
 	
-	public void close(int code, String reason) {
+	public void sendCloseFrame(int code, String reason) {
 		if(reason == null) {
 			send(CloseFrame.of(code));
 		}else {
 			send(CloseFrame.of(code, reason));
 		}
-		
+	}
+	
+	public void close(int code, String reason) {
+		sendCloseFrame(code, reason);
 		close();
 	}
 	

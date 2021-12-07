@@ -24,6 +24,7 @@ import me.mrletsplay.webinterfaceapi.http.header.HttpHeaderFields;
 import me.mrletsplay.webinterfaceapi.http.header.HttpServerHeader;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.http.websocket.WebSocketConnection;
+import me.mrletsplay.webinterfaceapi.http.websocket.frame.CloseFrame;
 import me.mrletsplay.webinterfaceapi.server.ServerException;
 import me.mrletsplay.webinterfaceapi.server.connection.impl.AbstractConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
@@ -200,6 +201,12 @@ public class HttpConnection extends AbstractConnection {
 			byte[] uncompressedContent = IOUtils.readAllBytes(content);
 			sh.setContent(comp.compress(uncompressedContent));
 		}
+	}
+	
+	@Override
+	public void close() {
+		if(websocketConnection != null) websocketConnection.sendCloseFrame(CloseFrame.GOING_AWAY, "Server shutting down");
+		super.close();
 	}
 
 }

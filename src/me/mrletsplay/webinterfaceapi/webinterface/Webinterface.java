@@ -52,6 +52,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDoc
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfacePasswordLoginDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceSetupDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceSetupSubmitDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebinterfaceWebSocketDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
@@ -167,6 +168,7 @@ public class Webinterface {
 		
 		documentProvider.registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/icon.png")));
 		documentProvider.registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
+		documentProvider.registerDocument("/_internal/ws", new WebinterfaceWebSocketDocument());
 		documentProvider.registerDocument("/", new WebinterfaceHomeDocument());
 		documentProvider.registerDocument("/login", new WebinterfaceLoginDocument());
 		documentProvider.registerDocument("/logout", new WebinterfaceLogoutDocument());

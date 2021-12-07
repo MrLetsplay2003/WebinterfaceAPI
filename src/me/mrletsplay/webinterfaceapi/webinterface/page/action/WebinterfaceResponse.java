@@ -22,6 +22,10 @@ public class WebinterfaceResponse {
 		return data;
 	}
 	
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+	
 	public JSONObject toJSON() {
 		JSONObject o = new JSONObject();
 		o.put("success", success);

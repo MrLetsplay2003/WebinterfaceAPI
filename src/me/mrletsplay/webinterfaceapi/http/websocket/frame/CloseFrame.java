@@ -29,7 +29,7 @@ public class CloseFrame extends WebSocketFrame {
 		
 		if(payload.length > 0) {
 			if(payload.length < 2) throw new InvalidFrameException("Invalid payload length for close frame");
-			code = (payload[0] << 8) | payload[1];
+			code = ((payload[0] & 0xFF) << 8) | (payload[1] & 0xFF);
 			
 			if(payload.length > 2) reason = new String(payload, 2, payload.length - 2, StandardCharsets.UTF_8);
 		}
