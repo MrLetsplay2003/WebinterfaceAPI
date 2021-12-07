@@ -23,11 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import me.mrletsplay.mrcore.io.IOUtils;
+import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
 import me.mrletsplay.webinterfaceapi.http.HttpServer;
 import me.mrletsplay.webinterfaceapi.http.HttpsServer;
 import me.mrletsplay.webinterfaceapi.http.document.FileDocument;
 import me.mrletsplay.webinterfaceapi.http.document.HttpDocumentProvider;
+import me.mrletsplay.webinterfaceapi.http.websocket.WebSocketEndpoint;
 import me.mrletsplay.webinterfaceapi.php.PHP;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileAccountStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileCredentialsStorage;
@@ -52,11 +54,14 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDoc
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfacePasswordLoginDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceSetupDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceSetupSubmitDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.Packet;
+import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebSocketData;
 import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebinterfaceWebSocketDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
+import me.mrletsplay.webinterfaceapi.webinterface.page.event.WebinterfaceEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceDefaultSettingsPage;
@@ -79,6 +84,7 @@ public class Webinterface {
 	private static List<WebinterfacePage> pages;
 	private static List<WebinterfacePageCategory> categories;
 	private static List<WebinterfaceActionHandler> handlers;
+	private static List<WebinterfaceEvent> events;
 	private static List<WebinterfaceAuthMethod> authMethods;
 	private static Map<String, File> includedFiles;
 	
@@ -89,11 +95,13 @@ public class Webinterface {
 	private static WebinterfaceCredentialsStorage credentialsStorage;
 	private static WebinterfaceConfig config;
 	private static MarkdownRenderer markdownRenderer;
+	private static WebSocketEndpoint webSocketEndpoint;
 	
 	static {
 		pages = new ArrayList<>();
 		categories = new ArrayList<>();
 		handlers = new ArrayList<>();
+		events = new ArrayList<>();
 		authMethods = new ArrayList<>();
 		includedFiles = new HashMap<>();
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
@@ -168,7 +176,8 @@ public class Webinterface {
 		
 		documentProvider.registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/icon.png")));
 		documentProvider.registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
-		documentProvider.registerDocument("/_internal/ws", new WebinterfaceWebSocketDocument());
+		webSocketEndpoint = new WebinterfaceWebSocketDocument();
+		documentProvider.registerDocument("/_internal/ws", webSocketEndpoint);
 		documentProvider.registerDocument("/", new WebinterfaceHomeDocument());
 		documentProvider.registerDocument("/login", new WebinterfaceLoginDocument());
 		documentProvider.registerDocument("/logout", new WebinterfaceLogoutDocument());
@@ -317,6 +326,37 @@ public class Webinterface {
 	
 	public static List<WebinterfaceActionHandler> getActionHandlers() {
 		return handlers;
+	}
+	
+	public static WebinterfaceEvent registerEvent(String target, String eventName, String permission) {
+		if(getEvent(target, eventName) != null) throw new IllegalArgumentException("An event with that target and name is already registered");
+		WebinterfaceEvent event = new WebinterfaceEvent(target, eventName, permission);
+		events.add(event);
+		return event;
+	}
+	
+	public static WebinterfaceEvent registerEvent(String target, String eventName) {
+		return registerEvent(target, eventName, null);
+	}
+	
+	public static WebinterfaceEvent getEvent(String target, String eventName) {
+		return events.stream()
+				.filter(e -> e.getTarget().equals(target) && e.getEventName().equals(eventName))
+				.findFirst().orElse(null);
+	}
+	
+	public static List<WebinterfaceEvent> getEvents() {
+		return events;
+	}
+	
+	public static void broadcastEvent(WebinterfaceEvent event, JSONObject eventData) {
+		if(!events.contains(event)) throw new IllegalArgumentException("Trying to throw an unregistered event");
+		webSocketEndpoint.getConnections().forEach(ws -> {
+			WebSocketData d = ws.getAttachment();
+			if(d != null && d.getSubscribedEvents().contains(event)) {
+				ws.sendText(Packet.of(event.getTarget(), event.getEventName(), eventData).toJSON().toString());
+			}
+		});
 	}
 	
 	public static void registerAuthMethod(WebinterfaceAuthMethod method) {

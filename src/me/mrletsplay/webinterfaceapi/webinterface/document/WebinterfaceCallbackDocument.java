@@ -35,7 +35,7 @@ public class WebinterfaceCallbackDocument implements HttpDocument {
 				return;
 			}
 			
-			WebinterfaceRequestEvent e = new WebinterfaceRequestEvent(sess, req.getString("target"), req.getString("method"), req.getJSONObject("data"));
+			WebinterfaceRequestEvent e = new WebinterfaceRequestEvent(null, sess, req.getString("target"), req.getString("method"), req.getJSONObject("data"));
 			setResponse(WebinterfaceActionHandlers.handle(e));
 		}catch(Exception e) {
 			Webinterface.getLogger().debug("Failed to handle request", e);

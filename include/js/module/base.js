@@ -59,8 +59,8 @@ class Webinterface {
 				}
 
 				for(let customHandler of Webinterface.customHandlers) {
-					if(p.getRequestTarget() == customHandler.requestTarget && p.getRequestMethod() == customHandler.requestMethod) {
-						customHandler.handler(p);
+					if(packet.getRequestTarget() == customHandler.requestTarget && packet.getRequestMethod() == customHandler.requestMethod) {
+						customHandler.handler(packet);
 					}
 				}
 			}
@@ -73,6 +73,13 @@ class Webinterface {
 				if(!r.isSuccess() && !suppressAlert) WebinterfaceToast.showErrorToast("Error: " + r.getErrorMessage());
 				resolve(new WebinterfaceResponse(r.isSuccess(), r.getData(), r.getErrorMessage()));
 			});
+		});
+	}
+
+	static subscribe(target, eventName, handler) {
+		Webinterface.customHandlers.push({requestTarget: target, requestMethod: eventName, handler: handler});
+		Webinterface.sendPacket(Packet.of("webinterface", "subscribeToEvent", {eventTarget: target, eventName: eventName})).then(r => {
+			if(!r.isSuccess()) WebinterfaceToast.showErrorToast("Failed to subscribe to event: " + r.getErrorMessage());
 		});
 	}
 

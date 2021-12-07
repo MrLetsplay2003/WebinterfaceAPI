@@ -65,6 +65,7 @@ public class WebSocketConnection {
 	}
 	
 	public void close() {
+		endpoint.getConnections().remove(this);
 		closed = true;
 		httpConnection.close();
 	}

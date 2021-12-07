@@ -18,9 +18,9 @@ public class WebinterfaceWebSocketDocument extends WebSocketEndpoint {
 	public void onTextMessage(WebSocketConnection connection, String message) {
 		try {
 			JSONObject o = new JSONObject(message);
-			WebinterfaceSession session = connection.getAttachment();
+			WebSocketData socketData = connection.getAttachment();
 			Packet p = JSONConverter.decodeObject(o, Packet.class);
-			if(session == null) {
+			if(socketData == null) {
 				if(p.getRequestTarget() != null || p.getRequestMethod() != null) {
 					connection.close(CloseFrame.POLICY_VIOLATION, "Not an init request");
 					return;
@@ -39,10 +39,11 @@ public class WebinterfaceWebSocketDocument extends WebSocketEndpoint {
 					return;
 				}
 				
-				connection.setAttachment(sess);
+				connection.setAttachment(new WebSocketData(sess));
+				return;
 			}
 			
-			WebinterfaceRequestEvent event = new WebinterfaceRequestEvent(session, p.getRequestTarget(), p.getRequestMethod(), p.getData());
+			WebinterfaceRequestEvent event = new WebinterfaceRequestEvent(connection, socketData.getSession(), p.getRequestTarget(), p.getRequestMethod(), p.getData());
 			WebinterfaceResponse response = WebinterfaceActionHandlers.handle(event);
 			send(connection, p, response);
 		}catch(Exception e) {

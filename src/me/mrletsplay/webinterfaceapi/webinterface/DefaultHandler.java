@@ -1,11 +1,14 @@
 package me.mrletsplay.webinterfaceapi.webinterface;
 import me.mrletsplay.mrcore.json.JSONObject;
+import me.mrletsplay.webinterfaceapi.http.websocket.WebSocketConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebSocketData;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfaceSettingsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
+import me.mrletsplay.webinterfaceapi.webinterface.page.event.WebinterfaceEvent;
 
 public class DefaultHandler implements WebinterfaceActionHandler {
 	
@@ -99,6 +102,27 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 		WebinterfaceAccount account = event.getAccount();
 		String authMethod = event.getRequestData().getString("value");
 		if(account.getConnections().size() > 1) account.removeConnection(authMethod);
+		return WebinterfaceResponse.success();
+	}
+	
+	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "subscribeToEvent")
+	public WebinterfaceResponse subscribeToEvent(WebinterfaceRequestEvent event) {
+		WebinterfaceAccount account = event.getAccount();
+		String target = event.getRequestData().getString("eventTarget");
+		String name = event.getRequestData().getString("eventName");
+		
+		if(!event.isFromWebSocket()) return WebinterfaceResponse.error("Only allowed for WebSockets");
+		
+		WebinterfaceEvent e = Webinterface.getEvent(target, name);
+		if(e == null) return WebinterfaceResponse.error("Event doesn't exist");
+		
+		if(e.getPermission() != null && !account.hasPermission(e.getPermission()))
+			return WebinterfaceResponse.error("No permission");
+		
+		WebSocketConnection con = event.getWebSocketConnection();
+		WebSocketData d = con.getAttachment();
+		d.getSubscribedEvents().add(e);
+		
 		return WebinterfaceResponse.success();
 	}
 	
