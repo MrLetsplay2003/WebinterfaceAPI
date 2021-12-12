@@ -121,7 +121,7 @@ public class DefaultHandler implements WebinterfaceActionHandler {
 		
 		WebSocketConnection con = event.getWebSocketConnection();
 		WebSocketData d = con.getAttachment();
-		d.getSubscribedEvents().add(e);
+		d.subscribe(e);
 		
 		return WebinterfaceResponse.success();
 	}

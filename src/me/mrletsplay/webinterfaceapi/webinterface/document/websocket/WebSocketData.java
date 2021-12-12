@@ -27,5 +27,13 @@ public class WebSocketData {
 	public Set<WebinterfaceEvent> getSubscribedEvents() {
 		return subscribedEvents;
 	}
+	
+	public synchronized void subscribe(WebinterfaceEvent event) {
+		subscribedEvents.add(event);
+	}
+	
+	public synchronized void unsubscribe(WebinterfaceEvent event) {
+		subscribedEvents.remove(event);
+	}
 
 }

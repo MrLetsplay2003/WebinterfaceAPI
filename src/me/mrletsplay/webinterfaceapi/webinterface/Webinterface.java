@@ -339,6 +339,14 @@ public class Webinterface {
 		return registerEvent(target, eventName, null);
 	}
 	
+	public static void unregisterEvent(WebinterfaceEvent event) {
+		events.remove(event);
+		webSocketEndpoint.getConnections().forEach(c -> {
+			WebSocketData d = c.getAttachment();
+			if(d != null) d.unsubscribe(event);
+		});
+	}
+	
 	public static WebinterfaceEvent getEvent(String target, String eventName) {
 		return events.stream()
 				.filter(e -> e.getTarget().equals(target) && e.getEventName().equals(eventName))
