@@ -1,6 +1,8 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.action;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,10 +17,19 @@ public class MultiAction implements WebinterfaceAction {
 
 	private List<WebinterfaceAction> actions;
 	
+	/**
+	 * @deprecated Use {@link #of(Collection)} instead
+	 * @param actions The actions for this MultiAction
+	 */
 	public MultiAction(List<WebinterfaceAction> actions) {
 		this.actions = actions;
 	}
 	
+	/**
+	 * @deprecated Use {@link #of(WebinterfaceAction...)} instead
+	 * @param actions The actions for this MultiAction
+	 */
+	@Deprecated
 	public MultiAction(WebinterfaceAction... actions) {
 		this(Arrays.asList(actions));
 	}
@@ -48,6 +59,14 @@ public class MultiAction implements WebinterfaceAction {
 		modules.add(DefaultJSModule.BASE_ACTIONS);
 		actions.forEach(a -> modules.addAll(a.getRequiredModules()));
 		return modules;
+	}
+	
+	public static MultiAction of(Collection<WebinterfaceAction> actions) {
+		return new MultiAction(new ArrayList<>(actions));
+	}
+	
+	public static MultiAction of(WebinterfaceAction... actions) {
+		return new MultiAction(Arrays.asList(actions));
 	}
 	
 }

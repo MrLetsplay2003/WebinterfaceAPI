@@ -7,6 +7,11 @@ import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
 
+/**
+ * Use {@link LoadingScreenAction#hide()} instead
+ * @author MrLetsplay2003
+ */
+@Deprecated
 public class HideLoadingScreenAction implements WebinterfaceAction {
 
 	@Override
