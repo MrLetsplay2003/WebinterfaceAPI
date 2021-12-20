@@ -31,6 +31,8 @@ public class WebinterfacePageSection {
 		style,
 		mobileStyle;
 	
+	private boolean slimLayout;
+	
 	public WebinterfacePageSection() {
 		this.elements = () -> new ArrayList<>();
 		this.layoutOptions = new ArrayList<>();
@@ -101,11 +103,34 @@ public class WebinterfacePageSection {
 		return mobileStyle;
 	}
 	
+	/**
+	 * Sets this page section's layout to be "slim". Enabling this option will reduce the section's maximum width to appear more "slim" when in fullscreen on a Desktop browser.<br>
+	 * This should only be used if the containing page only contains this one section
+	 * @param slimLayout Whether the slim layout should be used
+	 */
+	public void setSlimLayout(boolean slimLayout) {
+		this.slimLayout = slimLayout;
+	}
+	
+	/**
+	 * Returns whether this section uses the "slim" layout
+	 * @return Whether this section uses the "slim" layout
+	 * @see #setSlimLayout(boolean)
+	 */
+	public boolean isSlimLayout() {
+		return slimLayout;
+	}
+	
 	public HtmlElement toHtml() {
 		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
 		
 		HtmlElement el = new HtmlElement("div");
 		el.addClass("grid-layout page-section");
+		
+		if(slimLayout) {
+			el.addClass("page-section-slim");
+		}
+		
 		for(WebinterfacePageElement e : elements.get()) {
 			el.appendChild(e.toHtml());
 		}

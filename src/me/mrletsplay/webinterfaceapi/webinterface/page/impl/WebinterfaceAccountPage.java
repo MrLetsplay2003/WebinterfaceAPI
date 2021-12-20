@@ -34,9 +34,9 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 	
 	public WebinterfaceAccountPage() {
 		super("Account", URL, true);
-		getContainerStyle().setProperty("max-width", "900px");
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
+		sc.setSlimLayout(true);
 		
 		sc.addHeading("Account connections", 2);
 		sc.getStyle().setProperty("grid-template-columns", "1fr");
@@ -107,7 +107,7 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 					grp.addElement(WebinterfaceButton.builder()
 							.text("Remove connection")
 							.fullWidth()
-							.onClick(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getConnectionName())), new ReloadPageAction(false, 100))))
+							.onClick(new ConfirmAction(MultiAction.of(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getConnectionName())), new ReloadPageAction(false, 100))))
 							.width("auto")
 							.create());
 				}

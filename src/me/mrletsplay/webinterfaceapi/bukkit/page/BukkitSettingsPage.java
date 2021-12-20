@@ -11,9 +11,9 @@ public class BukkitSettingsPage extends WebinterfacePage {
 
 	public BukkitSettingsPage() {
 		super("Settings", "/bukkit/settings", DefaultPermissions.SETTINGS);
-		getContainerStyle().setProperty("max-width", "900px");
 		
 		WebinterfacePageSection sc2 = new WebinterfacePageSection();
+		sc2.setSlimLayout(true);
 		sc2.addTitle("Settings");
 		sc2.addElement(new WebinterfaceSettingsPane(() -> Webinterface.getConfig(), BukkitSettings.INSTANCE.getSettingsCategories(), "webinterface", "setSetting"));
 		

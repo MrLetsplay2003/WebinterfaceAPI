@@ -292,6 +292,10 @@ img.element {
 	border-radius: 5px;
 }
 
+.page-section-slim {
+	max-width: 900px;
+}
+
 /* element styles */
 
 .el-full-width {

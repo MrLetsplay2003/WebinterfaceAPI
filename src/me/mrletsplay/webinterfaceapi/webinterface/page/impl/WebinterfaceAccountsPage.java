@@ -36,9 +36,9 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 	public WebinterfaceAccountsPage() {
 		super("Accounts", "/wiapi/accounts", DefaultPermissions.MODIFY_USERS);
 		setIcon("mdi:account");
-		getContainerStyle().setProperty("max-width", "900px");
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();
+		sc.setSlimLayout(true);
 		
 		sc.addHeading("Accounts", 2);
 		sc.getStyle().setProperty("grid-template-columns", "1fr");
@@ -106,7 +106,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				opVal.put("account_id", new StringValue(acc.getID()));
 				opVal.put("value", new CheckboxValue(cb));
 				
-				cb.setOnChangeAction(new MultiAction(new ConfirmAction(new SendJSAction("webinterface", "setOP", opVal)), new ReloadPageAction(true, 100)));
+				cb.setOnChangeAction(MultiAction.of(new ConfirmAction(new SendJSAction("webinterface", "setOP", opVal)), new ReloadPageAction(true, 100)));
 				grp.addElement(cb);
 				
 				WebinterfaceElementGroup grp2 = new WebinterfaceElementGroup();
@@ -120,7 +120,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				addPVal.put("account_id", new StringValue(acc.getID()));
 				addPVal.put("permission", new ElementValue(addP));
 				
-				addP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "addPermission", addPVal), new SetValueAction(addP, new StringValue("")), new ReloadPageAction(false, 100)));
+				addP.setOnChangeAction(MultiAction.of(new SendJSAction("webinterface", "addPermission", addPVal), new SetValueAction(addP, new StringValue("")), new ReloadPageAction(false, 100)));
 				
 				grp2.addElement(addP);
 				
@@ -130,7 +130,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				remPVal.put("account_id", new StringValue(acc.getID()));
 				remPVal.put("permission", new ElementValue(remP));
 				
-				remP.setOnChangeAction(new MultiAction(new SendJSAction("webinterface", "removePermission", remPVal), new SetValueAction(remP, new StringValue("")), new ReloadPageAction(false, 100)));
+				remP.setOnChangeAction(MultiAction.of(new SendJSAction("webinterface", "removePermission", remPVal), new SetValueAction(remP, new StringValue("")), new ReloadPageAction(false, 100)));
 				
 				grp2.addElement(remP);
 				
@@ -138,7 +138,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				delBtn.setWidth("auto");
 				delBtn.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 				
-				delBtn.setOnClickAction(new ConfirmAction(new MultiAction(new SendJSAction("webinterface", "deleteAccount", new StringValue(acc.getID())), new ReloadPageAction(false, 100))));
+				delBtn.setOnClickAction(new ConfirmAction(MultiAction.of(new SendJSAction("webinterface", "deleteAccount", new StringValue(acc.getID())), new ReloadPageAction(false, 100))));
 				
 				grp2.addElement(delBtn);
 				

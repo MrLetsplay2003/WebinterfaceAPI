@@ -13,9 +13,9 @@ public class WebinterfaceSettingsPage extends WebinterfacePage {
 	
 	public WebinterfaceSettingsPage(String name, String url, String permission, boolean hidden, WebinterfaceSettingsPane settingsPane) {
 		super(name, url, permission, hidden);
-		getContainerStyle().setProperty("max-width", "900px");
 		
 		WebinterfacePageSection sc2 = new WebinterfacePageSection();
+		sc2.setSlimLayout(true);
 		sc2.addTitle("Settings");
 		sc2.addElement(settingsPane);
 		

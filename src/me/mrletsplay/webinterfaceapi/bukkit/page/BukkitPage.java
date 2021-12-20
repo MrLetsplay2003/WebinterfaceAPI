@@ -30,7 +30,6 @@ public class BukkitPage extends WebinterfacePage {
 
 	public BukkitPage() {
 		super("Home", "/bukkit/home");
-		getContainerStyle().setProperty("max-width", "900px");
 		
 		addDynamicSections(() -> {
 			List<WebinterfacePageSection> secs = new ArrayList<>();
@@ -40,6 +39,7 @@ public class BukkitPage extends WebinterfacePage {
 			
 			if(mcAcc != null) {
 				WebinterfacePageSection yourAccount = new WebinterfacePageSection();
+				yourAccount.setSlimLayout(true);
 				yourAccount.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 				yourAccount.addTitle("Your Profile");
 				
