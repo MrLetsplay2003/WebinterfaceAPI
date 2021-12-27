@@ -1,8 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.impl;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import me.mrletsplay.mrcore.http.HttpUtils;
@@ -20,7 +18,6 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButton;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceElementGroup;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceVerticalSpacer;
@@ -42,9 +39,7 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 		sc.getStyle().setProperty("grid-template-columns", "1fr");
 		sc.getMobileStyle().setProperty("grid-template-columns", "1fr");
 		
-		sc.addDynamicElements(() -> {
-			List<WebinterfacePageElement> els = new ArrayList<>();
-			
+		sc.dynamic(els -> {
 			WebinterfaceAccount account = WebinterfaceSession.getCurrentSession().getAccount();
 			
 			Map<WebinterfaceAccountConnection, WebinterfaceAuthMethod> loginCons = new LinkedHashMap<>();
@@ -122,8 +117,6 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 					.withLayoutOptions(DefaultLayoutOption.FULL_WIDTH)
 					.onClick(new RedirectAction("/login?from=" + HttpUtils.urlEncode(URL) + "&connect=true"))
 					.create());
-			
-			return els;
 		});
 		
 		addSection(sc);

@@ -23,8 +23,6 @@ public class DefaultSettings implements AutoSettings {
 		php = new SettingsCategory("PHP"),
 		performance = new SettingsCategory("Performance");
 	
-//	public static final BooleanSetting ENABLE_FILE_CACHING = general.addBoolean("enable-file-caching", true, "Enable file caching");
-	
 	// General
 	
 	public static final BooleanSetting

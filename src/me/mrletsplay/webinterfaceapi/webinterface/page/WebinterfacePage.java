@@ -1,7 +1,5 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +19,10 @@ import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
+import me.mrletsplay.webinterfaceapi.webinterface.page.dynamic.DynamicContent;
+import me.mrletsplay.webinterfaceapi.webinterface.page.dynamic.DynamicList;
+import me.mrletsplay.webinterfaceapi.webinterface.page.dynamic.DynamicMultiple;
+import me.mrletsplay.webinterfaceapi.webinterface.page.dynamic.DynamicOptional;
 import me.mrletsplay.webinterfaceapi.webinterface.page.impl.WebinterfaceAccountPage;
 import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 
@@ -41,7 +43,7 @@ public class WebinterfacePage implements HttpDocument {
 	
 	private String icon;
 	
-	private Supplier<List<WebinterfacePageSection>> sections;
+	private DynamicList<WebinterfacePageSection> sectionsList;
 	
 	private CssElement
 		containerStyle,
@@ -51,7 +53,7 @@ public class WebinterfacePage implements HttpDocument {
 		this.name = name;
 		this.url = url;
 		this.permission = permission;
-		this.sections = () -> new ArrayList<>();
+		this.sectionsList = new DynamicList<>();
 		this.hidden = hidden;
 		this.containerStyle = new CssElement(CssSelector.selectClass("content-container"));
 		this.mobileContainerStyle = new CssElement(CssSelector.selectClass("content-container"));
@@ -101,22 +103,34 @@ public class WebinterfacePage implements HttpDocument {
 		return mobileContainerStyle;
 	}
 	
+	@Deprecated
+	public void addDynamicSections(Supplier<List<WebinterfacePageSection>> dynamicSections) {
+		sectionsList.addDynamicMultiple(list -> list.addAll(dynamicSections.get()));
+	}
 	
-	public void addDynamicSections(Supplier<List<WebinterfacePageSection>> sections) {
-		Supplier<List<WebinterfacePageSection>> oldS = this.sections;
-		this.sections = () -> {
-			List<WebinterfacePageSection> ss = new ArrayList<>(oldS.get());
-			ss.addAll(sections.get());
-			return ss;
-		};
+	public void dynamic(DynamicContent<WebinterfacePageSection> dynamic) {
+		sectionsList.addDynamic(dynamic);
+	}
+	
+	public void dynamic(DynamicMultiple<WebinterfacePageSection> dynamic) {
+		sectionsList.addDynamicMultiple(dynamic);
+	}
+	
+	public void dynamic(DynamicOptional<WebinterfacePageSection> dynamic) {
+		sectionsList.addDynamicOptional(dynamic);
 	}
 	
 	public void addSection(WebinterfacePageSection section) {
-		addDynamicSections(() -> Collections.singletonList(section));
+		sectionsList.addStatic(section);
 	}
 	
+	@Deprecated
 	public Supplier<List<WebinterfacePageSection>> getSections() {
-		return sections;
+		return () -> sectionsList.create();
+	}
+	
+	public DynamicList<WebinterfacePageSection> getSectionsList() {
+		return sectionsList;
 	}
 	
 	public HtmlDocument toHtml() {
@@ -198,7 +212,7 @@ public class WebinterfacePage implements HttpDocument {
 		main.addClass("main");
 		
 		HtmlElement content = new HtmlElement("div");
-		for(WebinterfacePageSection s : sections.get()) {
+		for(WebinterfacePageSection s : sectionsList.create()) {
 			content.appendChild(s.toHtml());
 		}
 		content.addClass("content-container");

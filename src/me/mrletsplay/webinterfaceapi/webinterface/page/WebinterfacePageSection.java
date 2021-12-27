@@ -2,7 +2,6 @@ package me.mrletsplay.webinterfaceapi.webinterface.page;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -12,6 +11,10 @@ import me.mrletsplay.webinterfaceapi.css.selector.CssSelector;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
+import me.mrletsplay.webinterfaceapi.webinterface.page.dynamic.DynamicContent;
+import me.mrletsplay.webinterfaceapi.webinterface.page.dynamic.DynamicList;
+import me.mrletsplay.webinterfaceapi.webinterface.page.dynamic.DynamicMultiple;
+import me.mrletsplay.webinterfaceapi.webinterface.page.dynamic.DynamicOptional;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceHeading;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
@@ -22,7 +25,7 @@ public class WebinterfacePageSection {
 	
 	private String id;
 	
-	private Supplier<List<WebinterfacePageElement>> elements;
+	private DynamicList<WebinterfacePageElement> elementsList;
 	
 	private List<ElementLayoutOption>
 		layoutOptions;
@@ -34,7 +37,7 @@ public class WebinterfacePageSection {
 	private boolean slimLayout;
 	
 	public WebinterfacePageSection() {
-		this.elements = () -> new ArrayList<>();
+		this.elementsList = new DynamicList<>();
 		this.layoutOptions = new ArrayList<>();
 		this.style = new CssElement(new CssSelector(() -> "#" + getOrGenerateID()));
 		this.mobileStyle = new CssElement(new CssSelector(() -> "#" + getOrGenerateID()));
@@ -54,16 +57,24 @@ public class WebinterfacePageSection {
 	}
 	
 	public void addElement(WebinterfacePageElement element) {
-		addDynamicElements(() -> Collections.singletonList(element));
+		elementsList.addStatic(element);
 	}
 	
+	@Deprecated
 	public void addDynamicElements(Supplier<List<WebinterfacePageElement>> elements) {
-		Supplier<List<WebinterfacePageElement>> oldEls = this.elements;
-		this.elements = () -> {
-			List<WebinterfacePageElement> ss = new ArrayList<>(oldEls.get());
-			ss.addAll(elements.get());
-			return ss;
-		};
+		elementsList.addDynamicMultiple(list -> list.addAll(elements.get()));
+	}
+	
+	public void dynamic(DynamicContent<WebinterfacePageElement> dynamic) {
+		elementsList.addDynamic(dynamic);
+	}
+	
+	public void dynamic(DynamicMultiple<WebinterfacePageElement> dynamic) {
+		elementsList.addDynamicMultiple(dynamic);
+	}
+	
+	public void dynamic(DynamicOptional<WebinterfacePageElement> dynamic) {
+		elementsList.addDynamicOptional(dynamic);
 	}
 	
 	public void addTitle(Supplier<String> title) {
@@ -131,7 +142,7 @@ public class WebinterfacePageSection {
 			el.addClass("page-section-slim");
 		}
 		
-		for(WebinterfacePageElement e : elements.get()) {
+		for(WebinterfacePageElement e : elementsList.create()) {
 			el.appendChild(e.toHtml());
 		}
 		

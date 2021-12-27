@@ -1,7 +1,5 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.permission.Permission;
@@ -23,7 +21,6 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceButto
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceCheckBox;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceElementGroup;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceInputField;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceTitleText;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceVerticalSpacer;
@@ -44,9 +41,7 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 		sc.getStyle().setProperty("grid-template-columns", "1fr");
 		sc.getMobileStyle().setProperty("grid-template-columns", "1fr");
 		
-		sc.addDynamicElements(() -> {
-			List<WebinterfacePageElement> els = new ArrayList<>();
-			
+		sc.dynamic(els -> {
 			for(WebinterfaceAccount acc : Webinterface.getAccountStorage().getAccounts()) {
 				WebinterfaceElementGroup grp = new WebinterfaceElementGroup();
 				grp.addLayoutOptions(new GridLayout("min-content", "auto"));
@@ -147,8 +142,6 @@ public class WebinterfaceAccountsPage extends WebinterfacePage {
 				
 				els.add(grp);
 			}
-			
-			return els;
 		});
 		
 		addSection(sc);

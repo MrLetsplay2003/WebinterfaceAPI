@@ -11,6 +11,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
  * Use {@link LoadingScreenAction#show()} instead
  * @author MrLetsplay2003
  */
+@Deprecated
 public class ShowLoadingScreenAction implements WebinterfaceAction {
 
 	@Override
