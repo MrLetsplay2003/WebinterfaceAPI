@@ -490,6 +490,30 @@ img.element {
   }
 }
 
+.element-list-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--theme-color-sidenav-item);
+	margin-left: 5px;
+	width: 40px;
+}
+
+.element-list-button > .iconify {
+	width: 1.5em;
+	height: 1.5em;
+}
+
+.element-list-element {
+	display: grid;
+	margin-top: 5px;
+	grid-template-columns: 1fr min-content min-content min-content;
+}
+
+.element-list-element:first-child {
+	margin-top: 0;
+}
+
 /* Non-mobile styles for side nav responsiveness, 750px breakpoint */
 @media only screen and (min-width: 46.875em) {
 	.sidenav {

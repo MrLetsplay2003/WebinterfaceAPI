@@ -34,6 +34,8 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 		style,
 		mobileStyle;
 	
+	private boolean isTemplate;
+	
 	public AbstractWebinterfacePageElement() {
 		this.layoutOptions = new ArrayList<>();
 		this.attributes = new HashMap<>();
@@ -120,6 +122,16 @@ public abstract class AbstractWebinterfacePageElement implements WebinterfacePag
 	@Override
 	public CssElement getMobileStyle() {
 		return mobileStyle;
+	}
+	
+	@Override
+	public void setTemplate(boolean isTemplate) {
+		this.isTemplate = isTemplate;
+	}
+	
+	@Override
+	public boolean isTemplate() {
+		return isTemplate;
 	}
 	
 	public abstract HtmlElement createElement();

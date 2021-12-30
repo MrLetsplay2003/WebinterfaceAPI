@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Random;
 
+import me.mrletsplay.webinterfaceapi.html.HtmlElement;
+
 public class WebinterfaceUtils {
 	
 	public static final DateTimeFormatter HTTP_TIMESTAMP = DateTimeFormatter
@@ -24,6 +26,13 @@ public class WebinterfaceUtils {
 			b.append(chars[RANDOM.nextInt(chars.length)]);
 		}
 		return b.toString();
+	}
+	
+	public static HtmlElement iconElement(String icon) {
+		HtmlElement iconSpan = new HtmlElement("span");
+		iconSpan.addClass("iconify");
+		iconSpan.setAttribute("data-icon", icon);
+		return iconSpan;
 	}
 
 }

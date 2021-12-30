@@ -143,6 +143,7 @@ public class WebinterfacePageSection {
 		}
 		
 		for(WebinterfacePageElement e : elementsList.create()) {
+			if(e.isTemplate()) throw new IllegalStateException("Page contains template elements");
 			el.appendChild(e.toHtml());
 		}
 		

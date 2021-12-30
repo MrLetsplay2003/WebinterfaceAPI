@@ -106,6 +106,11 @@ public abstract class AbstractElementBuilder<T extends WebinterfacePageElement, 
 		return getSelf();
 	}
 	
+	public S template(boolean isTemplate) {
+		element.setTemplate(isTemplate);
+		return getSelf();
+	}
+	
 	public T create() {
 		return element;
 	}

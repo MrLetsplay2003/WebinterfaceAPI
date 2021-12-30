@@ -47,6 +47,20 @@ public interface WebinterfacePageElement {
 	
 	public CssElement getMobileStyle();
 	
+	/**
+	 * Sets whether this element should be treated as a template element.<br>
+	 * Template elements can't be added to pages normally, but can instead be used to implement dynamic content using client-side JavaScript.
+	 * @param isTemplate Whether this element is a template element
+	 */
+	public void setTemplate(boolean isTemplate);
+	
+	/**
+	 * Returns whether this element should be treated as a template element
+	 * @return Whether this element should be treated as a template element
+	 * @see #setTemplate(boolean)
+	 */
+	public boolean isTemplate();
+	
 	public HtmlElement toHtml();
 	
 }
