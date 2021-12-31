@@ -156,7 +156,7 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 		return new SendJSAction(requestTarget, requestMethod, new ArrayValue(
 				new StringValue(setting.getKey()),
 				value
-			)).onSuccess(new ReloadPageAction(false, 100));
+			)).onSuccess(ReloadPageAction.delayed(100));
 	}
 	
 	public List<SettingsCategory> getSettingsCategories() {

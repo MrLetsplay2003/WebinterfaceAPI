@@ -35,7 +35,7 @@ public class ConfirmAction implements WebinterfaceAction {
 		return Collections.singleton(DefaultJSModule.BASE_ACTIONS);
 	}
 	
-	public ConfirmAction of(WebinterfaceAction action) {
+	public static ConfirmAction of(WebinterfaceAction action) {
 		return new ConfirmAction(action);
 	}
 

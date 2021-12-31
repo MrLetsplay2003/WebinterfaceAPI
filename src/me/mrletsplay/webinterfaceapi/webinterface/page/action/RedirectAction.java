@@ -40,11 +40,11 @@ public class RedirectAction implements WebinterfaceAction {
 		return Collections.singleton(DefaultJSModule.BASE_ACTIONS);
 	}
 	
-	public RedirectAction to(StringValue url) {
+	public static RedirectAction to(StringValue url) {
 		return new RedirectAction(url);
 	}
 	
-	public RedirectAction to(String url) {
+	public static RedirectAction to(String url) {
 		return new RedirectAction(url);
 	}
 

@@ -102,7 +102,7 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 					grp.addElement(WebinterfaceButton.builder()
 							.text("Remove connection")
 							.fullWidth()
-							.onClick(new ConfirmAction(MultiAction.of(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getConnectionName())), new ReloadPageAction(false, 100))))
+							.onClick(ConfirmAction.of(MultiAction.of(new SendJSAction("webinterface", "removeAccountConnection", new StringValue(con.getConnectionName())), ReloadPageAction.delayed(100))))
 							.width("auto")
 							.create());
 				}
@@ -115,7 +115,7 @@ public class WebinterfaceAccountPage extends WebinterfacePage {
 			els.add(WebinterfaceButton.builder()
 					.text("Connect another auth method")
 					.withLayoutOptions(DefaultLayoutOption.FULL_WIDTH)
-					.onClick(new RedirectAction("/login?from=" + HttpUtils.urlEncode(URL) + "&connect=true"))
+					.onClick(RedirectAction.to("/login?from=" + HttpUtils.urlEncode(URL) + "&connect=true"))
 					.create());
 		});
 		
