@@ -13,10 +13,12 @@ public class RedirectAction implements WebinterfaceAction {
 
 	private WebinterfaceActionValue url;
 	
+	@Deprecated
 	public RedirectAction(WebinterfaceActionValue url) {
 		this.url = url;
 	}
 	
+	@Deprecated
 	public RedirectAction(String url) {
 		this(new StringValue(url));
 	}
@@ -36,6 +38,14 @@ public class RedirectAction implements WebinterfaceAction {
 	@Override
 	public Set<WebinterfaceJSModule> getRequiredModules() {
 		return Collections.singleton(DefaultJSModule.BASE_ACTIONS);
+	}
+	
+	public RedirectAction to(StringValue url) {
+		return new RedirectAction(url);
+	}
+	
+	public RedirectAction to(String url) {
+		return new RedirectAction(url);
 	}
 
 }

@@ -6,6 +6,8 @@ import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.html.element.HtmlButton;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
@@ -72,7 +74,7 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 					moveUp.put("action", new StringValue("swap"));
 					moveUp.put("item1", new StringValue(k));
 					moveUp.put("item2", new StringValue(items.getIdentifier(itemBefore)));
-					upBtn.setOnClick(new SendJSAction(requestTarget, requestMethod, moveUp).createAttributeValue());
+					upBtn.setOnClick(MultiAction.of(new SendJSAction(requestTarget, requestMethod, moveUp).onSuccess(ReloadPageAction.reload())).createAttributeValue());
 				}else {
 					upBtn.setAttribute("disabled");
 				}
@@ -87,7 +89,7 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 					moveDown.put("action", new StringValue("swap"));
 					moveDown.put("item1", new StringValue(k));
 					moveDown.put("item2", new StringValue(items.getIdentifier(itemAfter)));
-					downBtn.setOnClick(new SendJSAction(requestTarget, requestMethod, moveDown).createAttributeValue());
+					downBtn.setOnClick(MultiAction.of(new SendJSAction(requestTarget, requestMethod, moveDown).onSuccess(ReloadPageAction.reload())).createAttributeValue());
 				}else {
 					downBtn.setAttribute("disabled");
 				}
@@ -102,7 +104,7 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 				ObjectValue remove = new ObjectValue();
 				remove.put("action", new StringValue("remove"));
 				remove.put("item", new StringValue(k));
-				removeBtn.setOnClick(new SendJSAction(requestTarget, requestMethod, remove).createAttributeValue());
+				removeBtn.setOnClick(MultiAction.of(new SendJSAction(requestTarget, requestMethod, remove).onSuccess(ReloadPageAction.reload())).createAttributeValue());
 				removeBtn.appendChild(WebinterfaceUtils.iconElement("mdi:close"));
 				container.appendChild(removeBtn);
 			}
@@ -122,7 +124,7 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 			case "remove":
 				adapter.remove(value.getString("item"));
 		}
-		return null;
+		return WebinterfaceResponse.success();
 	}
 	
 }

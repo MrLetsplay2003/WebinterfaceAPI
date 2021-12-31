@@ -24,12 +24,6 @@ public class SetValueAction implements WebinterfaceAction {
 		this(element.getOrGenerateID(), value);
 	}
 
-//	public JavaScriptFunction toJavaScript() {
-//		JavaScriptFunction f = new JavaScriptFunction(randomFunctionName() + "()");
-//		f.setCode("document.getElementById(\"" + StringEscapeUtils.escapeEcmaScript(elementID) + "\").value=" + value.toJavaScript() + ";");
-//		return f;
-//	}
-	
 	@Override
 	public String getHandlerName() {
 		return "WebinterfaceBaseActions.setValue";

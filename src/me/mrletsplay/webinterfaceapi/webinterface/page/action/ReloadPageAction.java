@@ -10,14 +10,20 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.RawValue;
 
 public class ReloadPageAction implements WebinterfaceAction {
 	
+	private static final ReloadPageAction
+		RELOAD = new ReloadPageAction(),
+		FORCE_RELOAD = new ReloadPageAction(true);
+	
 	private boolean forceReload;
 	private int delay;
 	
+	@Deprecated
 	public ReloadPageAction(boolean forceReload, int delayMillis) {
 		this.forceReload = forceReload;
 		this.delay = delayMillis;
 	}
-	
+
+	@Deprecated
 	public ReloadPageAction(boolean forceReload) {
 		this(forceReload, 0);
 	}
@@ -46,6 +52,22 @@ public class ReloadPageAction implements WebinterfaceAction {
 	@Override
 	public Set<WebinterfaceJSModule> getRequiredModules() {
 		return Collections.singleton(DefaultJSModule.BASE_ACTIONS);
+	}
+	
+	public static ReloadPageAction reload() {
+		return RELOAD;
+	}
+	
+	public static ReloadPageAction forceReload() {
+		return FORCE_RELOAD;
+	}
+	
+	public static ReloadPageAction delayed(boolean forceReload, int delayMillis) {
+		return new ReloadPageAction(forceReload, delayMillis);
+	}
+	
+	public static ReloadPageAction delayed(int delayMillis) {
+		return delayed(false, delayMillis);
 	}
 
 }

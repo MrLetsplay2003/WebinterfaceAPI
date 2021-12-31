@@ -48,6 +48,7 @@ public class BasicListAdapter<T> implements ListAdapter<T> {
 	public void swap(String identifier1, String identifier2) {
 		T i1 = getItem(identifier1);
 		T i2 = getItem(identifier2);
+		if(i1 == null || i2 == null) return;
 		Collections.swap(items, items.indexOf(i1), items.indexOf(i2));
 	}
 

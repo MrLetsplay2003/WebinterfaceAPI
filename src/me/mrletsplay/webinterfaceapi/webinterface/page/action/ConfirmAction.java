@@ -12,6 +12,7 @@ public class ConfirmAction implements WebinterfaceAction {
 	
 	private WebinterfaceAction action;
 	
+	@Deprecated
 	public ConfirmAction(WebinterfaceAction action) {
 		this.action = action;
 	}
@@ -32,6 +33,10 @@ public class ConfirmAction implements WebinterfaceAction {
 	@Override
 	public Set<WebinterfaceJSModule> getRequiredModules() {
 		return Collections.singleton(DefaultJSModule.BASE_ACTIONS);
+	}
+	
+	public ConfirmAction of(WebinterfaceAction action) {
+		return new ConfirmAction(action);
 	}
 
 }
