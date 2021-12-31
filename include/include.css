@@ -196,9 +196,19 @@ button {
 	font-weight: var(--theme-button-font-weight);
 }
 
+button[disabled] {
+	color: var(--theme-color-content-text-secondary);
+	opacity: 0.5;
+}
+
 button:hover {
 	background-color: var(--theme-color-content-hover-bg);
 	cursor: pointer;
+}
+
+button[disabled]:hover {
+	background-color: var(--theme-color-content-bg);
+	cursor: default;
 }
 
 button:focus {
