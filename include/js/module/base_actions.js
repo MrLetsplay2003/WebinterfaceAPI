@@ -48,9 +48,31 @@ class WebinterfaceBaseActions {
 	static showLoadingScreen(element, event, parameters) {
 		document.getElementById("loading-box").style.display = "flex";
 	}
-	
+
 	static hideLoadingScreen(element, event, parameters) {
 		document.getElementById("loading-box").style.display = "none";
+	}
+
+	static async updateUpdateableElement(element, event, parameters) {
+		let orig = document.getElementById(parameters.element);
+
+		// Create template
+		let temp = document.createElement("template");
+		temp.innerHTML = orig.getAttribute("data-template");
+
+		// Load new data into template
+		let requestTarget = orig.getAttribute("data-updateRequestTarget");
+		let requestMethod = orig.getAttribute("data-updateRequestMethod");
+		let response = await Webinterface.call(requestTarget, requestMethod, null, false);
+		if(!response.isSuccess()) {
+			WebinterfaceToast.showErrorToast("Failed to load template object");
+			return;
+		}
+		convertTemplateElement(response.getData(), temp.content.firstChild);
+
+		// Replace old element with new element
+		orig.innerHTML = "";
+		orig.appendChild(temp.content);
 	}
 
 }
