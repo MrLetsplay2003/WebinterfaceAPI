@@ -206,3 +206,48 @@ function getCookie(cname) {
 	}
 	return "";
 }
+
+function convertTemplateString(templateObject, templateString) {
+	return templateString.replace(/\$\{([a-zA-Z0-9]+)\}/, (match, propertyName, offset, string) => {
+		return templateObject[propertyName];
+	});
+}
+
+function convertTemplateElement(templateObject, templateElement) {
+	if(templateElement.hasAttributes()) {
+		for(let i = 0; i < templateElement.attributes.length; i++) {
+			let a = templateElement.attributes[i];
+			if(a.name.startsWith("data-")) continue; // Ignore data attributes
+			a.value = convertTemplateString(templateObject, a.value);
+		}
+	}
+
+	for(let i = 0; i < templateElement.childNodes.length; i++) {
+		let n = templateElement.childNodes[i];
+
+		switch(n.nodeType) {
+			case Node.TEXT_NODE:
+				n.nodeValue = convertTemplateString(templateObject, n.nodeValue);
+				break;
+			case Node.ELEMENT_NODE:
+				convertTemplateElement(templateObject, n);
+				break;
+		}
+	}
+}
+
+async function loadUpdateableElements() {
+	for(let el of document.getElementsByClassName("updateable-element")) {
+		let requestTarget = el.getAttribute("data-updateRequestTarget");
+		let requestMethod = el.getAttribute("data-updateRequestMethod");
+		let response = await Webinterface.call(requestTarget, requestMethod, null, false);
+		if(!response.isSuccess()) {
+			WebinterfaceToast.showErrorToast("Failed to load template object");
+			continue;
+		}
+		convertTemplateElement(response.getData(), el);
+	}
+}
+
+loadUpdateableElements();
+console.log("Loaded!");
