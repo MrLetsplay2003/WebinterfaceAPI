@@ -44,14 +44,15 @@ public class WebinterfaceUpdateableElement extends AbstractWebinterfacePageEleme
 
 	@Override
 	public HtmlElement createElement() {
-		getOrGenerateID();
+		HtmlElement div = new HtmlElement("div");
 		if(!templateElement.isTemplate()) throw new IllegalStateException("Template element is not a template");
-		HtmlElement el = templateElement.toHtml();
-		el.addClass("updateable-element");
-		el.setAttribute("data-updateRequestTarget", updateRequestTarget);
-		el.setAttribute("data-updateRequestMethod", updateRequestMethod);
-		el.setAttribute("data-template", templateElement.toHtml().toString());
-		return el;
+		div.addClass("updateable-element");
+		div.setAttribute("data-updateRequestTarget", updateRequestTarget);
+		div.setAttribute("data-updateRequestMethod", updateRequestMethod);
+		HtmlElement templateHTML = templateElement.toHtml();
+		div.setAttribute("data-template", templateHTML.toString());
+		div.appendChild(templateHTML);
+		return div;
 	}
 
 	public static Builder builder() {

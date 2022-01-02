@@ -236,16 +236,31 @@ function convertTemplateElement(templateObject, templateElement) {
 	}
 }
 
+async function loadUpdateableElement(element) {
+	// Create template
+	let temp = document.createElement("template");
+	temp.innerHTML = element.getAttribute("data-template");
+
+	// Load new data into template
+	let requestTarget = element.getAttribute("data-updateRequestTarget");
+	let requestMethod = element.getAttribute("data-updateRequestMethod");
+
+	let response = await Webinterface.call(requestTarget, requestMethod, null, false);
+	if(!response.isSuccess()) {
+		WebinterfaceToast.showErrorToast("Failed to load template object");
+		return;
+	}
+
+	convertTemplateElement(response.getData(), temp.content.firstChild);
+
+	// Replace old element with new element
+	element.innerHTML = "";
+	element.appendChild(temp.content);
+}
+
 async function loadUpdateableElements() {
 	for(let el of document.getElementsByClassName("updateable-element")) {
-		let requestTarget = el.getAttribute("data-updateRequestTarget");
-		let requestMethod = el.getAttribute("data-updateRequestMethod");
-		let response = await Webinterface.call(requestTarget, requestMethod, null, false);
-		if(!response.isSuccess()) {
-			WebinterfaceToast.showErrorToast("Failed to load template object");
-			continue;
-		}
-		convertTemplateElement(response.getData(), el);
+		loadUpdateableElement(el);
 	}
 }
 
