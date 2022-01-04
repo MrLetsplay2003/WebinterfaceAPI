@@ -53,8 +53,13 @@ class WebinterfaceBaseActions {
 		document.getElementById("loading-box").style.display = "none";
 	}
 
-	static async updateUpdateableElement(element, event, parameters) {
-		loadUpdateableElement(document.getElementById(parameters.element));
+	static async updateElement(element, event, parameters) {
+		let el = document.getElementById(parameters.element);
+		if(el.classList.contains("updateable-element")) {
+			loadUpdateableElement(el);
+		}else if(el.classList.contains("dynamic-list")) {
+			loadDynamicList(el);
+		}
 	}
 
 }

@@ -7,13 +7,13 @@ public class WebinterfaceUpdateableElement extends AbstractWebinterfacePageEleme
 
 	private WebinterfacePageElement templateElement;
 	private String
-		updateRequestTarget,
-		updateRequestMethod;
+		dataRequestTarget,
+		dataRequestMethod;
 	
-	public WebinterfaceUpdateableElement(WebinterfacePageElement templateElement, String updateRequestTarget, String updateRequestMethod) {
+	public WebinterfaceUpdateableElement(WebinterfacePageElement templateElement, String dataRequestTarget, String dataRequestMethod) {
 		this.templateElement = templateElement;
-		this.updateRequestTarget = updateRequestTarget;
-		this.updateRequestMethod = updateRequestMethod;
+		this.dataRequestTarget = dataRequestTarget;
+		this.dataRequestMethod = dataRequestMethod;
 	}
 	
 	private WebinterfaceUpdateableElement() {}
@@ -26,20 +26,20 @@ public class WebinterfaceUpdateableElement extends AbstractWebinterfacePageEleme
 		return templateElement;
 	}
 	
-	public void setUpdateRequestTarget(String updateRequestTarget) {
-		this.updateRequestTarget = updateRequestTarget;
+	public void setDataRequestTarget(String dataRequestTarget) {
+		this.dataRequestTarget = dataRequestTarget;
 	}
 	
-	public String getUpdateRequestTarget() {
-		return updateRequestTarget;
+	public String getDataRequestTarget() {
+		return dataRequestTarget;
 	}
 	
-	public void setUpdateRequestMethod(String updateRequestMethod) {
-		this.updateRequestMethod = updateRequestMethod;
+	public void setDataRequestMethod(String dataRequestMethod) {
+		this.dataRequestMethod = dataRequestMethod;
 	}
 	
-	public String getUpdateRequestMethod() {
-		return updateRequestMethod;
+	public String getDataRequestMethod() {
+		return dataRequestMethod;
 	}
 
 	@Override
@@ -47,8 +47,8 @@ public class WebinterfaceUpdateableElement extends AbstractWebinterfacePageEleme
 		HtmlElement div = new HtmlElement("div");
 		if(!templateElement.isTemplate()) throw new IllegalStateException("Template element is not a template");
 		div.addClass("updateable-element");
-		div.setAttribute("data-updateRequestTarget", updateRequestTarget);
-		div.setAttribute("data-updateRequestMethod", updateRequestMethod);
+		div.setAttribute("data-dataRequestTarget", dataRequestTarget);
+		div.setAttribute("data-dataRequestMethod", dataRequestMethod);
 		HtmlElement templateHTML = templateElement.toHtml();
 		div.setAttribute("data-template", templateHTML.toString());
 		div.appendChild(templateHTML);
@@ -70,16 +70,16 @@ public class WebinterfaceUpdateableElement extends AbstractWebinterfacePageEleme
 			return this;
 		}
 		
-		public Builder updateHandler(String updateRequestTarget, String updateRequestMethod) {
-			element.setUpdateRequestTarget(updateRequestTarget);
-			element.setUpdateRequestMethod(updateRequestMethod);
+		public Builder dataHandler(String dataRequestTarget, String dataRequestMethod) {
+			element.setDataRequestTarget(dataRequestTarget);
+			element.setDataRequestMethod(dataRequestMethod);
 			return this;
 		}
 		
 		@Override
 		public WebinterfaceUpdateableElement create() {
 			if(element.getTemplateElement() == null) throw new IllegalStateException("No template element set");
-			if(element.getUpdateRequestTarget() == null || element.getUpdateRequestMethod() == null) throw new IllegalStateException("No update handler set");
+			if(element.getDataRequestTarget() == null || element.getDataRequestMethod() == null) throw new IllegalStateException("No data handler set");
 			return super.create();
 		}
 		

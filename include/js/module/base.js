@@ -208,17 +208,39 @@ function getCookie(cname) {
 }
 
 function convertTemplateString(templateObject, templateString) {
-	return templateString.replace(/\$\{([a-zA-Z0-9]+)\}/, (match, propertyName, offset, string) => {
-		return templateObject[propertyName];
+	return templateString.replace(/\$\{([a-zA-Z0-9\?\:_]+)\}/, (match, expr, offset, string) => {
+		if(expr.includes("?")) {
+			let condExpr = expr.split("?");
+			let cond = condExpr[0];
+			let ops = condExpr[1].split(":");
+			return templateObject[cond] ? ops[0] : ops[1];
+		}else {
+			return templateObject[expr];
+		}
 	});
 }
 
 function convertTemplateElement(templateObject, templateElement) {
 	if(templateElement.hasAttributes()) {
+		let newAttrs = {};
+
 		for(let i = 0; i < templateElement.attributes.length; i++) {
 			let a = templateElement.attributes[i];
-			if(a.name.startsWith("data-")) continue; // Ignore data attributes
-			a.value = convertTemplateString(templateObject, a.value);
+			if(a.name == "data-template") {
+				newAttrs[a.name] = a.value;
+				continue; // Ignore template attribute
+			}
+			let attrName = convertTemplateString(templateObject, a.name);
+			if(attrName.length == 0) continue;
+			newAttrs[attrName] = convertTemplateString(templateObject, a.value);
+		}
+
+		while(templateElement.attributes.length > 0) {
+			templateElement.removeAttribute(templateElement.attributes[0].name);
+		}
+
+		for(let k in newAttrs) {
+			templateElement.setAttribute(k, newAttrs[k]);
 		}
 	}
 
@@ -242,8 +264,8 @@ async function loadUpdateableElement(element) {
 	temp.innerHTML = element.getAttribute("data-template");
 
 	// Load new data into template
-	let requestTarget = element.getAttribute("data-updateRequestTarget");
-	let requestMethod = element.getAttribute("data-updateRequestMethod");
+	let requestTarget = element.getAttribute("data-dataRequestTarget");
+	let requestMethod = element.getAttribute("data-dataRequestMethod");
 
 	let response = await Webinterface.call(requestTarget, requestMethod, null, false);
 	if(!response.isSuccess()) {
@@ -258,9 +280,86 @@ async function loadUpdateableElement(element) {
 	element.appendChild(temp.content);
 }
 
+async function loadDynamicList(element) {
+	// Create template
+	let temp = document.createElement("template");
+	temp.innerHTML = element.getAttribute("data-template");
+
+	// Load new data into template
+	let requestTarget = element.getAttribute("data-dataRequestTarget");
+	let requestMethod = element.getAttribute("data-dataRequestMethod");
+
+	let response = await Webinterface.call(requestTarget, requestMethod, null, false);
+	if(!response.isSuccess()) {
+		WebinterfaceToast.showErrorToast("Failed to load template object");
+		return;
+	}
+
+	element.innerHTML = "";
+	for(let o of response.getData().elements) {
+		let el = temp.content.firstChild.cloneNode(true);
+		convertTemplateElement(o, el);
+		element.appendChild(el);
+	}
+}
+
+async function dynamicListElementUp(element) {
+	let params = dynamicListElementParams(element.parentElement);
+	await WebinterfaceBaseActions.sendJS(element, null, {
+		requestTarget: params.requestTarget,
+		requestMethod: params.requestMethod,
+		value: {
+			action: "swap",
+			item1: params.id,
+			item2: params.before
+		}
+	});
+	loadDynamicList(element.parentElement.parentElement);
+}
+
+async function dynamicListElementDown(element) {
+	let params = dynamicListElementParams(element.parentElement);
+	await WebinterfaceBaseActions.sendJS(element, null, {
+		requestTarget: params.requestTarget,
+		requestMethod: params.requestMethod,
+		value: {
+			action: "swap",
+			item1: params.id,
+			item2: params.after
+		}
+	});
+	loadDynamicList(element.parentElement.parentElement);
+}
+
+async function dynamicListElementRemove(element) {
+	let params = dynamicListElementParams(element.parentElement);
+	await WebinterfaceBaseActions.sendJS(element, null, {
+		requestTarget: params.requestTarget,
+		requestMethod: params.requestMethod,
+		value: {
+			action: "remove",
+			item: params.id
+		}
+	});
+	loadDynamicList(element.parentElement.parentElement);
+}
+
+function dynamicListElementParams(element) {
+	return {
+		requestTarget: element.parentElement.getAttribute("data-updateRequestTarget"),
+		requestMethod: element.parentElement.getAttribute("data-updateRequestMethod"),
+		id: element.getAttribute("data-elementId"),
+		before: element.getAttribute("data-elementBefore"),
+		after: element.getAttribute("data-elementAfter")
+	};
+}
+
 async function loadUpdateableElements() {
 	for(let el of document.getElementsByClassName("updateable-element")) {
-		loadUpdateableElement(el);
+		await loadUpdateableElement(el);
+	}
+	for(let el of document.getElementsByClassName("dynamic-list")) {
+		await loadDynamicList(el);
 	}
 }
 
