@@ -30,7 +30,7 @@ public class DefaultSettings implements AutoSettings {
 		ENABLE_DEBUG_MODE = general.addBoolean("debug.enable", false, "Enable debug mode");
 	
 	public static final StringSetting
-		THEME = general.addString("theme", "blue", "Theme"),
+		THEME = general.addString("theme", "dark", "Theme"),
 		HOME_PAGE_PATH = general.addString("home-page.path", "/wiapi/welcome", "Home page path");
 	
 	public static final StringListSetting
