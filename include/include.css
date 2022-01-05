@@ -553,6 +553,7 @@ img.element {
 
 	.header-image-item {
 		display: block;
+		cursor: pointer;
 	}
 
 	.sidenav-list {

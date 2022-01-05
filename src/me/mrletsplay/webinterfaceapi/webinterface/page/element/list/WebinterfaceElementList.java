@@ -10,12 +10,14 @@ import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.UpdateElementAction;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.AbstractWebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.builder.AbstractElementBuilder;
 
 public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement {
 	
@@ -59,17 +61,59 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 		this.templateElement = templateElement;
 	}
 	
+	private WebinterfaceElementList() {}
+	
+	public void setItems(ListAdapter<T> items) {
+		this.items = items;
+	}
+	
+	public ListAdapter<T> getItems() {
+		return items;
+	}
+	
+	public void setTemplateElement(WebinterfacePageElement templateElement) {
+		this.templateElement = templateElement;
+	}
+	
+	public WebinterfacePageElement getTemplateElement() {
+		return templateElement;
+	}
+	
+	public void setElementFunction(Function<T, WebinterfacePageElement> elementFunction) {
+		this.elementFunction = elementFunction;
+	}
+	
+	public Function<T, WebinterfacePageElement> getElementFunction() {
+		return elementFunction;
+	}
+	
 	public void setRearrangable(boolean rearrangable) {
 		this.rearrangable = rearrangable;
+	}
+	
+	public boolean isRearrangable() {
+		return rearrangable;
 	}
 	
 	public void setRemovable(boolean removable) {
 		this.removable = removable;
 	}
 	
+	public boolean isRemovable() {
+		return removable;
+	}
+	
 	public void setUpdateHandler(String requestTarget, String requestMethod) {
 		this.updateRequestTarget = requestTarget;
 		this.updateRequestMethod = requestMethod;
+	}
+	
+	public String getUpdateRequestTarget() {
+		return updateRequestTarget;
+	}
+	
+	public String getUpdateRequestMethod() {
+		return updateRequestMethod;
 	}
 	
 	public boolean isDynamic() {
@@ -79,6 +123,14 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 	public void setDataHandler(String requestTarget, String requestMethod) {
 		this.dataRequestTarget = requestTarget;
 		this.dataRequestMethod = requestMethod;
+	}
+	
+	public String getDataRequestTarget() {
+		return dataRequestTarget;
+	}
+	
+	public String getDataRequestMethod() {
+		return dataRequestMethod;
 	}
 
 	@Override
@@ -110,7 +162,7 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 		container.addClass("element-list-element");
 		container.appendChild(elementFunction.apply(item).toHtml());
 		if(rearrangable) {
-			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Both updateRequestTarget and updateRequestMethod must be set if the list is rearrangable");
+			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is rearrangable");
 			HtmlButton upBtn = HtmlElement.button();
 			upBtn.addClass("element-list-button");
 			T itemBefore = items.getItemBefore(item);
@@ -143,7 +195,7 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 		}
 		
 		if(removable) {
-			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Both updateRequestTarget and updateRequestMethod must be set if the list is removable");
+			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is removable");
 			HtmlButton removeBtn = HtmlElement.button();
 			removeBtn.addClass("element-list-button");
 			ObjectValue remove = new ObjectValue();
@@ -164,7 +216,7 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 		container.setAttribute("data-elementAfter", "${_after}");
 		container.appendChild(templateElement.toHtml());
 		if(rearrangable) {
-			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Both updateRequestTarget and updateRequestMethod must be set if the list is rearrangable");
+			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is rearrangable");
 			HtmlButton upBtn = HtmlElement.button();
 			upBtn.addClass("element-list-button");
 			upBtn.setAttribute("${_first?disabled:}");
@@ -181,7 +233,7 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 		}
 		
 		if(removable) {
-			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Both updateRequestTarget and updateRequestMethod must be set if the list is removable");
+			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is removable");
 			HtmlButton removeBtn = HtmlElement.button();
 			removeBtn.addClass("element-list-button");
 			removeBtn.setOnClick("dynamicListElementRemove(this)");
@@ -227,6 +279,124 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 		JSONObject obj = new JSONObject();
 		obj.put("elements", elements);
 		return WebinterfaceResponse.success(obj);
+	}
+	
+	public static <T> Builder<T> builder() {
+		return new Builder<>(new WebinterfaceElementList<>());
+	}
+	
+	public static class Builder<T> extends AbstractElementBuilder<WebinterfaceElementList<T>, Builder<T>> {
+
+		private Builder(WebinterfaceElementList<T> element) {
+			super(element);
+		}
+		
+		/**
+		 * Sets the items used for a non-dynamic list.<br>
+		 * An element function to convert the items to {@link WebinterfacePageElement}s must be set for a non-dynamic list using {@link #elementFunction(Function)}.<br>
+		 * <br>
+		 * Note: {@link #templateElement(WebinterfacePageElement)} and {@link #dataHandler(String, String)} must not be called after this point, as after this call the list is considered to be non-dynamic!
+		 * @param items A {@link ListAdapter} to provide a list of items
+		 * @return This builder
+		 * @see #elementFunction(Function)
+		 */
+		public Builder<T> items(ListAdapter<T> items) {
+			element.setItems(items);
+			return this;
+		}
+		
+		/**
+		 * Sets the template element used for a dynamic list.<br>
+		 * A data handler must be set for a dynamic list using {@link #dataHandler(String, String)}.<br>
+		 * <br>
+		 * Note: {@link #items(ListAdapter)} and {@link #elementFunction(Function)} must not be called after this point, as after this call the list is considered to be dynamic!
+		 * @param templateElement The template element to use for the elements of this list
+		 * @return This builder
+		 * @see #dataHandler(String, String)
+		 */
+		public Builder<T> templateElement(WebinterfacePageElement templateElement) {
+			element.setTemplateElement(templateElement);
+			return this;
+		}
+		
+		/**
+		 * Changes whether items in this list should be rearrangable (using up and down buttons).<br>
+		 * If <code>rearrangable</code> is set to <code>true</code>, you must set an update handler using {@link #updateHandler(String, String)}
+		 * @param rearrangable Whether the items in this list should be rearrangable
+		 * @return This builder
+		 * @see #updateHandler(String, String)
+		 */
+		public Builder<T> rearrangable(boolean rearrangable) {
+			element.setRearrangable(rearrangable);
+			return this;
+		}
+		
+		/**
+		 * Changes whether itms in this list should be removable (using a delete button).<br>
+		 * If <code>removable</code> is set to <code>true</code>, you must set an update handler using {@link #updateHandler(String, String)}
+		 * @param removable Whether the items in this list should be removable
+		 * @return This builder
+		 */
+		public Builder<T> removable(boolean removable) {
+			element.setRemovable(removable);
+			return this;
+		}
+		
+		/**
+		 * Sets an update handler for this list which will be called if an item is rearranged or removed.<br>
+		 * It does not need to be set if {@link #rearrangable(boolean)} and {@link #removable(boolean)} are set to false (which they are by default)
+		 * @param requestTarget The request target of the update handler
+		 * @param requestMethod The request method of the update handler
+		 * @return This builder
+		 */
+		public Builder<T> updateHandler(String requestTarget, String requestMethod) {
+			element.setUpdateHandler(requestTarget, requestMethod);
+			return this;
+		}
+		
+		/**
+		 * Sets a data handler for this list to retrieve data when it is updated (either by rearranging/removing an item or using an {@link UpdateElementAction}.<br>
+		 * This must not be set if the list is non-dynamic (See {@link #items(ListAdapter)} for details)
+		 * @param requestTarget The request target of the data handler
+		 * @param requestMethod The request method of the data handler
+		 * @return This builder
+		 */
+		public Builder<T> dataHandler(String requestTarget, String requestMethod) {
+			element.setDataHandler(requestTarget, requestMethod);
+			return this;
+		}
+		
+		/**
+		 * Sets a function for this list to convert the items of this list to {@link WebinterfacePageElement}s.<br>
+		 * This must not be set if the list is dynamic (See {@link #templateElement(WebinterfacePageElement)} for details)
+		 * @param requestTarget The request target of the data handler
+		 * @param requestMethod The request method of the data handler
+		 * @return This builder
+		 */
+		public Builder<T> elementFunction(Function<T, WebinterfacePageElement> elementFunction) {
+			element.setElementFunction(elementFunction);
+			return this;
+		}
+		
+		@Override
+		public WebinterfaceElementList<T> create() {
+			if(element.getItems() == null && element.getTemplateElement() == null) throw new IllegalStateException("Either items or template element must be set");
+			if(element.getItems() != null && element.getTemplateElement() != null) throw new IllegalStateException("Items and template element may not both be set");
+			
+			if(element.isDynamic()) {
+				if(element.getElementFunction() == null) throw new IllegalStateException("Element function must be set if the list is not dynamic");
+				if(element.getDataRequestTarget() != null || element.getDataRequestMethod() != null) throw new IllegalStateException("Data handler may not be set if the list is not dynamic");
+			}else {
+				if(element.getDataRequestTarget() == null || element.getDataRequestMethod() == null) throw new IllegalStateException("Data handler must be set if the list is dynamic");
+				if(element.getElementFunction() != null) throw new IllegalStateException("Element function may not be set if the list is dynamic");
+			}
+			
+			if((element.isRearrangable() || element.isRemovable())
+					&& (element.getUpdateRequestTarget() == null || element.getUpdateRequestMethod() == null)) throw new IllegalStateException("Update handler must be set if the list is rearrangable/removable");
+			
+			return super.create();
+		}
+		
 	}
 	
 }

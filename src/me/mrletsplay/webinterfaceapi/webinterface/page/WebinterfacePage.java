@@ -188,9 +188,10 @@ public class WebinterfacePage implements HttpDocument {
 		img2.setAttribute("onclick", "toggleSidebar()");
 		header.appendChild(img2);
 		
-		HtmlElement img = HtmlElement.img("/_internal/header.png", "WebinterfaceAPI");
+		HtmlElement img = HtmlElement.img(Webinterface.getConfig().getSetting(DefaultSettings.HEADER_IMAGE), "WebinterfaceAPI");
 		img.addClass("header-image-item");
 		img.setSelfClosing(true);
+		img.setAttribute("onclick", "window.location.href = \"/\";");
 		header.appendChild(img);
 		
 		HtmlElement ac = new HtmlElement("div");

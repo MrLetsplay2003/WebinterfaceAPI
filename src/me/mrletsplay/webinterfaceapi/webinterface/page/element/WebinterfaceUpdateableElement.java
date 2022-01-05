@@ -26,22 +26,19 @@ public class WebinterfaceUpdateableElement extends AbstractWebinterfacePageEleme
 		return templateElement;
 	}
 	
-	public void setDataRequestTarget(String dataRequestTarget) {
-		this.dataRequestTarget = dataRequestTarget;
+	public void setDataHandler(String requestTarget, String requestMethod) {
+		this.dataRequestTarget = requestTarget;
+		this.dataRequestMethod = requestMethod;
 	}
 	
 	public String getDataRequestTarget() {
 		return dataRequestTarget;
 	}
 	
-	public void setDataRequestMethod(String dataRequestMethod) {
-		this.dataRequestMethod = dataRequestMethod;
-	}
-	
 	public String getDataRequestMethod() {
 		return dataRequestMethod;
 	}
-
+	
 	@Override
 	public HtmlElement createElement() {
 		HtmlElement div = new HtmlElement("div");
@@ -70,9 +67,8 @@ public class WebinterfaceUpdateableElement extends AbstractWebinterfacePageEleme
 			return this;
 		}
 		
-		public Builder dataHandler(String dataRequestTarget, String dataRequestMethod) {
-			element.setDataRequestTarget(dataRequestTarget);
-			element.setDataRequestMethod(dataRequestMethod);
+		public Builder dataHandler(String requestTarget, String requestMethod) {
+			element.setDataHandler(requestTarget, requestMethod);
 			return this;
 		}
 		
