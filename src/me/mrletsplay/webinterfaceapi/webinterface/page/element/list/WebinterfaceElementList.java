@@ -54,7 +54,6 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 	 * Constructs a list element with the items from the specified {@link ListAdapter}.<br>
 	 * This will <b>not</b> automatically handle updates. You still need to set an update handler using {@link #setDataHandler(String, String)}, if you want to allow rearranging/remove items.<br>
 	 * The list will get its elements dynamically from the elements request handler, which can be set using {@link #setDataHandler(String, String)}
-	 * @param items The items to add to the list
 	 * @param templateElement A template element for the dynamic elements of the list
 	 */
 	public WebinterfaceElementList(WebinterfacePageElement templateElement) {
@@ -367,10 +366,9 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 		}
 		
 		/**
-		 * Sets a function for this list to convert the items of this list to {@link WebinterfacePageElement}s.<br>
+		 * Sets a function to convert the items of this list to {@link WebinterfacePageElement}s.<br>
 		 * This must not be set if the list is dynamic (See {@link #templateElement(WebinterfacePageElement)} for details)
-		 * @param requestTarget The request target of the data handler
-		 * @param requestMethod The request method of the data handler
+		 * @param elementFunction The function to convert the items
 		 * @return This builder
 		 */
 		public Builder<T> elementFunction(Function<T, WebinterfacePageElement> elementFunction) {
