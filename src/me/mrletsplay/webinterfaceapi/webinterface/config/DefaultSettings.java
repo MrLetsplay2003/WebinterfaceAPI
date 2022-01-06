@@ -95,8 +95,7 @@ public class DefaultSettings implements AutoSettings {
 	// Performance
 	
 	public static final BooleanSetting
-		ENABLE_FILE_CACHING = performance.addBoolean("enable-file-caching", true, "Enable file caching"),
-		MINIFY_SCRIPTS = performance.addBoolean("minify-scripts", true, "Minify scripts");
+		ENABLE_FILE_CACHING = performance.addBoolean("enable-file-caching", true, "Enable file caching");
 
 	private DefaultSettings() {}
 	

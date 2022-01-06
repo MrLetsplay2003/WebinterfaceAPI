@@ -1,5 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +46,8 @@ public class WebinterfacePage implements HttpDocument {
 	
 	private DynamicList<WebinterfacePageSection> sectionsList;
 	
+	private List<PeriodicAction> periodicActions;
+	
 	private CssElement
 		containerStyle,
 		mobileContainerStyle;
@@ -54,6 +57,7 @@ public class WebinterfacePage implements HttpDocument {
 		this.url = url;
 		this.permission = permission;
 		this.sectionsList = new DynamicList<>();
+		this.periodicActions = new ArrayList<>();
 		this.hidden = hidden;
 		this.containerStyle = new CssElement(CssSelector.selectClass("content-container"));
 		this.mobileContainerStyle = new CssElement(CssSelector.selectClass("content-container"));
@@ -133,6 +137,14 @@ public class WebinterfacePage implements HttpDocument {
 		return sectionsList;
 	}
 	
+	public void addPeriodicAction(PeriodicAction action) {
+		periodicActions.add(action);
+	}
+	
+	public List<PeriodicAction> getPeriodicActions() {
+		return periodicActions;
+	}
+	
 	public HtmlDocument toHtml() {
 		WebinterfaceAccount account = WebinterfaceSession.getCurrentSession().getAccount();
 		if(permission != null && !account.hasPermission(permission)) {
@@ -145,9 +157,13 @@ public class WebinterfacePage implements HttpDocument {
 		HtmlDocument d = new HtmlDocument();
 		d.setTitle(name);
 		d.setLanguage("en");
-		d.includeScript("https://code.jquery.com/jquery-3.5.1.min.js", false, true);
-		d.includeScript("https://code.iconify.design/1/1.0.7/iconify.min.js", false, true);
+		d.includeScript("https://code.jquery.com/jquery-3.6.0.min.js", false, true);
+		d.includeScript("https://code.iconify.design/2/2.1.0/iconify.min.js", false, true);
 		JavaScriptScript sc = new JavaScriptScript();
+		for(PeriodicAction a : periodicActions) {
+			sc.appendCode(String.format("setInterval(() => {%s}, %s);", a.getAction().getCode(), a.getPeriodMillis()));
+		}
+		
 		StyleSheet st = new StyleSheet();
 		st.addElement(containerStyle);
 		st.addMobileElement(mobileContainerStyle);
@@ -278,9 +294,6 @@ public class WebinterfacePage implements HttpDocument {
 			}
 		}
 		
-		// Script minify
-//		if(Webinterface.getConfig().getSetting(DefaultSettings.MINIFY_SCRIPTS)) minifyScript(); TODO: fix
-		
 		d.getBodyNode().appendChild(header);
 		d.getBodyNode().appendChild(main);
 		d.getBodyNode().appendChild(sidenav);
@@ -328,52 +341,6 @@ public class WebinterfacePage implements HttpDocument {
 			sideNavList.appendChild(sideNavListItem);
 		}
 	}
-	
-//	private void minifyScript() {
-//		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
-//		JavaScriptScript sc = (JavaScriptScript) ctx.getProperty(CONTEXT_PROPERTY_SCRIPT);
-//		
-//		Map<JavaScriptFunction, String> code = new HashMap<>();
-//		Map<String, JavaScriptFunction> qFs = new HashMap<>();
-//		int idx = 0;
-//		for(JavaScriptFunction f : sc.getFunctions()) {
-//			String cd = f.getCode().get();
-//			Map.Entry<JavaScriptFunction, String> fo = code.entrySet().stream().filter(e -> e.getValue().equals(cd)).findFirst().orElse(null);
-//			if(fo != null) {
-//				f.setCode("return " + fo.getKey().getSignature() + ";");
-//			}
-//			
-//			Pattern ebip = Pattern.compile("(?<method>(?:document|window|WebinterfaceUtils)\\.[^()\\[\\]]+)\\((?<params>[^\\)]*)\\)");
-//			
-//			String rest = cd;
-//			Matcher m = ebip.matcher(rest);
-//			StringBuilder nCode = new StringBuilder();
-//			while(m.find()) {
-//				JavaScriptFunction of = qFs.get(m.group("method"));
-//				if(of == null) {
-//					String sig = "q" + (idx++);
-//					List<String> args = new ArrayList<>();
-//					for(int i = 0; i < m.group("params").split(",").length; i++) {
-//						args.add("arg" + i);
-//					}
-//					String aStr = args.stream().collect(Collectors.joining(",", "(", ")"));
-//					sig += aStr;
-//					of = new JavaScriptFunction(sig);
-//					of.setCode("return " + m.group("method") + aStr + ";");
-//					qFs.put(m.group("method"), of);
-//				}
-//				
-//				nCode.append(rest.substring(0, m.start())); // Append preceding code
-//				nCode.append(of.getSignature().get().replaceAll("\\([^)]+\\)", "(" + m.group("params") + ")"));
-//				rest = rest.substring(m.end(), rest.length());
-//				m = ebip.matcher(rest);
-//			}
-//			nCode.append(rest);
-//			f.setCode(nCode.toString());
-//		}
-//		
-//		qFs.values().forEach(sc::addFunction);
-//	}
 
 	@Override
 	public void createContent() {

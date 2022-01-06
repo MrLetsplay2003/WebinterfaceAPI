@@ -25,13 +25,17 @@ public interface WebinterfaceAction {
 		String functionName = randomFunctionName();
 		JavaScriptFunction f = new JavaScriptFunction(functionName + "()");
 		f.addModifier("async");
-		f.setCode(String.format("%s(%s);", getHandlerName(), getParameters().toJavaScript()));
+		f.setCode(getCode());
 		sc.addFunction(f);
 		
 		Set<WebinterfaceJSModule> m = (Set<WebinterfaceJSModule>) ctx.getProperty(WebinterfacePage.CONTEXT_PROPERTY_REQUIRED_MODULES);
 		m.addAll(getRequiredModules());
 		
 		return String.format("%s()", functionName);
+	}
+	
+	public default String getCode() {
+		return String.format("%s(%s);", getHandlerName(), getParameters().toJavaScript());
 	}
 	
 	public static String randomFunctionName() {

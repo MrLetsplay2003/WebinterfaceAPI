@@ -71,6 +71,10 @@ public class WebinterfaceElementGroup extends AbstractWebinterfacePageElement {
 		return dataRequestMethod;
 	}
 	
+	public boolean isDynamic() {
+		return templateElement != null;
+	}
+	
 	@Override
 	public HtmlElement createElement() {
 		HtmlElement el = new HtmlElement("div");

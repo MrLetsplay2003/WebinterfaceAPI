@@ -7,6 +7,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceElementGroup;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfacePageElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.WebinterfaceUpdateableElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.list.WebinterfaceElementList;
@@ -52,6 +53,11 @@ public class UpdateElementAction implements WebinterfaceAction {
 	
 	public static UpdateElementAction of(WebinterfaceElementList<?> element) {
 		if(!element.isDynamic()) throw new IllegalArgumentException("Can only update dynamic lists");
+		return new UpdateElementAction(element);
+	}
+	
+	public static UpdateElementAction of(WebinterfaceElementGroup element) {
+		if(!element.isDynamic()) throw new IllegalArgumentException("Can only update dynamic groups");
 		return new UpdateElementAction(element);
 	}
 
