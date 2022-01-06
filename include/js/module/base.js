@@ -303,6 +303,29 @@ async function loadDynamicList(element) {
 	}
 }
 
+async function loadDynamicGroup(element) {
+	// Create template
+	let temp = document.createElement("template");
+	temp.innerHTML = element.getAttribute("data-template");
+
+	// Load new data into template
+	let requestTarget = element.getAttribute("data-dataRequestTarget");
+	let requestMethod = element.getAttribute("data-dataRequestMethod");
+
+	let response = await Webinterface.call(requestTarget, requestMethod, null, false);
+	if(!response.isSuccess()) {
+		WebinterfaceToast.showErrorToast("Failed to load template object");
+		return;
+	}
+
+	element.innerHTML = "";
+	for(let o of response.getData().elements) {
+		let el = temp.content.firstChild.cloneNode(true);
+		convertTemplateElement(o, el);
+		element.appendChild(el);
+	}
+}
+
 async function dynamicListElementUp(element) {
 	let params = dynamicListElementParams(element.parentElement);
 	await WebinterfaceBaseActions.sendJS(element, null, {
@@ -360,6 +383,9 @@ async function loadUpdateableElements() {
 	}
 	for(let el of document.getElementsByClassName("dynamic-list")) {
 		await loadDynamicList(el);
+	}
+	for(let el of document.getElementsByClassName("dynamic-group")) {
+		await loadDynamicGroup(el);
 	}
 }
 
