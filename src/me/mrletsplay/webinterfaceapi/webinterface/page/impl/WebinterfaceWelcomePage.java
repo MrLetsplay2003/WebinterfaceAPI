@@ -9,7 +9,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.session.WebinterfaceSession;
 public class WebinterfaceWelcomePage extends WebinterfacePage {
 	
 	public WebinterfaceWelcomePage() {
-		super("Welcome", "/wiapi/welcome");
+		super("Welcome", "/wiapi/welcome", true);
 		setIcon("mdi:party-popper");
 		
 		WebinterfacePageSection sc = new WebinterfacePageSection();

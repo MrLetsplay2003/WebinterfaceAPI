@@ -328,7 +328,7 @@ async function loadDynamicGroup(element) {
 
 async function dynamicListElementUp(element) {
 	let params = dynamicListElementParams(element.parentElement);
-	await WebinterfaceBaseActions.sendJS(element, null, {
+	await WebinterfaceBaseActions.sendJS({
 		requestTarget: params.requestTarget,
 		requestMethod: params.requestMethod,
 		value: {
@@ -342,7 +342,7 @@ async function dynamicListElementUp(element) {
 
 async function dynamicListElementDown(element) {
 	let params = dynamicListElementParams(element.parentElement);
-	await WebinterfaceBaseActions.sendJS(element, null, {
+	await WebinterfaceBaseActions.sendJS({
 		requestTarget: params.requestTarget,
 		requestMethod: params.requestMethod,
 		value: {
@@ -356,7 +356,7 @@ async function dynamicListElementDown(element) {
 
 async function dynamicListElementRemove(element) {
 	let params = dynamicListElementParams(element.parentElement);
-	await WebinterfaceBaseActions.sendJS(element, null, {
+	await WebinterfaceBaseActions.sendJS({
 		requestTarget: params.requestTarget,
 		requestMethod: params.requestMethod,
 		value: {

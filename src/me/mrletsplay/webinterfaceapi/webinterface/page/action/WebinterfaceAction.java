@@ -22,16 +22,16 @@ public interface WebinterfaceAction {
 	public default String createAttributeValue() {
 		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
 		JavaScriptScript sc = (JavaScriptScript) ctx.getProperty(WebinterfacePage.CONTEXT_PROPERTY_SCRIPT);
-		String functionName = WebinterfaceAction.randomFunctionName();
-		JavaScriptFunction f = new JavaScriptFunction(functionName + "(e,ev)");
+		String functionName = randomFunctionName();
+		JavaScriptFunction f = new JavaScriptFunction(functionName + "()");
 		f.addModifier("async");
-		f.setCode(String.format("%s(e,ev,%s);", getHandlerName(), getParameters().toJavaScript()));
+		f.setCode(String.format("%s(%s);", getHandlerName(), getParameters().toJavaScript()));
 		sc.addFunction(f);
 		
 		Set<WebinterfaceJSModule> m = (Set<WebinterfaceJSModule>) ctx.getProperty(WebinterfacePage.CONTEXT_PROPERTY_REQUIRED_MODULES);
 		m.addAll(getRequiredModules());
 		
-		return String.format("%s(this,event)", functionName);
+		return String.format("%s()", functionName);
 	}
 	
 	public static String randomFunctionName() {
