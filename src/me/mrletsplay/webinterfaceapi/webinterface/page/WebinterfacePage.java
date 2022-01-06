@@ -162,6 +162,7 @@ public class WebinterfacePage implements HttpDocument {
 		JavaScriptScript sc = new JavaScriptScript();
 		for(PeriodicAction a : periodicActions) {
 			sc.appendCode(String.format("setInterval(() => {%s}, %s);", a.getAction().getCode(), a.getPeriodMillis()));
+			if(a.isRunImmediately()) sc.appendCode(a.getAction().getCode());
 		}
 		
 		StyleSheet st = new StyleSheet();

@@ -59,6 +59,8 @@ class WebinterfaceBaseActions {
 			loadUpdateableElement(el);
 		}else if(el.classList.contains("dynamic-list")) {
 			loadDynamicList(el);
+		}else if(el.classList.contains("dynamic-group")) {
+			loadDynamicGroup(el);
 		}
 	}
 
