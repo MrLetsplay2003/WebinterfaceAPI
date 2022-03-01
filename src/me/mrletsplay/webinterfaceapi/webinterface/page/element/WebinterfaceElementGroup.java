@@ -11,6 +11,7 @@ import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceResponse;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.list.ListAdapter;
 
 public class WebinterfaceElementGroup extends AbstractWebinterfacePageElement {
 
@@ -95,10 +96,36 @@ public class WebinterfaceElementGroup extends AbstractWebinterfacePageElement {
 		return el;
 	}
 	
+	/**
+	 * @deprecated Use {@link #handleData(WebinterfaceRequestEvent, ListAdapter, Function)} instead
+	 * @param <T>
+	 * @param event
+	 * @param items
+	 * @param objectFunction
+	 * @return
+	 */
+	@Deprecated
 	public static <T> WebinterfaceResponse handleData(WebinterfaceRequestEvent event, List<T> items, Function<T, JSONObject> objectFunction) {
 		JSONArray elements = new JSONArray();
 		for(T o : items) {
 			JSONObject obj = objectFunction.apply(o);
+			elements.add(obj);
+		}
+		
+		JSONObject obj = new JSONObject();
+		obj.put("elements", elements);
+		return WebinterfaceResponse.success(obj);
+	}
+	
+	public static <T> WebinterfaceResponse handleData(WebinterfaceRequestEvent event, ListAdapter<T> items, Function<T, JSONObject> objectFunction) {
+		JSONArray elements = new JSONArray();
+		for(T o : items.getItems()) {
+			JSONObject obj = objectFunction.apply(o);
+			obj.put("_id", items.getIdentifier(o));
+			T before = items.getItemBefore(o);
+			if(before != null) obj.put("_before", items.getIdentifier(before));
+			T after = items.getItemAfter(o);
+			if(after != null) obj.put("_after", items.getIdentifier(after));
 			elements.add(obj);
 		}
 		

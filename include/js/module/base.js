@@ -208,7 +208,7 @@ function getCookie(cname) {
 }
 
 function convertTemplateString(templateObject, templateString) {
-	return templateString.replace(/\$\{([a-zA-Z0-9\?\:_]+)\}/, (match, expr, offset, string) => {
+	return templateString.replaceAll(/\$\{([a-zA-Z0-9\?\:_]+)\}/g, (match, expr, offset, string) => {
 		if(expr.includes("?")) {
 			let condExpr = expr.split("?");
 			let cond = condExpr[0];
@@ -253,6 +253,27 @@ function convertTemplateElement(templateObject, templateElement) {
 				break;
 			case Node.ELEMENT_NODE:
 				convertTemplateElement(templateObject, n);
+				break;
+		}
+	}
+}
+
+function updateElement(destination, source) {
+	for(let i = 0; i < source.attributes.length; i++) {
+		let a = source.attributes[i];
+		if(a.name == "data-template") continue; // Ignore template attribute
+		destination.setAttribute(a.name, a.value);
+	}
+	
+	for(let i = 0; i < source.childNodes.length; i++) {
+		let n = destination.childNodes[i];
+
+		switch(n.nodeType) {
+			case Node.TEXT_NODE:
+				n.nodeValue = source.childNodes[i].nodeValue;
+				break;
+			case Node.ELEMENT_NODE:
+				updateElement(n, source.childNodes[i]);
 				break;
 		}
 	}
@@ -318,11 +339,44 @@ async function loadDynamicGroup(element) {
 		return;
 	}
 
-	element.innerHTML = "";
-	for(let o of response.getData().elements) {
-		let el = temp.content.firstChild.cloneNode(true);
-		convertTemplateElement(o, el);
-		element.appendChild(el);
+	let newElements = response.getData().elements;
+	let newIDs = newElements.map(el => el._id);
+	
+	// Remove all elements that no longer exist
+	for(let c of element.children) {
+		if(newIDs.includes(c.getAttribute("data-elementId"))) continue; // Element still exists
+		c.remove();
+	}
+	
+	// Update existing elements
+	for(let i = 0; i < element.children.length; i++) {
+		let oldEl = element.children[i];
+		let elData = newElements.find(e => e._id == oldEl.getAttribute("data-elementId"));
+		let newEl = temp.content.firstChild.cloneNode(true);
+		convertTemplateElement(elData, newEl);
+		updateElement(oldEl, newEl);
+	}
+	
+	// Reorder elements and insert new ones
+	for(let i = 0; i < newIDs.length; i++) {
+		if(element.children[i] != null && element.children[i].getAttribute("data-elementId") == newIDs[i]) continue; // Correct element in the correct place
+		
+		// Search for existing element
+		let el = null;
+		for(let c of element.children) {
+			if(c.getAttribute("data-elementId") == newIDs[i]) {
+				el = c;
+				break;
+			}
+		}
+		
+		if(el == null) {
+			el = temp.content.firstChild.cloneNode(true);
+			el.setAttribute("data-elementId", newElements[i]._id);
+			convertTemplateElement(newElements[i], el);
+		}
+		
+		element.insertBefore(el, element.children[i + 1]);
 	}
 }
 
