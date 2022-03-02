@@ -160,11 +160,12 @@ public class WebinterfacePage implements HttpDocument {
 		d.includeScript("https://code.jquery.com/jquery-3.6.0.min.js", false, true);
 		d.includeScript("https://code.iconify.design/2/2.1.0/iconify.min.js", false, true);
 		JavaScriptScript sc = new JavaScriptScript();
+		StringBuilder b = new StringBuilder();
 		for(PeriodicAction a : periodicActions) {
-			sc.appendCode(String.format("setInterval(() => {%s}, %s);", a.getAction().getCode(), a.getPeriodMillis()));
-			if(a.isRunImmediately()) sc.appendCode(a.getAction().getCode());
+			b.append(String.format("setInterval(() => {%s}, %s);", a.getAction().getCode(), a.getPeriodMillis()));
+			if(a.isRunImmediately()) b.append(a.getAction().getCode());
 		}
-		
+		sc.appendCode(String.format("window.addEventListener('DOMContentLoaded', () => {%s});", b.toString()));
 		StyleSheet st = new StyleSheet();
 		st.addElement(containerStyle);
 		st.addMobileElement(mobileContainerStyle);
@@ -304,7 +305,7 @@ public class WebinterfacePage implements HttpDocument {
 		d.addStyleSheet("/_internal/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
 		d.getHeadNode().appendChild(HtmlElement.style(st));
 		for(WebinterfaceJSModule m : requiredModules) {
-			d.includeScript("/_internal/js/module/" + m.getFileName(), true, true);
+			d.includeScript("/_internal/js/module/" + m.getFileName(), false, true);
 		}
 		return d;
 	}

@@ -259,10 +259,19 @@ function convertTemplateElement(templateObject, templateElement) {
 }
 
 function updateElement(destination, source) {
+	let attrsSet = [];
 	for(let i = 0; i < source.attributes.length; i++) {
 		let a = source.attributes[i];
 		if(a.name == "data-template") continue; // Ignore template attribute
-		destination.setAttribute(a.name, a.value);
+		if(destination.getAttribute(a.name) != a.value) destination.setAttribute(a.name, a.value);
+		attrsSet.push(a.name);
+	}
+	
+	for(let i = 0; i < destination.attributes.length; i++) {
+		let attr = destination.attributes[i];
+		if(attr.name == "data-template" || attr.name == "data-elementid" || attrsSet.includes(attr.name)) continue;
+		destination.removeAttribute(attr.name);
+		i--;
 	}
 	
 	for(let i = 0; i < source.childNodes.length; i++) {
@@ -315,13 +324,8 @@ async function loadDynamicList(element) {
 		WebinterfaceToast.showErrorToast("Failed to load template object");
 		return;
 	}
-
-	element.innerHTML = "";
-	for(let o of response.getData().elements) {
-		let el = temp.content.firstChild.cloneNode(true);
-		convertTemplateElement(o, el);
-		element.appendChild(el);
-	}
+	
+	loadDynamicChildren(element, response.getData().elements, temp);
 }
 
 async function loadDynamicGroup(element) {
@@ -338,9 +342,12 @@ async function loadDynamicGroup(element) {
 		WebinterfaceToast.showErrorToast("Failed to load template object");
 		return;
 	}
+	
+	loadDynamicChildren(element, response.getData().elements, temp);
+}
 
-	let newElements = response.getData().elements;
-	let newIDs = newElements.map(el => el._id);
+function loadDynamicChildren(element, children, template) {
+	let newIDs = children.map(el => el._id);
 	
 	// Remove all elements that no longer exist
 	for(let c of element.children) {
@@ -351,8 +358,8 @@ async function loadDynamicGroup(element) {
 	// Update existing elements
 	for(let i = 0; i < element.children.length; i++) {
 		let oldEl = element.children[i];
-		let elData = newElements.find(e => e._id == oldEl.getAttribute("data-elementId"));
-		let newEl = temp.content.firstChild.cloneNode(true);
+		let elData = children.find(e => e._id == oldEl.getAttribute("data-elementId"));
+		let newEl = template.content.firstChild.cloneNode(true);
 		convertTemplateElement(elData, newEl);
 		updateElement(oldEl, newEl);
 	}
@@ -371,9 +378,9 @@ async function loadDynamicGroup(element) {
 		}
 		
 		if(el == null) {
-			el = temp.content.firstChild.cloneNode(true);
-			el.setAttribute("data-elementId", newElements[i]._id);
-			convertTemplateElement(newElements[i], el);
+			el = template.content.firstChild.cloneNode(true);
+			el.setAttribute("data-elementId", children[i]._id);
+			convertTemplateElement(children[i], el);
 		}
 		
 		element.insertBefore(el, element.children[i + 1]);
