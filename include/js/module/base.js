@@ -28,11 +28,12 @@ class Webinterface {
 
 	static async connect() {
 		Webinterface.packetQueue = [];
-		return new Promise(async(resolve, reject) => {
+		let p = new Promise(async(resolve, reject) => {
 			Webinterface.webSocket = new WebSocket(window.location.protocol.replace("http", "ws") + "//" + window.location.hostname + ":" + window.location.port + "/_internal/ws");
 
 			Webinterface.webSocket.onopen = function(event) {
 				resolve(event);
+				Webinterface.readyPromise = null;
 				Webinterface.webSocket.send(Packet.of(null, null, {sessionID: getCookie("wi_sessid")}).serialize());
 			};
 			
@@ -65,6 +66,8 @@ class Webinterface {
 				}
 			}
 		});
+		Webinterface.readyPromise = p;
+		return p;
 	}
 
 	static call(target, method, data = {}, suppressAlert = false) {
@@ -82,12 +85,18 @@ class Webinterface {
 			if(!r.isSuccess()) WebinterfaceToast.showErrorToast("Failed to subscribe to event: " + r.getErrorMessage());
 		});
 	}
+	
+	static async ensureReady() {
+		if(Webinterface.webSocket == null) {
+			await Webinterface.connect();
+		}
+		
+		if(Webinterface.readyPromise != null) await Webinterface.readyPromise;
+	}
 
 	static sendPacket(packet) {
 		return new Promise(async(resolve, _) => {
-			if(Webinterface.webSocket == null) {
-				await Webinterface.connect();
-			}
+			await Webinterface.ensureReady();
 
 			Webinterface.packetQueue.push({packet: packet, resolve: resolve});
 			Webinterface.webSocket.send(packet.serialize());
