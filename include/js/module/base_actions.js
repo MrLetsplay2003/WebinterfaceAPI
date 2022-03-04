@@ -63,5 +63,9 @@ class WebinterfaceBaseActions {
 			loadDynamicGroup(el);
 		}
 	}
+	
+	static showToast(parameters) {
+		WebinterfaceToast.showToast(parameters.message, parameters.error);
+	}
 
 }

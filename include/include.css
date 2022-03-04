@@ -372,8 +372,12 @@ img.element {
 	align-items: center;
 }
 
-::-webkit-scrollbar {
-	display: none;
+.el-fit-content {
+	grid-template-columns: 1fr;
+}
+
+.el-pack-content {
+	grid-template-columns: 1fr;
 }
 
 .header-image-item {
@@ -569,6 +573,14 @@ img.element {
 	}
 
 	.el-maximize-columns {
+		grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+	}
+
+	.el-fit-content {
+		grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+	}
+
+	.el-pack-content {
 		grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
 	}
 }

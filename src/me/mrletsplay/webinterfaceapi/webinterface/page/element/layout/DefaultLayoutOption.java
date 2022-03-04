@@ -21,6 +21,8 @@ public enum DefaultLayoutOption implements ElementLayoutOption {
 	ALIGN_TOP("el-align-top", true),
 	ALIGN_BOTTOM("el-align-bottom", true),
 	ALIGN_CENTER_VERTICALLY("el-align-center-vertically", true),
+	FIT_CONTENT("el-fit-content", false),
+	PACK_CONTENT("el-pack-content", false),
 	
 	/**
 	 * Use {@link #ALIGN_LEFT} instead
