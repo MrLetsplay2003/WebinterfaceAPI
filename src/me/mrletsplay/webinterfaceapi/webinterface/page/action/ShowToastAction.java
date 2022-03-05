@@ -6,14 +6,17 @@ import java.util.Set;
 import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.ObjectValue;
+import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.RawValue;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.value.StringValue;
 
 public class ShowToastAction implements WebinterfaceAction {
 	
 	private StringValue message;
+	private boolean error;
 	
 	private ShowToastAction(StringValue message, boolean error) {
 		this.message = message;
+		this.error = error;
 	}
 	
 	@Override
@@ -25,7 +28,7 @@ public class ShowToastAction implements WebinterfaceAction {
 	public ObjectValue getParameters() {
 		ObjectValue v = new ObjectValue();
 		v.put("message", message);
-		
+		v.put("error", new RawValue(String.valueOf(error)));
 		return v;
 	}
 
