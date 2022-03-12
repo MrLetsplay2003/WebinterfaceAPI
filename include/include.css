@@ -240,6 +240,16 @@ input[type="checkbox"] {
 	height: 16px;
 }
 
+input[type="file"] {
+	height: 40px;
+	font-family: 'Open Sans', sans-serif;
+	border-width: 1px 1px 1px 1px;
+	border-color: var(--theme-color-content-border);
+	padding: 8px;
+	border-radius: 5px;
+	width: 100%;
+}
+
 select {
 	position: relative;
 	background-color: var(--theme-color-content-bg);

@@ -67,5 +67,36 @@ class WebinterfaceBaseActions {
 	static showToast(parameters) {
 		WebinterfaceToast.showToast(parameters.message, parameters.error);
 	}
+	
+	static async submitUpload(parameters) {
+		let el = document.getElementById(parameters.element);
+		let response = await new Promise(function(resolve, reject) {
+			$.ajax({
+				url: "/_internal/fileupload?target=" + encodeURIComponent(el.getAttribute("data-requestTarget")) + "&method=" + encodeURIComponent(el.getAttribute("data-requestMethod")),
+				method: "POST",
+				contentType: false,
+				data: new FormData(el),
+				processData: false,
+				timeout: 120000,
+				cache: false,
+				success: function(response, status) {
+					let r = new WebinterfaceResponse(response.success, response.data, response.message);
+					if(!r.isSuccess()) WebinterfaceToast.showErrorToast("Error: " + r.getErrorMessage());
+					resolve(r);
+				},
+				error: function(xhr, status, error) {
+					WebinterfaceToast.showErrorToast("Request error: " + error);
+					resolve(new WebinterfaceResponse(false, null, "Request error: " + error));
+				}
+			});
+		});
+		
+		if(response.isSuccess() && parameters.onSuccess != null) {
+			parameters.onSuccess.action(parameters.onSuccess.parameters);
+		}else if(!response.isSuccess() && parameters.onError != null) {
+			parameters.onError.action(parameters.onError.parameters);
+		}
+	}
+
 
 }

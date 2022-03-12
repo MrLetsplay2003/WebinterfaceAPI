@@ -115,10 +115,10 @@ public class HttpConnection extends AbstractConnection {
 			getServer().getDocumentProvider().get500Document().createContent();
 		}
 		
-		if(h.getFields().getFieldValue("Connection").equalsIgnoreCase("keep-alive")) {
+		if("keep-alive".equalsIgnoreCase(h.getFields().getFieldValue("Connection"))) {
 			sh.getFields().setFieldValue("Connection", "keep-alive");
 		}
-
+		
 		InputStream sIn = getSocket().getInputStream();
 		OutputStream sOut = getSocket().getOutputStream();
 		

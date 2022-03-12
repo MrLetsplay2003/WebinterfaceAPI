@@ -38,7 +38,7 @@ public class HttpClientHeader {
 	}
 	
 	public PostData getPostData() {
-		return new PostData(fields.getFieldValue("Content-Type"), postData);
+		return new PostData(fields, postData);
 	}
 	
 	public static HttpClientHeader parse(InputStream data) {
@@ -49,16 +49,8 @@ public class HttpClientHeader {
 			String method = fs[0];
 			HttpURLPath path = HttpURLPath.parse(fs[1]);
 			String protocolVersion = fs[2];
-			HttpHeaderFields fields = new HttpHeaderFields();
-			String l;
-			while((l = readLine(data)) != null && !l.isEmpty()) {
-				if(l.isEmpty()) break;
-				String[] kv = l.split(": ", 2);
-				fields.addFieldValue(kv[0], kv[1]);
-			}
-			if(l == null) {
-				return null;
-			}
+			HttpHeaderFields fields = parseHeaders(data);
+			if(fields == null) return null;
 			String cL = fields.getFieldValue("Content-Length");
 			byte[] postData = new byte[0];
 			if(cL != null) {
@@ -82,6 +74,20 @@ public class HttpClientHeader {
 		}
 	}
 	
+	public static HttpHeaderFields parseHeaders(InputStream in) throws IOException {
+		HttpHeaderFields fields = new HttpHeaderFields();
+		String l;
+		while((l = readLine(in)) != null && !l.isEmpty()) {
+			if(l.isEmpty()) break;
+			String[] kv = l.split(": ", 2);
+			fields.addFieldValue(kv[0], kv[1]);
+		}
+		if(l == null) {
+			return null;
+		}
+		return fields;
+	}
+	
 	private static String readLine(InputStream in) throws IOException {
 		StringBuilder b = new StringBuilder();
 		int c;
@@ -89,7 +95,7 @@ public class HttpClientHeader {
 			b.appendCodePoint(c);
 		}
 		if(c == -1) return null;
-		in.read();
+		in.read(); // == LF
 		return b.toString();
 	}
 	

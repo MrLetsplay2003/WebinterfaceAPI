@@ -6,6 +6,6 @@ public interface HttpClientContentType {
 	
 	public List<String> getMimeTypes();
 
-	public Object parse(byte[] content);
+	public Object parse(HttpHeaderFields headers, byte[] content);
 	
 }

@@ -48,6 +48,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceAuthReque
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceAuthResponseDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceCallbackDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentProvider;
+import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceFileUploadDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceHomeDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
@@ -144,7 +145,7 @@ public class Webinterface {
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
 		PHP.setFileExtensions(config.getSetting(DefaultSettings.PHP_FILE_EXTENSIONS));
 		
-		documentProvider = new WebinterfaceDocumentProvider();
+		if(documentProvider == null) documentProvider = new WebinterfaceDocumentProvider();
 		
 		httpServer = new HttpServer(HttpServer.newConfigurationBuilder()
 				.host(config.getSetting(DefaultSettings.HTTP_BIND))
@@ -176,6 +177,7 @@ public class Webinterface {
 		
 		documentProvider.registerDocument("/favicon.ico", new FileDocument(new File(rootDirectory, "include/icon.png")));
 		documentProvider.registerDocument("/_internal/call", new WebinterfaceCallbackDocument());
+		documentProvider.registerDocument("/_internal/fileupload", new WebinterfaceFileUploadDocument());
 		webSocketEndpoint = new WebinterfaceWebSocketDocument();
 		documentProvider.registerDocument("/_internal/ws", webSocketEndpoint);
 		documentProvider.registerDocument("/", new WebinterfaceHomeDocument());
@@ -275,6 +277,10 @@ public class Webinterface {
 	@Nullable
 	public static HttpsServer getHttpsServer() {
 		return httpsServer;
+	}
+	
+	public static void setDocumentProvider(HttpDocumentProvider documentProvider) {
+		Webinterface.documentProvider = documentProvider;
 	}
 	
 	public static HttpDocumentProvider getDocumentProvider() {

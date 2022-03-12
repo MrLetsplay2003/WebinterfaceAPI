@@ -4,21 +4,23 @@ import me.mrletsplay.webinterfaceapi.server.ServerException;
 
 public class PostData {
 
-	private String contentType;
+	private HttpHeaderFields headers;
 	private byte[] content;
 	
-	public PostData(String contentType, byte[] content) {
-		this.contentType = (contentType != null && contentType.contains(";")) ? contentType.substring(0, contentType.indexOf(";")) : contentType; // TODO: extra parameters (e.g. charset)
+	public PostData(HttpHeaderFields headers, byte[] content) {
+		this.headers = headers;
 		this.content = content;
 	}
 	
 	public Object getParsedAs(HttpClientContentType type) {
-		return type.parse(content);
+		return type.parse(headers, content);
 	}
 	
 	public Object getParsed() {
+		String contentType = headers.getFieldValue("Content-Type");
+		contentType = (contentType != null && contentType.contains(";")) ? contentType.substring(0, contentType.indexOf(";")) : contentType;
 		HttpClientContentTypes t = HttpClientContentTypes.getByMimeType(contentType);
-		if(t == null) throw new ServerException("Unknown content type: " + contentType);
+		if(t == null) throw new ServerException("Unknown or unsupported content type: " + contentType);
 		return getParsedAs(t);
 	}
 	
