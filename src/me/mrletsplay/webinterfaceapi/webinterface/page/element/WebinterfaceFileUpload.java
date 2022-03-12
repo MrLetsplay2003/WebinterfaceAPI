@@ -4,6 +4,7 @@ import java.util.Base64;
 
 import me.mrletsplay.webinterfaceapi.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceRequestEvent;
+import me.mrletsplay.webinterfaceapi.webinterface.page.element.builder.AbstractElementBuilder;
 
 public class WebinterfaceFileUpload extends AbstractWebinterfacePageElement {
 	
@@ -32,8 +33,31 @@ public class WebinterfaceFileUpload extends AbstractWebinterfacePageElement {
 		return form;
 	}
 	
+	public static Builder builder() {
+		return new Builder(new WebinterfaceFileUpload());
+	}
+	
 	public static byte[] getUploadedFileBytes(WebinterfaceRequestEvent event) {
 		return Base64.getDecoder().decode(event.getRequestData().getString("value"));
+	}
+	
+	public static class Builder extends AbstractElementBuilder<WebinterfaceFileUpload, Builder> {
+
+		private Builder(WebinterfaceFileUpload element) {
+			super(element);
+		}
+		
+		public Builder uploadHandler(String requestTarget, String requestMethod) {
+			element.setUploadHandler(requestTarget, requestMethod);
+			return this;
+		}
+		
+		@Override
+		public WebinterfaceFileUpload create() throws IllegalStateException {
+			if(element.uploadRequestTarget == null || element.uploadRequestMethod == null) throw new IllegalStateException("Upload handler must be set");
+			return super.create();
+		}
+		
 	}
 
 }
