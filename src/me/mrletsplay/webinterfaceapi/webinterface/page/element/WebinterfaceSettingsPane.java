@@ -96,6 +96,20 @@ public class WebinterfaceSettingsPane extends WebinterfaceElementGroup {
 			defaultValue = new ArrayValue(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
 					.map(s -> new StringValue(s))
 					.collect(Collectors.toList()));
+			
+//			@SuppressWarnings("unchecked")
+//			ListAdapter<String> la = new BasicListAdapter<>(new ArrayList<>((List<String>) config.get().getSetting(setting)), i -> i);
+//			
+//			WebinterfaceElementList<String> list = WebinterfaceElementList.<String>builder()
+//					.items(la)
+//					.elementFunction(s -> WebinterfaceText.builder().text(s).create())
+//					.removable(true)
+//					.create();
+//			
+//			el = list;
+//			defaultValue = new ArrayValue(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
+//					.map(s -> new StringValue(s))
+//					.collect(Collectors.toList()));
 		}else if(setting.getType().equals(Complex.list(Integer.class)) || setting.getType().equals(Complex.list(Double.class))) {
 			WebinterfaceInputField in = new WebinterfaceInputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
 			in.setOnChangeAction(changeSettingAction(setting, new WrapperValue(new ElementValue(in), "%s.split(\",\").map(x=>x.trim()).map(" + (setting.getType().equals(Complex.list(Integer.class)) ? "x=>parseInt(x)" : "x=>parseFloat(x)") + ")")));

@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +59,8 @@ import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceSetupSubm
 import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.Packet;
 import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebSocketData;
 import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebinterfaceWebSocketDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
+import me.mrletsplay.webinterfaceapi.webinterface.js.WebinterfaceJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.WebinterfacePageCategory;
@@ -87,6 +90,7 @@ public class Webinterface {
 	private static List<WebinterfaceActionHandler> handlers;
 	private static List<WebinterfaceEvent> events;
 	private static List<WebinterfaceAuthMethod> authMethods;
+	private static List<WebinterfaceJSModule> jsModules;
 	private static Map<String, File> includedFiles;
 	
 	private static boolean initialized = false;
@@ -104,6 +108,7 @@ public class Webinterface {
 		handlers = new ArrayList<>();
 		events = new ArrayList<>();
 		authMethods = new ArrayList<>();
+		jsModules = new ArrayList<>();
 		includedFiles = new HashMap<>();
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
 		markdownRenderer = new MarkdownRenderer();
@@ -140,6 +145,8 @@ public class Webinterface {
 		registerAuthMethod(new GoogleAuth());
 		registerAuthMethod(new GitHubAuth());
 		registerAuthMethod(new PasswordAuth());
+		
+		Arrays.stream(DefaultJSModule.values()).forEach(Webinterface::registerJSModule);
 		
 		PHP.setEnabled(config.getSetting(DefaultSettings.ENABLE_PHP));
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
@@ -189,6 +196,7 @@ public class Webinterface {
 		categories.forEach(category -> category.getPages().forEach(page -> documentProvider.registerDocument(page.getUrl(), page)));
 		
 		authMethods.forEach(Webinterface::registerAuthPages);
+		jsModules.forEach(Webinterface::registerJSModulePage);
 		
 		Integer setupStep = config.getOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
 		if(config.getSetting(DefaultSettings.ENABLE_INITIAL_SETUP) && (setupStep == null || setupStep < WebinterfaceSetupDocument.SETUP_STEP_DONE)) {
@@ -396,6 +404,19 @@ public class Webinterface {
 	
 	public static List<WebinterfaceAuthMethod> getAvailableAuthMethods() {
 		return authMethods.stream().filter(WebinterfaceAuthMethod::isAvailable).collect(Collectors.toList());
+	}
+	
+	public static void registerJSModule(WebinterfaceJSModule module) {
+		jsModules.add(module);
+		if(initialized) registerJSModulePage(module);
+	}
+	
+	private static void registerJSModulePage(WebinterfaceJSModule module) {
+		documentProvider.registerDocument("/_internal/module/" + module.getIdentifier() + ".js", module);
+	}
+	
+	public static List<WebinterfaceJSModule> getJSModules() {
+		return jsModules;
 	}
 	
 	public static void setAccountStorage(WebinterfaceAccountStorage accountStorage) {

@@ -12,10 +12,6 @@ public class WebinterfaceFileUpload extends AbstractWebinterfacePageElement {
 		uploadRequestTarget,
 		uploadRequestMethod;
 	
-	public WebinterfaceFileUpload() {
-		
-	}
-	
 	public void setUploadHandler(String requestTarget, String requestMethod) {
 		this.uploadRequestTarget = requestTarget;
 		this.uploadRequestMethod = requestMethod;

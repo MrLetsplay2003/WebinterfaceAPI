@@ -54,7 +54,12 @@ public class WebinterfaceText extends AbstractWebinterfacePageElement {
 		return markdownPostProcessor;
 	}
 	
+	@Deprecated
 	public ElementValue getValue() {
+		return new ElementValue(this);
+	}
+	
+	public ElementValue textValue() {
 		return new ElementValue(this);
 	}
 	

@@ -41,7 +41,12 @@ public class WebinterfaceCheckBox extends AbstractWebinterfacePageElement {
 		return initialState;
 	}
 	
+	@Deprecated
 	public CheckboxValue getCheckedValue() {
+		return new CheckboxValue(this);
+	}
+	
+	public CheckboxValue checkedValue() {
 		return new CheckboxValue(this);
 	}
 	

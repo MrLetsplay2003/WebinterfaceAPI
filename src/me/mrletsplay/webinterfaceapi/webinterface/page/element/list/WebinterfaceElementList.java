@@ -381,7 +381,7 @@ public class WebinterfaceElementList<T> extends AbstractWebinterfacePageElement 
 			if(element.getItems() == null && element.getTemplateElement() == null) throw new IllegalStateException("Either items or template element must be set");
 			if(element.getItems() != null && element.getTemplateElement() != null) throw new IllegalStateException("Items and template element may not both be set");
 			
-			if(element.isDynamic()) {
+			if(!element.isDynamic()) {
 				if(element.getElementFunction() == null) throw new IllegalStateException("Element function must be set if the list is not dynamic");
 				if(element.getDataRequestTarget() != null || element.getDataRequestMethod() != null) throw new IllegalStateException("Data handler may not be set if the list is not dynamic");
 			}else {
