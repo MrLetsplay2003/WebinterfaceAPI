@@ -72,6 +72,7 @@ public class InputField extends AbstractPageElement {
 	@Override
 	public HtmlElement createElement() {
 		HtmlElement b = new HtmlElement("input");
+		b.setSelfClosing(true);
 		b.setAttribute("type", "text");
 		b.setAttribute("placeholder", placeholder);
 		b.setAttribute("aria-label", placeholder);

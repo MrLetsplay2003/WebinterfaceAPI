@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.DefaultPermissions;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
 import me.mrletsplay.webinterfaceapi.webinterface.page.Page;
 import me.mrletsplay.webinterfaceapi.webinterface.page.PageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.MultiAction;
@@ -30,6 +30,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.element.VerticalSpacer;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.builder.Align;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
+import me.mrletsplay.webinterfaceapi.webinterface.session.Session;
 
 public class PermissionsPage extends Page {
 
@@ -47,7 +48,7 @@ public class PermissionsPage extends Page {
 		sc.dynamic(els -> {
 			HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
 			String accID = ctx.getRequestedPath().getQuery().getFirst("acc");
-			WebinterfaceAccount account = accID == null ? null : Webinterface.getAccountStorage().getAccountByID(accID);
+			Account account = accID == null ? null : Webinterface.getAccountStorage().getAccountByID(accID);
 
 			Group group = new Group();
 			group.addLayoutOptions(new GridLayout("auto", "75fr"));
@@ -58,8 +59,9 @@ public class PermissionsPage extends Page {
 
 			Select.Builder b = Select.builder();
 			b.addOption("Select an account", null, account == null, false);
-			for(WebinterfaceAccount acc : Webinterface.getAccountStorage().getAccounts()) {
-				b.addOption(acc.getName() + " (" + acc.getID() + ")", acc.getID(), acc.getID().equals(accID));
+			for(Account acc : Webinterface.getAccountStorage().getAccounts()) {
+				boolean self = acc.getID().equals(Session.getCurrentSession().getAccountID());
+				b.addOption(acc.getName() + " (" + acc.getID() + ")" + (self ? " - Can't change own permissions" : ""), acc.getID(), acc.getID().equals(accID), !self);
 			}
 			b.onChange(s -> RedirectAction.to(ActionValue.string("/wiapi/permissions?acc=").plus(s.selectedValue())));
 			group.addElement(b.create());

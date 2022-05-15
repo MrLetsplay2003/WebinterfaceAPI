@@ -13,8 +13,8 @@ import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
 public class Session {
@@ -46,7 +46,7 @@ public class Session {
 		return accountID;
 	}
 
-	public WebinterfaceAccount getAccount() {
+	public Account getAccount() {
 		return Webinterface.getAccountStorage().getAccountByID(accountID);
 	}
 
@@ -70,11 +70,11 @@ public class Session {
 		return properties;
 	}
 
-	public static Session startSession(WebinterfaceAccountConnection accountData) {
+	public static Session startSession(AccountConnection accountData) {
 		String sID = UUID.randomUUID().toString();
 		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
 
-		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(accountData.getConnectionName(), accountData.getUserID());
+		Account acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(accountData.getConnectionName(), accountData.getUserID());
 
 //		if(acc == null && accountData.getUserEmail() != null) { FIXME
 //			acc = Webinterface.getAccountStorage().getAccountByPrimaryEmail(accountData.getUserEmail());

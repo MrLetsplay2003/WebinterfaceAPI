@@ -6,7 +6,7 @@ import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public class WebinterfacePasswordLoginDocument implements HttpDocument {
+public class PasswordLoginDocument implements HttpDocument {
 
 	@Override
 	public void createContent() {
@@ -35,6 +35,7 @@ public class WebinterfacePasswordLoginDocument implements HttpDocument {
 		ul.appendChild(uDiv);
 
 		HtmlElement uInput = new HtmlElement("input");
+		uInput.setSelfClosing(true);
 		uInput.setID("username-input");
 		uInput.setAttribute("placeholder", "Username");
 		uInput.setAttribute("name", "username");
@@ -45,6 +46,7 @@ public class WebinterfacePasswordLoginDocument implements HttpDocument {
 		ul.appendChild(pwDiv);
 
 		HtmlElement pwInput = new HtmlElement("input");
+		pwInput.setSelfClosing(true);
 		pwInput.setID("password-input");
 		pwInput.setAttribute("placeholder", "Password");
 		pwInput.setAttribute("type", "password");
@@ -52,6 +54,7 @@ public class WebinterfacePasswordLoginDocument implements HttpDocument {
 		pwDiv.appendChild(pwInput);
 
 		HtmlElement regInput = new HtmlElement("input");
+		regInput.setSelfClosing(true);
 		regInput.setID("register-input");
 		regInput.setAttribute("type", "checkbox");
 		regInput.setAttribute("name", "register");

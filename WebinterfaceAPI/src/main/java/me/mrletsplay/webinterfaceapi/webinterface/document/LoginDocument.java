@@ -7,10 +7,10 @@ import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public class WebinterfaceLoginDocument implements HttpDocument {
+public class LoginDocument implements HttpDocument {
 
 	@Override
 	public void createContent() {
@@ -31,7 +31,7 @@ public class WebinterfaceLoginDocument implements HttpDocument {
 		ul.addClass("login-list");
 		cont.appendChild(ul);
 
-		for(WebinterfaceAuthMethod m : Webinterface.getAvailableAuthMethods()) {
+		for(AuthMethod m : Webinterface.getAvailableAuthMethods()) {
 			HtmlElement lo = new HtmlElement("div");
 			lo.addClass("login-list-item");
 			ul.appendChild(lo);

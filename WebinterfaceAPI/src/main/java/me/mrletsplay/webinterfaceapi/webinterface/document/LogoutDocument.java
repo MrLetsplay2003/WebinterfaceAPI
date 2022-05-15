@@ -5,7 +5,7 @@ import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.session.Session;
 
-public class WebinterfaceLogoutDocument implements HttpDocument {
+public class LogoutDocument implements HttpDocument {
 
 	@Override
 	public void createContent() {

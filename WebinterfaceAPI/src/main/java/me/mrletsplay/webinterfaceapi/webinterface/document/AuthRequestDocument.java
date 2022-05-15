@@ -4,13 +4,13 @@ import java.nio.charset.StandardCharsets;
 
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthMethod;
 
 public class AuthRequestDocument implements HttpDocument {
 
-	private WebinterfaceAuthMethod method;
+	private AuthMethod method;
 
-	public AuthRequestDocument(WebinterfaceAuthMethod method) {
+	public AuthRequestDocument(AuthMethod method) {
 		this.method = method;
 	}
 

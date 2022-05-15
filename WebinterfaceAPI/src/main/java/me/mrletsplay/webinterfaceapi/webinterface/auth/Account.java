@@ -8,13 +8,13 @@ import me.mrletsplay.mrcore.permission.Permissible;
 import me.mrletsplay.mrcore.permission.Permission;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
-public class WebinterfaceAccount implements Permissible {
+public class Account implements Permissible {
 
 	private String id;
-	private List<WebinterfaceAccountConnection> connections;
+	private List<AccountConnection> connections;
 	private List<Permission> permissions;
 	
-	public WebinterfaceAccount(String id, List<WebinterfaceAccountConnection> connections, List<Permission> permissions) {
+	public Account(String id, List<AccountConnection> connections, List<Permission> permissions) {
 		this.id = id;
 		this.connections = connections;
 		this.permissions = permissions;
@@ -26,7 +26,7 @@ public class WebinterfaceAccount implements Permissible {
 	
 	public boolean isTemporary() {
 		return connections.stream()
-				.allMatch(WebinterfaceAccountConnection::isTemporary);
+				.allMatch(AccountConnection::isTemporary);
 	}
 	
 	public List<String> getEmails() {
@@ -57,27 +57,27 @@ public class WebinterfaceAccount implements Permissible {
 				.findFirst().orElse(null);
 	}
 	
-	public void addConnection(WebinterfaceAccountConnection connection) {
+	public void addConnection(AccountConnection connection) {
 		this.connections.add(connection);
 		Webinterface.getAccountStorage().storeAccount(this);
 	}
 	
-	public void removeConnection(WebinterfaceAccountConnection connection) {
+	public void removeConnection(AccountConnection connection) {
 		this.connections.remove(connection);
 		Webinterface.getAccountStorage().storeAccount(this);
 	}
 	
 	public void removeConnection(String connectionName) {
-		WebinterfaceAccountConnection con = getConnection(connectionName);
+		AccountConnection con = getConnection(connectionName);
 		if(con == null) return;
 		removeConnection(con);
 	}
 	
-	public List<WebinterfaceAccountConnection> getConnections() {
+	public List<AccountConnection> getConnections() {
 		return connections;
 	}
 	
-	public WebinterfaceAccountConnection getConnection(String connectionName) {
+	public AccountConnection getConnection(String connectionName) {
 		return connections.stream().filter(c -> c.getConnectionName().equals(connectionName)).findFirst().orElse(null);
 	}
 	

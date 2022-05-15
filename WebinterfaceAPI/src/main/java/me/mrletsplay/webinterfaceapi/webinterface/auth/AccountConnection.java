@@ -1,6 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface.auth;
 
-public class WebinterfaceAccountConnection {
+public class AccountConnection {
 
 	private String
 		connectionName,
@@ -11,7 +11,7 @@ public class WebinterfaceAccountConnection {
 	
 	private boolean isTemporary;
 	
-	public WebinterfaceAccountConnection(String connectionName, String userID, String userName, String userEmail, String userAvatar, boolean isTemporary) {
+	public AccountConnection(String connectionName, String userID, String userName, String userEmail, String userAvatar, boolean isTemporary) {
 		this.connectionName = connectionName;
 		this.userID = userID;
 		this.userName = userName;
@@ -20,7 +20,7 @@ public class WebinterfaceAccountConnection {
 		this.isTemporary = isTemporary;
 	}
 	
-	public WebinterfaceAccountConnection(String connectionName, String userID, String userName, String userEmail, String userAvatar) {
+	public AccountConnection(String connectionName, String userID, String userName, String userEmail, String userAvatar) {
 		this(connectionName, userID, userName, userEmail, userAvatar, false);
 	}
 	

@@ -16,7 +16,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.ActionResponse;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandlers;
 import me.mrletsplay.webinterfaceapi.webinterface.session.Session;
 
-public class WebinterfaceFileUploadDocument implements HttpDocument {
+public class FileUploadDocument implements HttpDocument {
 
 	@Override
 	public void createContent() {

@@ -6,7 +6,7 @@ import me.mrletsplay.mrcore.bukkitimpl.command.BukkitCommand;
 import me.mrletsplay.mrcore.bukkitimpl.command.BukkitCommandSender;
 import me.mrletsplay.mrcore.command.event.CommandInvokedEvent;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -31,7 +31,7 @@ public class CommandUserPermissionAdd extends BukkitCommand {
 		String userID = event.getArguments()[0];
 		String permission = event.getArguments()[1];
 		
-		WebinterfaceAccount account;
+		Account account;
 		if(userID.contains(":")) {
 			String m = userID.split(":", 2)[0];
 			String i = userID.split(":", 2)[1];

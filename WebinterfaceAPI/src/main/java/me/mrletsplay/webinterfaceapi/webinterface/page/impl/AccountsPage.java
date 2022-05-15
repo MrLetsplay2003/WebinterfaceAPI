@@ -2,7 +2,7 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.impl;
 
 import me.mrletsplay.webinterfaceapi.webinterface.DefaultPermissions;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
 import me.mrletsplay.webinterfaceapi.webinterface.page.Page;
 import me.mrletsplay.webinterfaceapi.webinterface.page.PageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ConfirmAction;
@@ -33,7 +33,7 @@ public class AccountsPage extends Page {
 		sc.getMobileStyle().setProperty("grid-template-columns", "1fr");
 
 		sc.dynamic(els -> {
-			for(WebinterfaceAccount acc : Webinterface.getAccountStorage().getAccounts()) {
+			for(Account acc : Webinterface.getAccountStorage().getAccounts()) {
 				Group grp = new Group();
 				grp.getStyle().setProperty("border", "1px solid var(--theme-color-content-border)");
 				grp.getStyle().setProperty("border-radius", "5px");

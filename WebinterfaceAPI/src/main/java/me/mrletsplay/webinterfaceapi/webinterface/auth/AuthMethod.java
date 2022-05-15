@@ -9,7 +9,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.Config;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public interface WebinterfaceAuthMethod {
+public interface AuthMethod {
 
 	public String getID();
 
@@ -17,7 +17,7 @@ public interface WebinterfaceAuthMethod {
 
 	public void handleAuthRequest();
 
-	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException;
+	public AccountConnection handleAuthResponse() throws AuthException;
 
 	public default HttpURLPath getAuthResponseUrl() {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();

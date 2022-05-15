@@ -8,26 +8,26 @@ import me.mrletsplay.simplehttpserver.http.header.DefaultClientContentTypes;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.DiscordAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GitHubAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GoogleAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.PasswordAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public class WebinterfaceSetupSubmitDocument implements HttpDocument {
+public class SetupSubmitDocument implements HttpDocument {
 
 	@Override
 	public void createContent() {
 		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
 		URLEncoded params = ctx.getClientHeader().getPostData().getParsedAs(DefaultClientContentTypes.URLENCODED);
 
-		Integer currentStep = Webinterface.getConfig().getOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
-		if(currentStep == null) currentStep = WebinterfaceSetupDocument.SETUP_STEP_BASE;
+		Integer currentStep = Webinterface.getConfig().getOverride(SetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
+		if(currentStep == null) currentStep = SetupDocument.SETUP_STEP_BASE;
 
 		switch(currentStep) {
-			case WebinterfaceSetupDocument.SETUP_STEP_BASE:
+			case SetupDocument.SETUP_STEP_BASE:
 			{
 				String username = params.getFirst("admin-name").trim();
 				if(!PasswordAuth.isValidUsername(username)) {
@@ -36,21 +36,21 @@ public class WebinterfaceSetupSubmitDocument implements HttpDocument {
 				}
 
 				String password = params.getFirst("admin-password").trim();
-				WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(PasswordAuth.ID, username, true);
+				Account acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(PasswordAuth.ID, username, true);
 				if(acc != null) {
 					error("Account already exists");
 					return;
 				}
 
 				Webinterface.getCredentialsStorage().storeCredentials(username, password);
-				WebinterfaceAccountConnection con = new WebinterfaceAccountConnection(PasswordAuth.ID, username, username, null, null);
+				AccountConnection con = new AccountConnection(PasswordAuth.ID, username, username, null, null);
 				acc = Webinterface.getAccountStorage().createAccount();
 				acc.addConnection(con);
 				acc.addPermission("*");
-				Webinterface.getConfig().setOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, WebinterfaceSetupDocument.SETUP_STEP_HTTP);
+				Webinterface.getConfig().setOverride(SetupDocument.SETUP_STEP_OVERRIDE_PATH, SetupDocument.SETUP_STEP_HTTP);
 				break;
 			}
-			case WebinterfaceSetupDocument.SETUP_STEP_HTTP:
+			case SetupDocument.SETUP_STEP_HTTP:
 			{
 				String httpBind = params.getFirst("http-bind");
 				String httpHost = params.getFirst("http-host");
@@ -79,10 +79,10 @@ public class WebinterfaceSetupSubmitDocument implements HttpDocument {
 					Webinterface.getConfig().setSetting(DefaultSettings.HTTPS_CERTIFICATE_KEY_PATH, certKeyPath);
 				}
 
-				Webinterface.getConfig().setOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, WebinterfaceSetupDocument.SETUP_STEP_AUTH);
+				Webinterface.getConfig().setOverride(SetupDocument.SETUP_STEP_OVERRIDE_PATH, SetupDocument.SETUP_STEP_AUTH);
 				break;
 			}
-			case WebinterfaceSetupDocument.SETUP_STEP_AUTH:
+			case SetupDocument.SETUP_STEP_AUTH:
 			{
 				boolean noAuth = params.has("no-auth") && params.getFirst("no-auth").equals("on");
 				Webinterface.getConfig().setSetting(DefaultSettings.ALLOW_ANONYMOUS, noAuth);
@@ -114,7 +114,7 @@ public class WebinterfaceSetupSubmitDocument implements HttpDocument {
 					a.setup(clientID, clientSecret);
 				}
 
-				Webinterface.getConfig().setOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, WebinterfaceSetupDocument.SETUP_STEP_DONE);
+				Webinterface.getConfig().setOverride(SetupDocument.SETUP_STEP_OVERRIDE_PATH, SetupDocument.SETUP_STEP_DONE);
 				ctx.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 				ctx.getServerHeader().getFields().set("Location", "/");
 				Webinterface.getDocumentProvider().unregisterDocument("/setup");

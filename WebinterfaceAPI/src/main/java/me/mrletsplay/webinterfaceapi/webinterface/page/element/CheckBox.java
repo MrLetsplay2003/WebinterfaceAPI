@@ -59,6 +59,7 @@ public class CheckBox extends AbstractPageElement {
 		HtmlElement label = new HtmlElement("label");
 		label.addClass("checkbox-container");
 		HtmlElement ch = new HtmlElement("input");
+		ch.setSelfClosing(true);
 		ch.setAttribute("type", "checkbox");
 		ch.setAttribute("aria-label", "Yes/No"); // TODO aria-label
 		if(initialState.get()) ch.setAttribute("checked");

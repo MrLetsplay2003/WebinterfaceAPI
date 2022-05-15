@@ -11,12 +11,12 @@ import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public class PasswordAuth implements WebinterfaceAuthMethod {
+public class PasswordAuth implements AuthMethod {
 
 	public static final String
 		ID = "password";
@@ -49,17 +49,17 @@ public class PasswordAuth implements WebinterfaceAuthMethod {
 	}
 
 	@Override
-	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException {
+	public AccountConnection handleAuthResponse() throws AuthException {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		try {
 			URLEncoded params = c.getClientHeader().getPostData().getParsedAs(DefaultClientContentTypes.URLENCODED);
 			String username = params.getFirst("username"); // NONBETA: allow case
 			String password = params.getFirst("password");
 			boolean register = (params.has("register") ? params.getFirst("register").equalsIgnoreCase("on") : false);
-			WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(ID, username, true);
+			Account acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(ID, username, true);
 			if(!register) {
 				if(acc == null) throw new AuthException("Invalid username/password");
-				WebinterfaceAccountConnection con = acc.getConnection(ID);
+				AccountConnection con = acc.getConnection(ID);
 				if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) throw new AuthException("Invalid username/password");
 				return con;
 			}else {
@@ -67,7 +67,7 @@ public class PasswordAuth implements WebinterfaceAuthMethod {
 				if(!isValidUsername(username)) throw new AuthException("Username contains invalid characters or is too long/short");
 				if(acc != null) throw new AuthException("An account with that username already exists");
 				Webinterface.getCredentialsStorage().storeCredentials(username, password);
-				return new WebinterfaceAccountConnection(getID(), username, username, null, null);
+				return new AccountConnection(getID(), username, username, null, null);
 			}
 		}catch(AuthException e) {
 			c.getServerHeader().setStatusCode(HttpStatusCodes.FOUND_302);

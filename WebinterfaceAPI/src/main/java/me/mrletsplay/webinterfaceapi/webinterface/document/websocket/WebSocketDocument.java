@@ -12,7 +12,7 @@ import me.mrletsplay.webinterfaceapi.webinterface.page.action.ActionResponse;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceActionHandlers;
 import me.mrletsplay.webinterfaceapi.webinterface.session.Session;
 
-public class WebinterfaceWebSocketDocument extends WebSocketEndpoint {
+public class WebSocketDocument extends WebSocketEndpoint {
 
 	@Override
 	public void onTextMessage(WebSocketConnection connection, String message) {

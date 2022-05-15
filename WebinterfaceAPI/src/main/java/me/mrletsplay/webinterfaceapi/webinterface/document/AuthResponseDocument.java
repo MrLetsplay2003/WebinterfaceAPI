@@ -8,16 +8,16 @@ import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.session.Session;
 
 public class AuthResponseDocument implements HttpDocument {
 
-	private WebinterfaceAuthMethod method;
+	private AuthMethod method;
 
-	public AuthResponseDocument(WebinterfaceAuthMethod method) {
+	public AuthResponseDocument(AuthMethod method) {
 		this.method = method;
 	}
 
@@ -29,14 +29,14 @@ public class AuthResponseDocument implements HttpDocument {
 			return;
 		}
 		try {
-			WebinterfaceAccountConnection acc = method.handleAuthResponse();
+			AccountConnection acc = method.handleAuthResponse();
 
 			Session sess = Session.getCurrentSession();
 			if(sess != null && !acc.isTemporary() && method.getShouldConnect()) {
-				WebinterfaceAccount other = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(acc.getConnectionName(), acc.getUserID());
+				Account other = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(acc.getConnectionName(), acc.getUserID());
 
 				if(other == null) {
-					WebinterfaceAccount account = sess.getAccount();
+					Account account = sess.getAccount();
 					if(account.getConnection(acc.getConnectionName()) == null) account.addConnection(acc);
 				}
 			}else {

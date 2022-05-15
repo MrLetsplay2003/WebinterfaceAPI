@@ -10,7 +10,7 @@ import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public class WebinterfaceDocumentProvider extends DefaultDocumentProvider {
+public class DocumentProvider extends DefaultDocumentProvider {
 
 	@Override
 	public HttpDocument getDocument(String path) {

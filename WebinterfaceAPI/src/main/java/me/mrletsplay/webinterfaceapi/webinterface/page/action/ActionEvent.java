@@ -2,7 +2,7 @@ package me.mrletsplay.webinterfaceapi.webinterface.page.action;
 
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.simplehttpserver.http.websocket.WebSocketConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
 import me.mrletsplay.webinterfaceapi.webinterface.session.Session;
 
 public class ActionEvent {
@@ -37,7 +37,7 @@ public class ActionEvent {
 		return session;
 	}
 
-	public WebinterfaceAccount getAccount() {
+	public Account getAccount() {
 		return session.getAccount();
 	}
 

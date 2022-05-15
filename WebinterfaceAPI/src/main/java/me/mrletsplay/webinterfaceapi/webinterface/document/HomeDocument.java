@@ -6,12 +6,12 @@ import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public class WebinterfaceHomeDocument implements HttpDocument {
+public class HomeDocument implements HttpDocument {
 
 	@Override
 	public void createContent() {
-		Integer setupStep = Webinterface.getConfig().getOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
-		if(Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_INITIAL_SETUP) && (setupStep == null || setupStep < WebinterfaceSetupDocument.SETUP_STEP_DONE)) {
+		Integer setupStep = Webinterface.getConfig().getOverride(SetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
+		if(Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_INITIAL_SETUP) && (setupStep == null || setupStep < SetupDocument.SETUP_STEP_DONE)) {
 			HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
 			ctx.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 			ctx.getServerHeader().getFields().set("Location", "/setup");

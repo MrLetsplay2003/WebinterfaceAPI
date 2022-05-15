@@ -20,11 +20,11 @@ import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public class GoogleAuth implements WebinterfaceAuthMethod {
+public class GoogleAuth implements AuthMethod {
 
 	public static final String
 		ID = "google";
@@ -99,7 +99,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 	}
 
 	@Override
-	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException {
+	public AccountConnection handleAuthResponse() throws AuthException {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		String code = c.getRequestedPath().getQuery().getFirst("code");
 
@@ -124,7 +124,7 @@ public class GoogleAuth implements WebinterfaceAuthMethod {
 				userEmail = usr.getString("email");
 //				userAvatarUrl = usr.getString("picture");
 
-			return new WebinterfaceAccountConnection(getID(), userID, userName, userEmail, null);
+			return new AccountConnection(getID(), userID, userName, userEmail, null);
 		} catch (Exception e) {
 			throw new AuthException("Failed to verify Google auth token", e);
 		}

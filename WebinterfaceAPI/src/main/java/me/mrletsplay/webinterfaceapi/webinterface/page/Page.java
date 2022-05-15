@@ -15,7 +15,7 @@ import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.js.JSModule;
@@ -135,7 +135,7 @@ public class Page implements HttpDocument {
 	}
 
 	public HtmlDocument toHtml() {
-		WebinterfaceAccount account = Session.getCurrentSession().getAccount();
+		Account account = Session.getCurrentSession().getAccount();
 		if(permission != null && !account.hasPermission(permission)) {
 			HtmlDocument doc = new HtmlDocument();
 			doc.getBodyNode().setText("403 Access denied");
@@ -301,7 +301,7 @@ public class Page implements HttpDocument {
 	}
 
 	private void appendPageElement(HtmlElement sideNavList, Page page) {
-		WebinterfaceAccount account = Session.getCurrentSession().getAccount();
+		Account account = Session.getCurrentSession().getAccount();
 
 		if(!page.isHidden() && (page.getPermission() == null || account.hasPermission(page.getPermission()))) {
 			HtmlElement sideNavListItem = new HtmlElement("li");

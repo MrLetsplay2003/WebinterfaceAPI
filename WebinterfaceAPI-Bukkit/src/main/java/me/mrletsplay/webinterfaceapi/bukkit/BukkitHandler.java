@@ -11,8 +11,8 @@ import me.mrletsplay.mrcore.bukkitimpl.ui.UILayout;
 import me.mrletsplay.mrcore.bukkitimpl.ui.event.UIBuildEvent;
 import me.mrletsplay.mrcore.misc.QuickMap;
 import me.mrletsplay.webinterfaceapi.bukkit.command.CommandWebinterfaceAPI;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ActionHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceHandler;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ActionEvent;
@@ -30,7 +30,7 @@ public class BukkitHandler implements ActionHandler {
 				
 				@Override
 				public BaseComponent[] getLayout(UIBuildEvent e) {
-					WebinterfaceAccount acc = (WebinterfaceAccount) e.getUIInstance().getProperty(WebinterfacePlugin.plugin, "account");
+					Account acc = (Account) e.getUIInstance().getProperty(WebinterfacePlugin.plugin, "account");
 					return new ComponentBuilder("Connect to "
 							+ acc.getName()
 							+ "?").event(new HoverEvent(Action.SHOW_TEXT, CommandWebinterfaceAPI.createHoverText(acc))).create();
@@ -39,8 +39,8 @@ public class BukkitHandler implements ActionHandler {
 			.addElement("accept", new StaticUIElement("§a[Yes]")
 					.setAction(uie -> {
 						Player p = uie.getPlayer();
-						WebinterfaceAccount acc = (WebinterfaceAccount) uie.getUIInstance().getProperty(WebinterfacePlugin.plugin, "account");
-						WebinterfaceAccountConnection con = new WebinterfaceAccountConnection(
+						Account acc = (Account) uie.getUIInstance().getProperty(WebinterfacePlugin.plugin, "account");
+						AccountConnection con = new AccountConnection(
 								WebinterfacePlugin.MINECRAFT_ACCOUNT_CONNECTION_NAME,
 								p.getUniqueId().toString(),
 								p.getName(),
@@ -75,7 +75,7 @@ public class BukkitHandler implements ActionHandler {
 		String mcAccName = event.getRequestData().getString("value");
 		Player p = Bukkit.getPlayer(mcAccName);
 		if(p == null) return ActionResponse.error("Invalid player");
-		WebinterfaceAccount acc = Session.getCurrentSession().getAccount();
+		Account acc = Session.getCurrentSession().getAccount();
 		if(acc.getConnection(WebinterfacePlugin.MINECRAFT_ACCOUNT_CONNECTION_NAME) != null)
 			return ActionResponse.error("Account already connected");
 		CONNECT_UI

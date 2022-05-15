@@ -6,7 +6,7 @@ import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public class WebinterfaceSetupDocument implements HttpDocument {
+public class SetupDocument implements HttpDocument {
 
 	public static final String
 		SETUP_STEP_OVERRIDE_PATH = "initial-setup.current-step";
@@ -126,6 +126,7 @@ public class WebinterfaceSetupDocument implements HttpDocument {
 		element.appendChild(a);
 
 		HtmlElement input = new HtmlElement("input");
+		input.setSelfClosing(true);
 		input.setID(name);
 		input.setAttribute("name", name);
 		if(defaultValue != null) input.setAttribute("value", defaultValue);
@@ -175,6 +176,7 @@ public class WebinterfaceSetupDocument implements HttpDocument {
 		HtmlElement label = new HtmlElement("label");
 		label.addClass("checkbox-container");
 		HtmlElement ch = new HtmlElement("input");
+		ch.setSelfClosing(true);
 		ch.setID(name);
 		ch.setAttribute("name", name);
 		ch.setAttribute("type", "checkbox");

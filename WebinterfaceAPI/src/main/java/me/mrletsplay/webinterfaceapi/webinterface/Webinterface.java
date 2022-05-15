@@ -1,21 +1,18 @@
 package me.mrletsplay.webinterfaceapi.webinterface;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -24,16 +21,17 @@ import org.slf4j.LoggerFactory;
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
+import me.mrletsplay.mrcore.misc.ByteUtils;
 import me.mrletsplay.simplehttpserver.http.HttpServer;
 import me.mrletsplay.simplehttpserver.http.HttpsServer;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocumentProvider;
 import me.mrletsplay.simplehttpserver.http.websocket.WebSocketEndpoint;
 import me.mrletsplay.simplehttpserver.php.PHP;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountStorage;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.CredentialsStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileAccountStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.FileCredentialsStorage;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountStorage;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceCredentialsStorage;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.DiscordAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GitHubAuth;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.impl.GoogleAuth;
@@ -45,17 +43,17 @@ import me.mrletsplay.webinterfaceapi.webinterface.config.FileConfig;
 import me.mrletsplay.webinterfaceapi.webinterface.document.ActionCallbackDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.AuthRequestDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.AuthResponseDocument;
-import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceDocumentProvider;
-import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceFileUploadDocument;
-import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceHomeDocument;
-import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLoginDocument;
-import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceLogoutDocument;
-import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfacePasswordLoginDocument;
-import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceSetupDocument;
-import me.mrletsplay.webinterfaceapi.webinterface.document.WebinterfaceSetupSubmitDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.DocumentProvider;
+import me.mrletsplay.webinterfaceapi.webinterface.document.FileUploadDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.HomeDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.LoginDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.LogoutDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.PasswordLoginDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.SetupDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.SetupSubmitDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.Packet;
 import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebSocketData;
-import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebinterfaceWebSocketDocument;
+import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebSocketDocument;
 import me.mrletsplay.webinterfaceapi.webinterface.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.js.JSModule;
 import me.mrletsplay.webinterfaceapi.webinterface.markdown.MarkdownRenderer;
@@ -87,15 +85,15 @@ public class Webinterface {
 	private static List<PageCategory> categories;
 	private static List<ActionHandler> handlers;
 	private static List<WebinterfaceEvent> events;
-	private static List<WebinterfaceAuthMethod> authMethods;
+	private static List<AuthMethod> authMethods;
 	private static List<JSModule> jsModules;
 	private static Map<String, File> includedFiles;
 
 	private static boolean initialized = false;
 	private static File rootDirectory;
-	private static WebinterfaceAccountStorage accountStorage;
+	private static AccountStorage accountStorage;
 	private static SessionStorage sessionStorage;
-	private static WebinterfaceCredentialsStorage credentialsStorage;
+	private static CredentialsStorage credentialsStorage;
 	private static Config config;
 	private static MarkdownRenderer markdownRenderer;
 	private static WebSocketEndpoint webSocketEndpoint;
@@ -151,13 +149,13 @@ public class Webinterface {
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
 		PHP.setFileExtensions(config.getSetting(DefaultSettings.PHP_FILE_EXTENSIONS));
 
-		if(documentProvider == null) documentProvider = new WebinterfaceDocumentProvider();
+		if(documentProvider == null) documentProvider = new DocumentProvider();
 
 		httpServer = new HttpServer(HttpServer.newConfigurationBuilder()
-				.host(config.getSetting(DefaultSettings.HTTP_BIND))
-				.port(config.getSetting(DefaultSettings.HTTP_PORT))
-				.debugMode(config.getSetting(DefaultSettings.ENABLE_DEBUG_MODE))
-				.create());
+			.host(config.getSetting(DefaultSettings.HTTP_BIND))
+			.port(config.getSetting(DefaultSettings.HTTP_PORT))
+			.debugMode(config.getSetting(DefaultSettings.ENABLE_DEBUG_MODE))
+			.create());
 		httpServer.setDocumentProvider(documentProvider);
 
 		if(config.getSetting(DefaultSettings.HTTPS_ENABLE)) {
@@ -171,12 +169,12 @@ public class Webinterface {
 				File certKeyFile = new File(certKeyPath);
 				String password = config.getSetting(DefaultSettings.HTTPS_CERTIFICATE_PASSWORD);
 				httpsServer = new HttpsServer(HttpsServer.newConfigurationBuilder()
-						.host(config.getSetting(DefaultSettings.HTTPS_BIND))
-						.port(config.getSetting(DefaultSettings.HTTPS_PORT))
-						.debugMode(config.getSetting(DefaultSettings.ENABLE_DEBUG_MODE))
-						.certificate(certFile, certKeyFile)
-						.certificatePassword(password)
-						.create());
+					.host(config.getSetting(DefaultSettings.HTTPS_BIND))
+					.port(config.getSetting(DefaultSettings.HTTPS_PORT))
+					.debugMode(config.getSetting(DefaultSettings.ENABLE_DEBUG_MODE))
+					.certificate(certFile, certKeyFile)
+					.certificatePassword(password)
+					.create());
 				httpsServer.setDocumentProvider(documentProvider);
 			}
 		}
@@ -184,13 +182,13 @@ public class Webinterface {
 		loadIncludedFiles();
 
 		documentProvider.registerDocument("/_internal/call", new ActionCallbackDocument());
-		documentProvider.registerDocument("/_internal/fileupload", new WebinterfaceFileUploadDocument());
-		webSocketEndpoint = new WebinterfaceWebSocketDocument();
+		documentProvider.registerDocument("/_internal/fileupload", new FileUploadDocument());
+		webSocketEndpoint = new WebSocketDocument();
 		documentProvider.registerDocument("/_internal/ws", webSocketEndpoint);
-		documentProvider.registerDocument("/", new WebinterfaceHomeDocument());
-		documentProvider.registerDocument("/login", new WebinterfaceLoginDocument());
-		documentProvider.registerDocument("/logout", new WebinterfaceLogoutDocument());
-		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) documentProvider.registerDocument("/auth/password/login", new WebinterfacePasswordLoginDocument());
+		documentProvider.registerDocument("/", new HomeDocument());
+		documentProvider.registerDocument("/login", new LoginDocument());
+		documentProvider.registerDocument("/logout", new LogoutDocument());
+		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) documentProvider.registerDocument("/auth/password/login", new PasswordLoginDocument());
 
 		pages.forEach(page -> documentProvider.registerDocument(page.getUrl(), page));
 		categories.forEach(category -> category.getPages().forEach(page -> documentProvider.registerDocument(page.getUrl(), page)));
@@ -198,10 +196,10 @@ public class Webinterface {
 		authMethods.forEach(Webinterface::registerAuthPages);
 		jsModules.forEach(Webinterface::registerJSModulePage);
 
-		Integer setupStep = config.getOverride(WebinterfaceSetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
-		if(config.getSetting(DefaultSettings.ENABLE_INITIAL_SETUP) && (setupStep == null || setupStep < WebinterfaceSetupDocument.SETUP_STEP_DONE)) {
-			documentProvider.registerDocument("/setup", new WebinterfaceSetupDocument());
-			documentProvider.registerDocument("/setup/submit", new WebinterfaceSetupSubmitDocument());
+		Integer setupStep = config.getOverride(SetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
+		if(config.getSetting(DefaultSettings.ENABLE_INITIAL_SETUP) && (setupStep == null || setupStep < SetupDocument.SETUP_STEP_DONE)) {
+			documentProvider.registerDocument("/setup", new SetupDocument());
+			documentProvider.registerDocument("/setup/submit", new SetupSubmitDocument());
 		}
 
 		initialized = true;
@@ -212,7 +210,7 @@ public class Webinterface {
 		service.fire(WebinterfaceService.EVENT_PRE_START);
 
 		initialize();
-		extractFiles();
+		extractResources("/webinterfaceapi-resources.list");
 
 		accountStorage.initialize();
 		sessionStorage.initialize();
@@ -244,32 +242,73 @@ public class Webinterface {
 		service.fire(WebinterfaceService.EVENT_POST_START);
 	}
 
-	private static void extractFiles() {
+	/**
+	 * Extracts resources from the JAR file.<br>
+	 * Resources must be specified in a resource index file as generated by the <a href="https://github.com/MrLetsplay2003/resource-index-maven-plugin">resource-index-maven-plugin</a>
+	 * @param resourceIndexPath The path to the resource index in the JAR file, retrieved using {@link Class#getResource(String) Webinterface.class.getResource(String)}
+	 */
+	public static void extractResources(String resourceIndexPath) {
 		try {
-			URL jarLoc = Webinterface.class.getProtectionDomain().getCodeSource().getLocation();
-			File jarFl = new File(jarLoc.toURI().getPath());
-			if(!jarFl.isFile()) return;
-			Webinterface.getLogger().info("Extracting files from \"" + jarFl.getAbsolutePath() + "\"...");
-			try (JarFile fl = new JarFile(jarFl)) {
-				Enumeration<JarEntry> en = fl.entries();
-				while(en.hasMoreElements()) {
-					JarEntry e = en.nextElement();
-					if(!e.isDirectory() && e.getName().startsWith("include/")) {
-						File ofl = new File(getRootDirectory(), e.getName());
-						if(ofl.exists()) continue;
-						Webinterface.getLogger().debug("Extracting " + e.getName() + "...");
-						IOUtils.createFile(ofl);
-						try (InputStream in = fl.getInputStream(e);
-								OutputStream out = new FileOutputStream(ofl)) {
-							IOUtils.transfer(in, out);
-						}
-					}
-				}
-			}catch(IOException e) {
-				Webinterface.getLogger().error("Error while extracting required files", e);
+			Webinterface.getLogger().info("Extracting resources from index '" + resourceIndexPath + "'");
+			URL url = Webinterface.class.getResource(resourceIndexPath);
+			if(url == null) {
+				Webinterface.getLogger().warn("Couldn't find resource index '" + resourceIndexPath + "'. Not extracting resources!");
+				return;
 			}
+
+			Path resourcesPath = getRootDirectory().toPath().resolve("data/resources.json");
+			JSONObject resourcesObj;
+			if(Files.exists(resourcesPath)) {
+				resourcesObj = new JSONObject(Files.readString(resourcesPath, StandardCharsets.UTF_8));
+			}else {
+				resourcesObj = new JSONObject();
+				resourcesObj.put("_comment", "Do not edit this file. It is used to check whether resource files have been modified, so they can be updated automatically.");
+			}
+
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			String[] resources = new String(IOUtils.readAllBytes(url.openStream()), StandardCharsets.UTF_8).split("\n");
+			for(String resource : resources) {
+				URL resURL = Webinterface.class.getResource("/" + resource);
+				if(resURL == null) {
+					Webinterface.getLogger().warn("Couldn't find resource '" + resource + "' in JAR file");
+					continue;
+				}
+
+				String expectedDigest = resourcesObj.optString(resource).orElse(null);
+				byte[] resBytes = IOUtils.readAllBytes(resURL.openStream());
+				byte[] digest = md.digest(resBytes);
+				String digestStr = ByteUtils.bytesToHex(digest);
+
+				Path outFile = getRootDirectory().toPath().resolve(resource);
+				if(Files.exists(outFile)) {
+					if(expectedDigest == null) {
+						Webinterface.getLogger().warn("Resource file '" + resource + "' already exists, but there is no digest entry in the resources.json. Skipping!");
+						continue;
+					}
+
+					if(expectedDigest.equals(digestStr)) continue; // File isn't supposed to change, skip
+
+					byte[] bytes = Files.readAllBytes(outFile);
+					byte[] resDigest = md.digest(bytes);
+					if(!ByteUtils.bytesToHex(resDigest).equals(expectedDigest)) {
+						// TODO: Add command line option to force override file
+						Webinterface.getLogger().warn("Resource file '" + resource + "' has been edited. To force updating this file, add the '--force-update-resources' option. Skipping!");
+						continue;
+					}
+
+					// File hasn't been edited since the last update, automatically update it
+				}
+
+				Webinterface.getLogger().info("Extracting resource '" + resource + "'...");
+				IOUtils.createFile(outFile.toFile());
+				Files.write(outFile, resBytes);
+				resourcesObj.put(resource, digestStr);
+			}
+
+			Files.createDirectories(resourcesPath.getParent());
+			Files.writeString(resourcesPath, resourcesObj.toFancyString(), StandardCharsets.UTF_8);
 		} catch (Exception e) {
-			Webinterface.getLogger().error("Error while locating required files", e);
+			Webinterface.getLogger().error("Error while extracting resources from index '" + resourceIndexPath + "'", e);
 		}
 	}
 
@@ -379,29 +418,29 @@ public class Webinterface {
 		});
 	}
 
-	public static void registerAuthMethod(WebinterfaceAuthMethod method) {
+	public static void registerAuthMethod(AuthMethod method) {
 		if(authMethods.stream().anyMatch(a -> a.getID().equals(method.getID()))) return;
 		authMethods.add(method);
 		if(initialized) registerAuthPages(method);
 	}
 
-	private static void registerAuthPages(WebinterfaceAuthMethod method) {
+	private static void registerAuthPages(AuthMethod method) {
 		documentProvider.registerDocument("/auth/" + method.getID(), new AuthRequestDocument(method));
 		documentProvider.registerDocument("/auth/" + method.getID() + "/response", new AuthResponseDocument(method));
 	}
 
-	public static List<WebinterfaceAuthMethod> getAuthMethods() {
+	public static List<AuthMethod> getAuthMethods() {
 		return authMethods;
 	}
 
-	public static WebinterfaceAuthMethod getAuthMethodByID(String id) {
+	public static AuthMethod getAuthMethodByID(String id) {
 		return authMethods.stream()
 				.filter(a -> a.getID().equals(id))
 				.findFirst().orElse(null);
 	}
 
-	public static List<WebinterfaceAuthMethod> getAvailableAuthMethods() {
-		return authMethods.stream().filter(WebinterfaceAuthMethod::isAvailable).collect(Collectors.toList());
+	public static List<AuthMethod> getAvailableAuthMethods() {
+		return authMethods.stream().filter(AuthMethod::isAvailable).collect(Collectors.toList());
 	}
 
 	public static void registerJSModule(JSModule module) {
@@ -417,11 +456,11 @@ public class Webinterface {
 		return jsModules;
 	}
 
-	public static void setAccountStorage(WebinterfaceAccountStorage accountStorage) {
+	public static void setAccountStorage(AccountStorage accountStorage) {
 		Webinterface.accountStorage = accountStorage;
 	}
 
-	public static WebinterfaceAccountStorage getAccountStorage() {
+	public static AccountStorage getAccountStorage() {
 		return accountStorage;
 	}
 
@@ -433,11 +472,11 @@ public class Webinterface {
 		return sessionStorage;
 	}
 
-	public static void setCredentialsStorage(WebinterfaceCredentialsStorage credentialsStorage) {
+	public static void setCredentialsStorage(CredentialsStorage credentialsStorage) {
 		Webinterface.credentialsStorage = credentialsStorage;
 	}
 
-	public static WebinterfaceCredentialsStorage getCredentialsStorage() {
+	public static CredentialsStorage getCredentialsStorage() {
 		return credentialsStorage;
 	}
 

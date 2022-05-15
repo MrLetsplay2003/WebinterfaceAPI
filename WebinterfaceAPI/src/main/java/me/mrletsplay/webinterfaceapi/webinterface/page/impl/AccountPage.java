@@ -5,9 +5,9 @@ import java.util.Map;
 
 import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.page.Page;
 import me.mrletsplay.webinterfaceapi.webinterface.page.PageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ConfirmAction;
@@ -39,18 +39,18 @@ public class AccountPage extends Page {
 		sc.addLayoutOptions(new GridLayout("1fr"));
 
 		sc.dynamic(els -> {
-			WebinterfaceAccount account = Session.getCurrentSession().getAccount();
+			Account account = Session.getCurrentSession().getAccount();
 
-			Map<WebinterfaceAccountConnection, WebinterfaceAuthMethod> loginCons = new LinkedHashMap<>();
-			for(WebinterfaceAccountConnection con : account.getConnections()) {
-				WebinterfaceAuthMethod mth = Webinterface.getAuthMethods().stream()
+			Map<AccountConnection, AuthMethod> loginCons = new LinkedHashMap<>();
+			for(AccountConnection con : account.getConnections()) {
+				AuthMethod mth = Webinterface.getAuthMethods().stream()
 					.filter(m -> m.getID().equals(con.getConnectionName()))
 					.findFirst().orElse(null);
 				if(mth != null) loginCons.put(con, mth);
 			}
 
-			for(WebinterfaceAccountConnection con : account.getConnections()) {
-				WebinterfaceAuthMethod mth = loginCons.get(con);
+			for(AccountConnection con : account.getConnections()) {
+				AuthMethod mth = loginCons.get(con);
 
 				Group grp = new Group();
 				grp.addLayoutOptions(new GridLayout("min-content", "auto"));

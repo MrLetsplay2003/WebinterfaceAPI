@@ -9,8 +9,8 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import me.mrletsplay.webinterfaceapi.bukkit.BukkitSettings;
 import me.mrletsplay.webinterfaceapi.bukkit.WebinterfacePlugin;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.Page;
 import me.mrletsplay.webinterfaceapi.webinterface.page.PageSection;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
@@ -29,8 +29,8 @@ public class BukkitPage extends Page {
 		super("Home", "/bukkit/home");
 
 		dynamic(() -> {
-			WebinterfaceAccount acc = Session.getCurrentSession().getAccount();
-			WebinterfaceAccountConnection mcAcc = acc.getConnection(WebinterfacePlugin.MINECRAFT_ACCOUNT_CONNECTION_NAME);
+			Account acc = Session.getCurrentSession().getAccount();
+			AccountConnection mcAcc = acc.getConnection(WebinterfacePlugin.MINECRAFT_ACCOUNT_CONNECTION_NAME);
 
 			if(mcAcc == null) return Optional.empty();
 
@@ -81,8 +81,8 @@ public class BukkitPage extends Page {
 		sets.addLayoutOptions(DefaultLayoutOption.FULL_WIDTH);
 
 		sets.dynamic(els -> {
-			WebinterfaceAccount acc = Session.getCurrentSession().getAccount();
-			WebinterfaceAccountConnection mcAcc = acc.getConnection(WebinterfacePlugin.MINECRAFT_ACCOUNT_CONNECTION_NAME);
+			Account acc = Session.getCurrentSession().getAccount();
+			AccountConnection mcAcc = acc.getConnection(WebinterfacePlugin.MINECRAFT_ACCOUNT_CONNECTION_NAME);
 
 			if(mcAcc != null) {
 				els.add(Text.builder()

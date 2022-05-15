@@ -1,7 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.simplehttpserver.http.websocket.WebSocketConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccount;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
 import me.mrletsplay.webinterfaceapi.webinterface.document.websocket.WebSocketData;
 import me.mrletsplay.webinterfaceapi.webinterface.page.SettingsPage;
 import me.mrletsplay.webinterfaceapi.webinterface.page.action.ActionEvent;
@@ -43,8 +43,9 @@ public class DefaultHandler implements ActionHandler {
 		String accountID = val.getString("account");
 		String perm = val.getString("permission");
 		boolean b = val.getBoolean("value");
-		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByID(accountID);
+		Account acc = Webinterface.getAccountStorage().getAccountByID(accountID);
 		if(acc == null) return ActionResponse.error("Account doesn't exist");
+		if(event.getAccount().getID().equals(accountID)) return ActionResponse.error("You cannot change your own permissions");
 		if(b && !acc.hasPermissionExactly(perm)) {
 			acc.addPermission(perm);
 		}else if(!b && acc.hasPermissionExactly(perm)) {
@@ -58,7 +59,7 @@ public class DefaultHandler implements ActionHandler {
 		JSONObject val = event.getRequestData().getJSONObject("value");
 		String permission = val.getString("permission");
 		String accountID = val.getString("account_id");
-		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByID(accountID);
+		Account acc = Webinterface.getAccountStorage().getAccountByID(accountID);
 		if(acc == null) return ActionResponse.error("Account doesn't exist");
 		acc.addPermission(permission);
 		return ActionResponse.success();
@@ -69,7 +70,7 @@ public class DefaultHandler implements ActionHandler {
 		JSONObject val = event.getRequestData().getJSONObject("value");
 		String permission = val.getString("permission");
 		String accountID = val.getString("account_id");
-		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByID(accountID);
+		Account acc = Webinterface.getAccountStorage().getAccountByID(accountID);
 		if(acc == null) return ActionResponse.error("Account doesn't exist");
 		acc.removePermission(permission);
 		return ActionResponse.success();
@@ -78,7 +79,7 @@ public class DefaultHandler implements ActionHandler {
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "deleteAccount", permission = DefaultPermissions.MODIFY_USERS)
 	public ActionResponse deleteAccount(ActionEvent event) {
 		String accountID = event.getRequestData().getString("value");
-		WebinterfaceAccount acc = Webinterface.getAccountStorage().getAccountByID(accountID);
+		Account acc = Webinterface.getAccountStorage().getAccountByID(accountID);
 		if(acc == null) return ActionResponse.error("Account doesn't exist");
 		Webinterface.getAccountStorage().deleteAccount(acc);
 		return ActionResponse.success();
@@ -86,7 +87,7 @@ public class DefaultHandler implements ActionHandler {
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "removeAccountConnection")
 	public ActionResponse removeAccountConnection(ActionEvent event) {
-		WebinterfaceAccount account = event.getAccount();
+		Account account = event.getAccount();
 		String authMethod = event.getRequestData().getString("value");
 		if(account.getConnections().size() > 1) account.removeConnection(authMethod);
 		return ActionResponse.success();
@@ -94,7 +95,7 @@ public class DefaultHandler implements ActionHandler {
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "subscribeToEvent")
 	public ActionResponse subscribeToEvent(ActionEvent event) {
-		WebinterfaceAccount account = event.getAccount();
+		Account account = event.getAccount();
 		String target = event.getRequestData().getString("eventTarget");
 		String name = event.getRequestData().getString("eventName");
 

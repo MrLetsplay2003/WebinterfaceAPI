@@ -16,7 +16,7 @@ import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.permission.Permission;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 
-public class FileAccountStorage implements WebinterfaceAccountStorage {
+public class FileAccountStorage implements AccountStorage {
 	
 	private File file;
 	private FileCustomConfig config;
@@ -35,16 +35,16 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	}
 	
 	@Override
-	public WebinterfaceAccount createAccount() {
-		WebinterfaceAccount acc = new WebinterfaceAccount(UUID.randomUUID().toString(), new ArrayList<>(), new ArrayList<>());
+	public Account createAccount() {
+		Account acc = new Account(UUID.randomUUID().toString(), new ArrayList<>(), new ArrayList<>());
 		storeAccount(acc);
 		return acc;
 	}
 
 	@Override
-	public void storeAccount(WebinterfaceAccount account) {
+	public void storeAccount(Account account) {
 		JSONArray arr = new JSONArray();
-		for(WebinterfaceAccountConnection c : account.getConnections()) {
+		for(AccountConnection c : account.getConnections()) {
 			JSONObject accCon = new JSONObject();
 			accCon.set("connection", c.getConnectionName());
 			accCon.set("id", c.getUserID());
@@ -60,17 +60,17 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	}
 	
 	@Override
-	public void deleteAccount(WebinterfaceAccount account) {
+	public void deleteAccount(Account account) {
 		config.unset(account.getID());
 		config.saveToFile();
 	}
 
 	@Override
-	public WebinterfaceAccount getAccountByID(String id) {
+	public Account getAccountByID(String id) {
 		if(!config.isSet(id)) return null;
-		List<WebinterfaceAccountConnection> connections = new ArrayList<>();
+		List<AccountConnection> connections = new ArrayList<>();
 		for(ConfigSection s : config.getComplex(id + ".connections", Complex.list(ConfigSection.class), new ArrayList<>(), false)) {
-			WebinterfaceAccountConnection con = new WebinterfaceAccountConnection(
+			AccountConnection con = new AccountConnection(
 					s.getString("connection"),
 					s.getString("id"),
 					s.getString("name"),
@@ -91,14 +91,14 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 				.map(Permission::new)
 				.distinct()
 				.collect(Collectors.toList());
-		return new WebinterfaceAccount(id, connections, perms);
+		return new Account(id, connections, perms);
 	}
 
 	@Override
-	public WebinterfaceAccount getAccountByPrimaryEmail(String email) {
+	public Account getAccountByPrimaryEmail(String email) {
 		if(email == null) return null;
 		for(String id : config.getKeys()) {
-			WebinterfaceAccount acc = getAccountByID(id);
+			Account acc = getAccountByID(id);
 			if(acc == null) continue;
 			String pEmail = acc.getPrimaryEmail();
 			if(pEmail != null && pEmail.equals(email)) return acc;
@@ -107,12 +107,12 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	}
 	
 	@Override
-	public WebinterfaceAccount getAccountByConnectionSpecificID(String connectionName, String id, boolean caseInsensitive) {
+	public Account getAccountByConnectionSpecificID(String connectionName, String id, boolean caseInsensitive) {
 		if(id == null) return null;
 		for(String aID : config.getKeys()) {
-			WebinterfaceAccount acc = getAccountByID(aID);
+			Account acc = getAccountByID(aID);
 			if(acc == null) continue;
-			WebinterfaceAccountConnection con = acc.getConnection(connectionName);
+			AccountConnection con = acc.getConnection(connectionName);
 			if(con == null) continue;
 			String tID = con.getUserID();
 			if(tID != null && (caseInsensitive ? tID.equalsIgnoreCase(id) : tID.equals(id))) return acc;
@@ -121,7 +121,7 @@ public class FileAccountStorage implements WebinterfaceAccountStorage {
 	}
 	
 	@Override
-	public List<WebinterfaceAccount> getAccounts() {
+	public List<Account> getAccounts() {
 		return config.getKeys().stream()
 				.map(this::getAccountByID)
 				.filter(Objects::nonNull)

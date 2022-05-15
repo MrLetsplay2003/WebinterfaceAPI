@@ -1,6 +1,6 @@
 package me.mrletsplay.webinterfaceapi.webinterface.auth;
 
-public interface WebinterfaceCredentialsStorage {
+public interface CredentialsStorage {
 	
 	public void initialize();
 

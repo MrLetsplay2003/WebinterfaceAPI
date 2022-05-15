@@ -23,6 +23,7 @@ public class FileUpload extends AbstractPageElement {
 		form.setAttribute("data-requestTarget", uploadRequestTarget);
 		form.setAttribute("data-requestMethod", uploadRequestMethod);
 		HtmlElement input = new HtmlElement("input");
+		input.setSelfClosing(true);
 		input.setAttribute("type", "file");
 		input.setAttribute("name", "file");
 		form.appendChild(input);

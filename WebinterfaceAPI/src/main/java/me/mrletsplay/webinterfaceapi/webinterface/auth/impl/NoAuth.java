@@ -5,11 +5,11 @@ import me.mrletsplay.simplehttpserver.http.header.HttpURLPath;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthException;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAccountConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.WebinterfaceAuthMethod;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
+import me.mrletsplay.webinterfaceapi.webinterface.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.webinterface.config.DefaultSettings;
 
-public class NoAuth implements WebinterfaceAuthMethod {
+public class NoAuth implements AuthMethod {
 
 	public static final String
 		ID = "no_auth";
@@ -35,8 +35,8 @@ public class NoAuth implements WebinterfaceAuthMethod {
 	}
 
 	@Override
-	public WebinterfaceAccountConnection handleAuthResponse() throws AuthException {
-		return new WebinterfaceAccountConnection(getID(), "0", "Anonymous", null, null, true);
+	public AccountConnection handleAuthResponse() throws AuthException {
+		return new AccountConnection(getID(), "0", "Anonymous", null, null, true);
 	}
 
 	@Override
