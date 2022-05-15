@@ -1,4 +1,4 @@
-open module webinterfaceapi {
+open module me.mrletsplay.webinterfaceapi {
 	exports me.mrletsplay.webinterfaceapi.webinterface.auth.impl;
 	exports me.mrletsplay.webinterfaceapi.webinterface.config.setting;
 	exports me.mrletsplay.webinterfaceapi.webinterface.config.setting.impl;
