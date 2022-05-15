@@ -64,9 +64,9 @@
 	<dependencies>
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
-			<artifactId>MrCore-Bukkit</artifactId>
-			<version>4.0</version>
-			<scope>provided</scope>
+			<artifactId>MrCore</artifactId>
+			<version>4.0.1</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
