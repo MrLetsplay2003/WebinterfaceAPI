@@ -1,5 +1,7 @@
 package me.mrletsplay.webinterfaceapi.webinterface.page.impl;
 
+import java.util.stream.Collectors;
+
 import me.mrletsplay.webinterfaceapi.webinterface.DefaultPermissions;
 import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
 import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
@@ -78,6 +80,17 @@ public class AccountsPage extends Page {
 					.create());
 				grp.addElement(Text.builder()
 					.text(acc.isTemporary() ? "yes" : "no")
+					.leftboundText()
+					.create());
+
+				grp.addElement(TitleText.builder()
+					.text("Account Connections")
+					.noLineBreaks()
+					.leftboundText()
+					.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
+					.create());
+				grp.addElement(Text.builder()
+					.text(acc.getConnections().stream().map(c -> c.getConnectionName()).collect(Collectors.joining(", ")))
 					.leftboundText()
 					.create());
 
