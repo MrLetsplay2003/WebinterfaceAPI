@@ -7,6 +7,7 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	overflow: hidden;
 }
 
 .setup-container {
@@ -15,13 +16,15 @@ body {
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background-color: var(--theme-color-content-bg);
+	background-color: var(--theme-color-section-background);
 	box-shadow: 2px 2px 2px 2px var(--theme-color-content-shadow);
 	text-align: center;
 	padding-top: 20px;
 	padding-bottom: 20px;
 	border-radius: 5px;
     overflow-y: auto;
+	color: var(--theme-color-content-text);
+	font-family: 'Open Sans', sans-serif;
 }
 
 .setup-list {
@@ -35,29 +38,16 @@ body {
 	font-family: 'Open Sans', sans-serif;
 	text-decoration: none;
 	display: block;
-	margin-bottom: 20px;
 }
 
-.setup-title > a {
+.setup-title > span {
 	color: #757575;
-}
-
-.setup-list input, .setup-list a, .setup-list b {
-	font-family: 'Open Sans', sans-serif;
-	text-decoration: none;
-	color: var(--theme-color-content-text);
-	background-color: transparent;
-	outline: none;
-	text-decoration: none;
-	padding: 10px 0px 10px 0px;
-	display: block;
-	border: 0;
-	width: 100%;
-    margin-top: 10px;
 }
 
 .setup-label {
     text-align: left;
+	margin-top: 10px;
+	margin-bottom: 5px;
 }
 
 .confirm-button > a:hover {
@@ -70,24 +60,17 @@ body {
 	text-decoration: none;
 }
 
-.setup-list input {
-	border-bottom: 1px solid rgb(95, 95, 95);
-	margin: 0;
-    margin-top: 10px;
-}
-
 .setup-heading, .setup-description, .setup-button, .setup-sub-heading {
     grid-column: 1 / -1;
 }
 
 .setup-sub-heading {
-    text-align: left;
-    margin-top: 30px !important;
+	text-align: left;
+	margin-top: 30px !important;
 }
 
 .setup-description {
-    margin-top: 0 !important;
-    margin-bottom: 10px;
+	margin-bottom: 30px;
 }
 
 .setup-button:hover {
@@ -95,15 +78,26 @@ body {
 	cursor: pointer;
 }
 
+.setup-checkbox-container {
+	display: flex;
+	align-items: center;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+.setup-checkbox-container > .setup-label {
+	margin: 0;
+}
+
 .checkbox-container {
-    margin-top: 20px;
+	margin: 5px;
 }
 
 #setup-form-container {
-    display: grid;
-    padding-left: 30px;
-    padding-right: 30px;
-    grid-template-columns: 1fr;
+	display: grid;
+	padding: 0px 30px;
+	grid-template-columns: 1fr;
+	margin: 20px 0px;
 }
 
 /* Non-mobile styles for side nav responsiveness, 750px breakpoint */
@@ -111,15 +105,13 @@ body {
 
 	.setup-container {
 		position: absolute;
-		left: calc(50% - 450px);
-		top: auto;
-		width: 900px;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 1000px;
 		height: auto;
+		max-width: 100%;
 		max-height: 80%;
 	}
-	
-	#setup-form-container {
-        grid-template-columns: 33fr 66fr;
-    }
 
 }

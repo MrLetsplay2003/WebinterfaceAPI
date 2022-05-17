@@ -31,7 +31,7 @@ public class SetupDocument implements HttpDocument {
 		tt.addClass("setup-title");
 		cont.appendChild(tt);
 
-		HtmlElement ttx = new HtmlElement("a");
+		HtmlElement ttx = new HtmlElement("span");
 		ttx.setText("WebinterfaceAPI Setup");
 		tt.appendChild(ttx);
 
@@ -62,14 +62,14 @@ public class SetupDocument implements HttpDocument {
 				addTitle(c2, "Set up the web server");
 				addDescription(c2, "Configure your server so it works as smoothly as possible");
 				addSubTitle(c2, "HTTP");
-				addInputField(c2, "http-bind", "HTTP IP Bind", "0.0.0.0", false);
-				addInputField(c2, "http-host", "HTTP Host", false);
-				addInputField(c2, "http-port", "HTTP Port", "8880", false);
+				addInputField(c2, "http-bind", "HTTP IP Bind", DefaultSettings.HTTP_BIND.getDefaultValue(), false);
+				addInputField(c2, "http-host", "HTTP Host", DefaultSettings.HTTP_HOST.getDefaultValue(), false);
+				addInputField(c2, "http-port", "HTTP Port", String.valueOf(DefaultSettings.HTTP_PORT.getDefaultValue()), false);
 				addSubTitle(c2, "HTTPS");
 				addCheckbox(c2, "enable-https", "Enable HTTPS", false);
-				addInputField(c2, "https-bind", "HTTPS IP Bind", "0.0.0.0", false);
-				addInputField(c2, "https-host", "HTTPS Host", false);
-				addInputField(c2, "https-port", "HTTPS Port", "8881", false);
+				addInputField(c2, "https-bind", "HTTPS IP Bind", DefaultSettings.HTTPS_BIND.getDefaultValue(), false);
+				addInputField(c2, "https-host", "HTTPS Host", DefaultSettings.HTTPS_HOST.getDefaultValue(), false);
+				addInputField(c2, "https-port", "HTTPS Port", String.valueOf(DefaultSettings.HTTPS_PORT.getDefaultValue()), false);
 				addInputField(c2, "https-cert-path", "HTTPS Certificate Path", false);
 				addInputField(c2, "https-cert-password", "HTTPS Certificate Password (leave empty for none)", false);
 				addInputField(c2, "https-cert-key-path", "HTTPS Certificate Key Path", false);
@@ -110,8 +110,9 @@ public class SetupDocument implements HttpDocument {
 
 		d.getBodyNode().appendChild(cont);
 		d.addStyleSheet("/_internal/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
+		d.addStyleSheet("/_internal/css/base.css");
 		d.addStyleSheet("/_internal/css/setup-include.css");
-		d.addStyleSheet("/_internal/css/include.css");
+//		d.addStyleSheet("/_internal/css/include.css");
 		d.addStyleSheet("/_internal/css/alerts.css");
 		d.includeScript("https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js", false, true);
 		d.includeScript("/_internal/js/module/toast.js", true, true);
@@ -120,7 +121,7 @@ public class SetupDocument implements HttpDocument {
 	}
 
 	private void addInputField(HtmlElement element, String name, String title, String defaultValue, boolean password) {
-		HtmlElement a = new HtmlElement("a");
+		HtmlElement a = new HtmlElement("span");
 		a.addClass("setup-label");
 		a.setText(title);
 		element.appendChild(a);
@@ -128,9 +129,9 @@ public class SetupDocument implements HttpDocument {
 		HtmlElement input = new HtmlElement("input");
 		input.setSelfClosing(true);
 		input.setID(name);
+		input.setAttribute("type", password ? "password" : "text");
 		input.setAttribute("name", name);
 		if(defaultValue != null) input.setAttribute("value", defaultValue);
-		if(password) input.setAttribute("type", "password");
 		element.appendChild(input);
 	}
 
@@ -153,14 +154,14 @@ public class SetupDocument implements HttpDocument {
 	}
 
 	private void addDescription(HtmlElement element, String description) {
-		HtmlElement b = new HtmlElement("a");
+		HtmlElement b = new HtmlElement("span");
 		b.addClass("setup-description");
 		b.setText(description);
 		element.appendChild(b);
 	}
 
 	private void addButton(HtmlElement element, String name, String onclick) {
-		HtmlElement b = new HtmlElement("a");
+		HtmlElement b = new HtmlElement("button");
 		b.addClass("setup-button");
 		b.setText(name);
 		b.setAttribute("onclick", onclick);
@@ -168,10 +169,8 @@ public class SetupDocument implements HttpDocument {
 	}
 
 	private void addCheckbox(HtmlElement element, String name, String title, boolean initialState) {
-		HtmlElement a = new HtmlElement("a");
-		a.addClass("setup-label");
-		a.setText(title);
-		element.appendChild(a);
+		HtmlElement container = new HtmlElement("div");
+		container.addClass("setup-checkbox-container");
 
 		HtmlElement label = new HtmlElement("label");
 		label.addClass("checkbox-container");
@@ -186,7 +185,14 @@ public class SetupDocument implements HttpDocument {
 		HtmlElement sp = new HtmlElement("span");
 		sp.addClass("checkbox-checkmark");
 		label.appendChild(sp);
-		element.appendChild(label);
+		container.appendChild(label);
+
+		HtmlElement a = new HtmlElement("span");
+		a.addClass("setup-label");
+		a.setText(title);
+		container.appendChild(a);
+
+		element.appendChild(container);
 	}
 
 }

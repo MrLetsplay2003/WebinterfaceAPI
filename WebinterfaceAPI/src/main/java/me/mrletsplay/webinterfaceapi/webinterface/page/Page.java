@@ -290,6 +290,7 @@ public class Page implements HttpDocument {
 		d.getBodyNode().appendChild(main);
 		d.getBodyNode().appendChild(sidenav);
 		d.getHeadNode().appendChild(HtmlElement.script(sc));
+		d.addStyleSheet("/_internal/css/base.css");
 		d.addStyleSheet("/_internal/css/include.css");
 		d.addStyleSheet("/_internal/css/alerts.css");
 		d.addStyleSheet("/_internal/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
