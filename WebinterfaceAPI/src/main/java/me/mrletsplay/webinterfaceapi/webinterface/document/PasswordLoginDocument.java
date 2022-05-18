@@ -15,13 +15,10 @@ public class PasswordLoginDocument implements HttpDocument {
 		HtmlElement cont = new HtmlElement("div");
 		cont.addClass("login-container");
 
-		HtmlElement tt = new HtmlElement("div");
-		tt.addClass("login-title");
-		cont.appendChild(tt);
-
-		HtmlElement ttx = new HtmlElement("a");
+		HtmlElement ttx = new HtmlElement("span");
 		ttx.setText("Log In");
-		tt.appendChild(ttx);
+		ttx.addClass("login-title");
+		cont.appendChild(ttx);
 
 		HtmlElement ul = new HtmlElement("form");
 		ul.setID("login-form");
@@ -30,28 +27,24 @@ public class PasswordLoginDocument implements HttpDocument {
 		ul.setAttribute("method", "post");
 		cont.appendChild(ul);
 
-		HtmlElement uDiv = new HtmlElement("div");
-		uDiv.addClass("login-list-item");
-		ul.appendChild(uDiv);
-
 		HtmlElement uInput = new HtmlElement("input");
 		uInput.setSelfClosing(true);
 		uInput.setID("username-input");
+		uInput.addClass("login-list-item");
+		uInput.setAttribute("type", "text");
 		uInput.setAttribute("placeholder", "Username");
 		uInput.setAttribute("name", "username");
-		uDiv.appendChild(uInput);
-
-		HtmlElement pwDiv = new HtmlElement("div");
-		pwDiv.addClass("login-list-item");
-		ul.appendChild(pwDiv);
+		ul.appendChild(uInput);
 
 		HtmlElement pwInput = new HtmlElement("input");
 		pwInput.setSelfClosing(true);
 		pwInput.setID("password-input");
+		pwInput.addClass("login-list-item");
+		pwInput.setAttribute("type", "text");
 		pwInput.setAttribute("placeholder", "Password");
 		pwInput.setAttribute("type", "password");
 		pwInput.setAttribute("name", "password");
-		pwDiv.appendChild(pwInput);
+		ul.appendChild(pwInput);
 
 		HtmlElement regInput = new HtmlElement("input");
 		regInput.setSelfClosing(true);
@@ -61,23 +54,17 @@ public class PasswordLoginDocument implements HttpDocument {
 		regInput.setAttribute("style", "display:none;");
 		ul.appendChild(regInput);
 
-		HtmlElement btnDiv = new HtmlElement("div");
-		btnDiv.addClass("login-list-item login-button");
-		ul.appendChild(btnDiv);
-
-		HtmlElement lBtn = new HtmlElement("a");
+		HtmlElement lBtn = new HtmlElement("button");
 		lBtn.setText("Log In");
+		lBtn.addClass("login-button");
 		lBtn.setAttribute("onclick", "login(false)");
-		btnDiv.appendChild(lBtn);
+		ul.appendChild(lBtn);
 
-		HtmlElement rBtnDiv = new HtmlElement("div");
-		rBtnDiv.addClass("login-list-item register-button");
-		ul.appendChild(rBtnDiv);
-
-		HtmlElement rBtn = new HtmlElement("a");
+		HtmlElement rBtn = new HtmlElement("button");
 		rBtn.setText("Register");
+		rBtn.addClass("login-button");
 		rBtn.setAttribute("onclick", "login(true)");
-		rBtnDiv.appendChild(rBtn);
+		ul.appendChild(rBtn);
 
 		HtmlElement alertBox = new HtmlElement("div");
 		alertBox.setID("alert-box");
@@ -88,7 +75,8 @@ public class PasswordLoginDocument implements HttpDocument {
 		d.includeScript("/_internal/js/module/toast.js", true, true);
 		d.includeScript("/_internal/js/password-login-include.js", false, true);
 		d.addStyleSheet("/_internal/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
-		d.addStyleSheet("/_internal/css/password-login-include.css");
+		d.addStyleSheet("/_internal/css/base.css");
+		d.addStyleSheet("/_internal/css/login-include.css");
 		d.addStyleSheet("/_internal/css/alerts.css");
 		d.createContent();
 	}

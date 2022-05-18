@@ -19,24 +19,18 @@ public class LoginDocument implements HttpDocument {
 		HtmlElement cont = new HtmlElement("div");
 		cont.addClass("login-container");
 
-		HtmlElement tt = new HtmlElement("div");
-		tt.addClass("login-title");
-		cont.appendChild(tt);
-
-		HtmlElement ttx = new HtmlElement("a");
+		HtmlElement ttx = new HtmlElement("span");
 		ttx.setText("Log In using");
-		tt.appendChild(ttx);
+		ttx.addClass("login-title");
+		cont.appendChild(ttx);
 
 		HtmlElement ul = new HtmlElement("ul");
 		ul.addClass("login-list");
 		cont.appendChild(ul);
 
 		for(AuthMethod m : Webinterface.getAvailableAuthMethods()) {
-			HtmlElement lo = new HtmlElement("div");
-			lo.addClass("login-list-item");
-			ul.appendChild(lo);
-
 			HtmlElement a = new HtmlElement("a");
+			a.addClass("login-list-item");
 			a.setText(m.getName());
 
 			URLEncoded query = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery();
@@ -47,22 +41,19 @@ public class LoginDocument implements HttpDocument {
 				+ (shouldConnect ? "&connect=true" : "");
 
 			a.setAttribute("href", () -> href);
-			lo.appendChild(a);
+			ul.appendChild(a);
 		}
 
 		if(Webinterface.getAvailableAuthMethods().isEmpty()) {
-			HtmlElement lo = new HtmlElement("div");
-			lo.addClass("login-list-item");
-			ul.appendChild(lo);
-
 			HtmlElement a = new HtmlElement("a");
 			a.setText("No login method is available at the moment");
 			a.setAttribute("href", "#");
-			lo.appendChild(a);
+			ul.appendChild(a);
 		}
 
 		d.getBodyNode().appendChild(cont);
 		d.addStyleSheet("/_internal/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
+		d.addStyleSheet("/_internal/css/base.css");
 		d.addStyleSheet("/_internal/css/login-include.css");
 		d.createContent();
 	}

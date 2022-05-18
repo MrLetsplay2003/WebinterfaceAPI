@@ -112,7 +112,6 @@ public class SetupDocument implements HttpDocument {
 		d.addStyleSheet("/_internal/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
 		d.addStyleSheet("/_internal/css/base.css");
 		d.addStyleSheet("/_internal/css/setup-include.css");
-//		d.addStyleSheet("/_internal/css/include.css");
 		d.addStyleSheet("/_internal/css/alerts.css");
 		d.includeScript("https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js", false, true);
 		d.includeScript("/_internal/js/module/toast.js", true, true);

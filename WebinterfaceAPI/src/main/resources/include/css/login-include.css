@@ -7,6 +7,7 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	overflow: hidden;
 }
 
 .login-container {
@@ -15,12 +16,14 @@ body {
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background-color: var(--theme-color-content-bg);
+	background-color: var(--theme-color-section-background);
 	box-shadow: 2px 2px 2px 2px var(--theme-color-content-shadow);
 	text-align: center;
 	padding-top: 20px;
 	padding-bottom: 20px;
 	border-radius: 5px;
+	color: var(--theme-color-content-text);
+	font-family: 'Open Sans', sans-serif;
 }
 
 .login-list {
@@ -36,34 +39,37 @@ body {
 	text-decoration: none;
 	display: block;
 	margin-bottom: 20px;
-}
-
-.login-title > a {
 	color: #757575;
 }
 
 .login-list-item {
-	position: relative;
-	text-align: center;
+	display: block;
 	width: 100%;
-}
-
-.login-list-item > a {
 	font-family: 'Open Sans', sans-serif;
 	text-decoration: none;
 	color: var(--theme-color-content-text);
-	padding: 10px 0px 10px 5px;
-	display: block;
+	padding: 10px 0px 10px 0px;
 }
 
-.login-list-item:hover {
+a.login-list-item:hover {
 	background-color: rgba(128, 128, 128, 0.5);
 	cursor: pointer;
 }
 
-.login-list-item > a:visited, .login-list-item > a:hover, .login-list-item > a:active {
-	color: var(--theme-color-content-text);
-	text-decoration: none;
+/* Password Login */
+
+.login-button {
+	margin-top: 10px;
+	margin-left: 5px;
+	margin-right: 5px;
+	width: calc(50% - 15px);
+}
+
+input.login-list-item {
+	position: relative;
+	width: calc(100% - 20px);
+	margin-top: 10px;
+	margin-left: 10px;
 }
 
 /* Non-mobile styles for side nav responsiveness, 750px breakpoint */
@@ -71,8 +77,9 @@ body {
 
 	.login-container {
 		position: absolute;
-		left: calc(50% - 200px);
-		top: auto;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 		width: 400px;
 		height: auto;
 	}
