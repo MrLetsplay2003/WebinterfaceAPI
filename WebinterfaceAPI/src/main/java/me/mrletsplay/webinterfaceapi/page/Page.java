@@ -1,9 +1,7 @@
 package me.mrletsplay.webinterfaceapi.page;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import me.mrletsplay.simplehttpserver.dom.css.CssElement;
 import me.mrletsplay.simplehttpserver.dom.css.CssSelector;
@@ -17,6 +15,7 @@ import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.Account;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
+import me.mrletsplay.webinterfaceapi.context.WebinterfaceContext;
 import me.mrletsplay.webinterfaceapi.js.DefaultJSModule;
 import me.mrletsplay.webinterfaceapi.js.JSModule;
 import me.mrletsplay.webinterfaceapi.page.dynamic.DynamicContent;
@@ -25,14 +24,15 @@ import me.mrletsplay.webinterfaceapi.page.dynamic.DynamicMultiple;
 import me.mrletsplay.webinterfaceapi.page.dynamic.DynamicOptional;
 import me.mrletsplay.webinterfaceapi.page.impl.AccountPage;
 import me.mrletsplay.webinterfaceapi.session.Session;
+import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 
 public class Page implements HttpDocument {
 
-	public static final String
-		CONTEXT_PROPERTY_DOCUMENT = "webinterface-document",
-		CONTEXT_PROPERTY_SCRIPT = "webinterface-script",
-		CONTEXT_PROPERTY_STYLE = "webinterface-style",
-		CONTEXT_PROPERTY_REQUIRED_MODULES = "webinterface-required-modules";
+//	public static final String
+//		CONTEXT_PROPERTY_DOCUMENT = "webinterface-document",
+//		CONTEXT_PROPERTY_SCRIPT = "webinterface-script",
+//		CONTEXT_PROPERTY_STYLE = "webinterface-style",
+//		CONTEXT_PROPERTY_REQUIRED_MODULES = "webinterface-required-modules";
 
 	private String
 		name,
@@ -145,10 +145,12 @@ public class Page implements HttpDocument {
 
 		HtmlDocument d = new HtmlDocument();
 		d.setTitle(name);
-		d.setIcon(Webinterface.getConfig().getSetting(DefaultSettings.ICON_IMAGE));
+		d.setIcon("/_internal/include/img/" + Webinterface.getConfig().getSetting(DefaultSettings.ICON_IMAGE));
 		d.setLanguage("en");
-		d.includeScript("https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js", false, true);
-		d.includeScript("https://code.iconify.design/2/2.2.1/iconify.min.js", false, true);
+
+		for(String script : WebinterfaceUtils.DEFAULT_SCRIPTS) {
+			d.includeScript(script, false, true);
+		}
 		JSScript sc = new JSScript();
 		StringBuilder b = new StringBuilder();
 		for(PeriodicAction a : periodicActions) {
@@ -161,13 +163,10 @@ public class Page implements HttpDocument {
 		st.addMobileElement(mobileContainerStyle);
 
 		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
-		ctx.setProperty(CONTEXT_PROPERTY_DOCUMENT, d);
-		ctx.setProperty(CONTEXT_PROPERTY_SCRIPT, sc);
-		ctx.setProperty(CONTEXT_PROPERTY_STYLE, st);
-		Set<JSModule> requiredModules = new HashSet<>();
-		requiredModules.add(DefaultJSModule.BASE);
-		requiredModules.add(DefaultJSModule.TOAST);
-		ctx.setProperty(CONTEXT_PROPERTY_REQUIRED_MODULES, requiredModules);
+		WebinterfaceContext wiCtx = new WebinterfaceContext(ctx, d, sc, st);
+		wiCtx.requireModule(DefaultJSModule.BASE);
+		wiCtx.requireModule(DefaultJSModule.TOAST);
+		ctx.setProperty(WebinterfaceContext.CONTEXT_PROPERTY_NAME, wiCtx);
 
 		HtmlElement alertBox = new HtmlElement("div");
 		alertBox.setID("alert-box");
@@ -191,12 +190,12 @@ public class Page implements HttpDocument {
 		HtmlElement header = new HtmlElement("header");
 		header.addClass("header");
 
-		HtmlElement img2 = HtmlElement.img("/_internal/img/list.svg", "Dropdown");
+		HtmlElement img2 = HtmlElement.img("/_internal/include/img/list.svg", "Dropdown");
 		img2.addClass("header-list-item");
 		img2.setAttribute("onclick", "toggleSidebar()");
 		header.appendChild(img2);
 
-		HtmlElement img = HtmlElement.img(Webinterface.getConfig().getSetting(DefaultSettings.HEADER_IMAGE), "WebinterfaceAPI");
+		HtmlElement img = HtmlElement.img("/_internal/include/img/" + Webinterface.getConfig().getSetting(DefaultSettings.HEADER_IMAGE), "WebinterfaceAPI");
 		img.addClass("header-image-item");
 		img.setSelfClosing(true);
 		img.setAttribute("onclick", "window.location.href = \"/\";");
@@ -261,7 +260,7 @@ public class Page implements HttpDocument {
 		HtmlElement sidenav = new HtmlElement("aside");
 		sidenav.addClass("sidenav");
 
-		HtmlElement img3 = HtmlElement.img("/_internal/img/close.svg", "Close");
+		HtmlElement img3 = HtmlElement.img("/_internal/include/img/close.svg", "Close");
 		img3.addClass("header-list-item");
 		img3.setAttribute("onclick", "toggleSidebar()");
 		sidenav.appendChild(img3);
@@ -290,12 +289,13 @@ public class Page implements HttpDocument {
 		d.getBodyNode().appendChild(main);
 		d.getBodyNode().appendChild(sidenav);
 		d.getHeadNode().appendChild(HtmlElement.script(sc));
-		d.addStyleSheet("/_internal/css/base.css");
-		d.addStyleSheet("/_internal/css/include.css");
-		d.addStyleSheet("/_internal/css/alerts.css");
-		d.addStyleSheet("/_internal/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
+
+		wiCtx.includeStyleSheet("base.css");
+		wiCtx.includeStyleSheet("include.css");
+		wiCtx.includeStyleSheet("alerts.css");
+		wiCtx.includeStyleSheet("theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
 		d.getHeadNode().appendChild(HtmlElement.style(st));
-		for(JSModule m : requiredModules) {
+		for(JSModule m : wiCtx.getRequiredModules()) {
 			d.includeScript("/_internal/module/" + m.getIdentifier() + ".js", false, true);
 		}
 		return d;

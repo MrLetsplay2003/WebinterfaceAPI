@@ -72,12 +72,12 @@ public class PasswordLoginDocument implements HttpDocument {
 
 		d.getBodyNode().appendChild(cont);
 		d.includeScript("https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js", false, true);
-		d.includeScript("/_internal/js/module/toast.js", true, true);
-		d.includeScript("/_internal/js/password-login-include.js", false, true);
-		d.addStyleSheet("/_internal/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
-		d.addStyleSheet("/_internal/css/base.css");
-		d.addStyleSheet("/_internal/css/login-include.css");
-		d.addStyleSheet("/_internal/css/alerts.css");
+		d.includeScript("/_internal/include/js/module/toast.js", false, true);
+		d.includeScript("/_internal/include/js/password-login-include.js", false, true);
+		d.addStyleSheet("/_internal/include/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
+		d.addStyleSheet("/_internal/include/css/base.css");
+		d.addStyleSheet("/_internal/include/css/login-include.css");
+		d.addStyleSheet("/_internal/include/css/alerts.css");
 		d.createContent();
 	}
 

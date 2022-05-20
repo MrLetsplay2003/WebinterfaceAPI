@@ -15,6 +15,11 @@ public class WebinterfaceUtils {
 
 	private static final Random RANDOM = new Random();
 
+	public static final String[] DEFAULT_SCRIPTS = {
+		"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js",
+		"https://code.iconify.design/2/2.2.1/iconify.min.js"
+	};
+
 	public static String httpTimeStamp(TemporalAccessor temporal) {
 		return HTTP_TIMESTAMP.format(temporal);
 	}

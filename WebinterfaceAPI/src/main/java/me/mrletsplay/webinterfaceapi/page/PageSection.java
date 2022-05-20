@@ -9,7 +9,7 @@ import me.mrletsplay.simplehttpserver.dom.css.CssElement;
 import me.mrletsplay.simplehttpserver.dom.css.CssSelector;
 import me.mrletsplay.simplehttpserver.dom.css.StyleSheet;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
-import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.context.WebinterfaceContext;
 import me.mrletsplay.webinterfaceapi.page.dynamic.DynamicContent;
 import me.mrletsplay.webinterfaceapi.page.dynamic.DynamicList;
 import me.mrletsplay.webinterfaceapi.page.dynamic.DynamicMultiple;
@@ -128,8 +128,6 @@ public class PageSection {
 	}
 
 	public HtmlElement toHtml() {
-		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
-
 		HtmlElement el = new HtmlElement("div");
 		el.addClass("grid-layout page-section");
 
@@ -142,7 +140,8 @@ public class PageSection {
 			el.appendChild(e.toHtml());
 		}
 
-		StyleSheet st = (StyleSheet) ctx.getProperty(Page.CONTEXT_PROPERTY_STYLE);
+		WebinterfaceContext ctx = WebinterfaceContext.getCurrentContext();
+		StyleSheet st = ctx.getStyle();
 		if(!style.isEmpty()) {
 			el.setID(getOrGenerateID()); // Set id to safe non-null, because it might have not been set before
 			st.addElement(style);

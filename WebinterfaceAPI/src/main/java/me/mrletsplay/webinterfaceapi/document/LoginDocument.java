@@ -52,9 +52,9 @@ public class LoginDocument implements HttpDocument {
 		}
 
 		d.getBodyNode().appendChild(cont);
-		d.addStyleSheet("/_internal/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
-		d.addStyleSheet("/_internal/css/base.css");
-		d.addStyleSheet("/_internal/css/login-include.css");
+		d.addStyleSheet("/_internal/include/css/theme/" + Webinterface.getConfig().getSetting(DefaultSettings.THEME) + ".css");
+		d.addStyleSheet("/_internal/include/css/base.css");
+		d.addStyleSheet("/_internal/include/css/login-include.css");
 		d.createContent();
 	}
 

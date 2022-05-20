@@ -32,8 +32,8 @@ public class DefaultSettings implements AutoSettings {
 	public static final StringSetting
 		THEME = general.addString("theme", "dark", "Theme"),
 		HOME_PAGE_PATH = general.addString("home-page.path", "/wiapi/welcome", "Home page path"),
-		ICON_IMAGE = general.addString("icon-image", "/_internal/img/icon.svg", "Icon Image"),
-		HEADER_IMAGE = general.addString("header-image", "/_internal/img/header.svg", "Header Image");
+		ICON_IMAGE = general.addString("icon-image", "icon.svg", "Icon Image", "Path of the icon image inside the include/img resource directory"),
+		HEADER_IMAGE = general.addString("header-image", "header.svg", "Header Image", "Path of the header image inside the include/img resource directory");
 
 	public static final StringListSetting
 		INDEX_FILES = general.addStringList("index-files", Arrays.asList("index.php", "index.html"), "Index file names");

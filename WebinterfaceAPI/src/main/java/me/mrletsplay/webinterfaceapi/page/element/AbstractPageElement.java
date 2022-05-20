@@ -11,8 +11,7 @@ import me.mrletsplay.simplehttpserver.dom.css.CssElement;
 import me.mrletsplay.simplehttpserver.dom.css.CssSelector;
 import me.mrletsplay.simplehttpserver.dom.css.StyleSheet;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
-import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
-import me.mrletsplay.webinterfaceapi.page.Page;
+import me.mrletsplay.webinterfaceapi.context.WebinterfaceContext;
 import me.mrletsplay.webinterfaceapi.page.action.Action;
 import me.mrletsplay.webinterfaceapi.page.element.layout.ElementLayoutOption;
 
@@ -139,8 +138,6 @@ public abstract class AbstractPageElement implements PageElement {
 
 	@Override
 	public HtmlElement toHtml() {
-		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
-
 		HtmlElement elContainer = new HtmlElement("div");
 		elContainer.addClass("element-container");
 		HtmlElement el = createElement();
@@ -151,7 +148,8 @@ public abstract class AbstractPageElement implements PageElement {
 		el.addClass("element");
 		if(onClickAction != null) el.setAttribute("onclick", onClickAction.createAttributeValue());
 
-		StyleSheet st = (StyleSheet) ctx.getProperty(Page.CONTEXT_PROPERTY_STYLE);
+		WebinterfaceContext ctx = WebinterfaceContext.getCurrentContext();
+		StyleSheet st = ctx.getStyle();
 		if(!style.isEmpty()) {
 			el.setID(getOrGenerateID()); // Set id to safe non-null, because it might have not been set before
 			st.addElement(style);

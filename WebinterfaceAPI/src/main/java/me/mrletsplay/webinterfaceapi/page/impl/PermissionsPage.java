@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.DefaultPermissions;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.Account;
+import me.mrletsplay.webinterfaceapi.context.WebinterfaceContext;
 import me.mrletsplay.webinterfaceapi.page.Page;
 import me.mrletsplay.webinterfaceapi.page.PageSection;
 import me.mrletsplay.webinterfaceapi.page.action.MultiAction;
@@ -46,7 +46,7 @@ public class PermissionsPage extends Page {
 		sc.getMobileStyle().setProperty("grid-template-columns", "1fr");
 
 		sc.dynamic(els -> {
-			HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
+			WebinterfaceContext ctx = WebinterfaceContext.getCurrentContext();
 			String accID = ctx.getRequestedPath().getQuery().getFirst("acc");
 			Account account = accID == null ? null : Webinterface.getAccountStorage().getAccountByID(accID);
 

@@ -129,7 +129,7 @@ public class Webinterface {
 			System.setProperty("webinterface.log-dir", new File(rootDirectory, "logs").getAbsolutePath());
 		logger = LoggerFactory.getLogger(Webinterface.class);
 
-		includeFile("/_internal", new File(rootDirectory, "include"));
+		includeFile("/_internal/include", new File(rootDirectory, "include"));
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
 		credentialsStorage = new FileCredentialsStorage(new File(rootDirectory, "data/credentials.yml"));
@@ -291,8 +291,7 @@ public class Webinterface {
 					byte[] bytes = Files.readAllBytes(outFile);
 					byte[] resDigest = md.digest(bytes);
 					if(!ByteUtils.bytesToHex(resDigest).equals(expectedDigest)) {
-						// TODO: Add command line option to force override file
-						Webinterface.getLogger().warn("Resource file '" + resource + "' has been edited. To force updating this file, add the '--force-update-resources' option. Skipping!");
+						Webinterface.getLogger().warn("Resource file '" + resource + "' has been edited. Skipping!");
 						continue;
 					}
 
