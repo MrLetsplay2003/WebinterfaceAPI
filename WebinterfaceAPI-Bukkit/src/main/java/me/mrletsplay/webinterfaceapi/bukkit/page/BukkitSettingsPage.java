@@ -1,11 +1,11 @@
 package me.mrletsplay.webinterfaceapi.bukkit.page;
 
+import me.mrletsplay.webinterfaceapi.DefaultPermissions;
+import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.bukkit.BukkitSettings;
-import me.mrletsplay.webinterfaceapi.webinterface.DefaultPermissions;
-import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.page.Page;
-import me.mrletsplay.webinterfaceapi.webinterface.page.PageSection;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.SettingsPane;
+import me.mrletsplay.webinterfaceapi.page.Page;
+import me.mrletsplay.webinterfaceapi.page.PageSection;
+import me.mrletsplay.webinterfaceapi.page.element.SettingsPane;
 
 public class BukkitSettingsPage extends Page {
 

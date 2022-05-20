@@ -2,11 +2,11 @@ package me.mrletsplay.webinterfaceapi.bukkit;
 
 import java.util.Arrays;
 
-import me.mrletsplay.webinterfaceapi.webinterface.config.setting.AutoSetting;
-import me.mrletsplay.webinterfaceapi.webinterface.config.setting.AutoSettings;
-import me.mrletsplay.webinterfaceapi.webinterface.config.setting.SettingsCategory;
-import me.mrletsplay.webinterfaceapi.webinterface.config.setting.impl.BooleanSetting;
-import me.mrletsplay.webinterfaceapi.webinterface.config.setting.impl.StringListSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.AutoSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.AutoSettings;
+import me.mrletsplay.webinterfaceapi.config.setting.SettingsCategory;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.BooleanSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.StringListSetting;
 
 public class BukkitSettings implements AutoSettings {
 	

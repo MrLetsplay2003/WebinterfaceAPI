@@ -6,22 +6,22 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.mrletsplay.webinterfaceapi.Webinterface;
+import me.mrletsplay.webinterfaceapi.auth.Account;
+import me.mrletsplay.webinterfaceapi.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.bukkit.BukkitSettings;
 import me.mrletsplay.webinterfaceapi.bukkit.WebinterfacePlugin;
-import me.mrletsplay.webinterfaceapi.webinterface.Webinterface;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.page.Page;
-import me.mrletsplay.webinterfaceapi.webinterface.page.PageSection;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.SendJSAction;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.Group;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.Image;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.InputField;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.Text;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.TitleText;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.DefaultLayoutOption;
-import me.mrletsplay.webinterfaceapi.webinterface.page.element.layout.GridLayout;
-import me.mrletsplay.webinterfaceapi.webinterface.session.Session;
+import me.mrletsplay.webinterfaceapi.page.Page;
+import me.mrletsplay.webinterfaceapi.page.PageSection;
+import me.mrletsplay.webinterfaceapi.page.action.SendJSAction;
+import me.mrletsplay.webinterfaceapi.page.element.Group;
+import me.mrletsplay.webinterfaceapi.page.element.Image;
+import me.mrletsplay.webinterfaceapi.page.element.InputField;
+import me.mrletsplay.webinterfaceapi.page.element.Text;
+import me.mrletsplay.webinterfaceapi.page.element.TitleText;
+import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
+import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
+import me.mrletsplay.webinterfaceapi.session.Session;
 
 public class BukkitPage extends Page {
 

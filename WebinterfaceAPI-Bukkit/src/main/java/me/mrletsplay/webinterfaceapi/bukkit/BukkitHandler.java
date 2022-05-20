@@ -10,24 +10,24 @@ import me.mrletsplay.mrcore.bukkitimpl.ui.UIElement;
 import me.mrletsplay.mrcore.bukkitimpl.ui.UILayout;
 import me.mrletsplay.mrcore.bukkitimpl.ui.event.UIBuildEvent;
 import me.mrletsplay.mrcore.misc.QuickMap;
+import me.mrletsplay.webinterfaceapi.auth.Account;
+import me.mrletsplay.webinterfaceapi.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.bukkit.command.CommandWebinterfaceAPI;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.Account;
-import me.mrletsplay.webinterfaceapi.webinterface.auth.AccountConnection;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ActionHandler;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.WebinterfaceHandler;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ActionEvent;
-import me.mrletsplay.webinterfaceapi.webinterface.page.action.ActionResponse;
-import me.mrletsplay.webinterfaceapi.webinterface.session.Session;
+import me.mrletsplay.webinterfaceapi.page.action.ActionEvent;
+import me.mrletsplay.webinterfaceapi.page.action.ActionHandler;
+import me.mrletsplay.webinterfaceapi.page.action.ActionResponse;
+import me.mrletsplay.webinterfaceapi.page.action.WebinterfaceHandler;
+import me.mrletsplay.webinterfaceapi.session.Session;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 
 public class BukkitHandler implements ActionHandler {
-	
+
 	private static final UI CONNECT_UI = new UIBuilder()
 			.addElement("connect_text", new UIElement() {
-				
+
 				@Override
 				public BaseComponent[] getLayout(UIBuildEvent e) {
 					Account acc = (Account) e.getUIInstance().getProperty(WebinterfacePlugin.plugin, "account");
@@ -84,5 +84,5 @@ public class BukkitHandler implements ActionHandler {
 			.sendToPlayer(p);
 		return ActionResponse.success();
 	}
-	
+
 }
