@@ -72,7 +72,7 @@ public class WebinterfaceContext {
 
 	/**
 	 * Adds multiple JavaScript module to be included in the page
-	 * @param module The modules to be included
+	 * @param modules The modules to be included
 	 */
 	public void requireModules(Collection<? extends JSModule> modules) {
 		requiredModules.addAll(modules);
@@ -80,7 +80,7 @@ public class WebinterfaceContext {
 
 	/**
 	 * Adds multiple JavaScript module to be included in the page
-	 * @param module The modules to be included
+	 * @param modules The modules to be included
 	 */
 	public void requireModules(JSModule... modules) {
 		requiredModules.addAll(Arrays.asList(modules));
