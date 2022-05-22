@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import org.apache.commons.text.StringEscapeUtils;
 
 import me.mrletsplay.webinterfaceapi.page.element.CheckBox;
+import me.mrletsplay.webinterfaceapi.page.element.ElementID;
 import me.mrletsplay.webinterfaceapi.page.element.PageElement;
 
 public interface ActionValue {
@@ -48,28 +49,31 @@ public interface ActionValue {
 		return new ObjectValue();
 	}
 
-	public static ActionValue elementValue(String elementID) {
-		return () -> "document.getElementById(\"" + StringEscapeUtils.escapeEcmaScript(elementID) + "\").value";
+	public static ActionValue elementValue(ElementID elementID) {
+		elementID.require();
+		return () -> "document.getElementById(\"" + StringEscapeUtils.escapeEcmaScript(elementID.get()) + "\").value";
 	}
 
 	public static ActionValue elementValue(PageElement element) {
-		return () -> "document.getElementById(\"" + StringEscapeUtils.escapeEcmaScript(element.getOrGenerateID()) + "\").value";
+		return elementValue(element.getID());
 	}
 
-	public static ActionValue checkboxValue(String elementID) {
-		return () -> "document.getElementById(\"" + StringEscapeUtils.escapeEcmaScript(elementID) + "\").firstChild.checked";
+	public static ActionValue checkboxValue(ElementID elementID) {
+		elementID.require();
+		return () -> "document.getElementById(\"" + StringEscapeUtils.escapeEcmaScript(elementID.get()) + "\").firstChild.checked";
 	}
 
 	public static ActionValue checkboxValue(CheckBox checkbox) {
-		return () -> "document.getElementById(\"" + StringEscapeUtils.escapeEcmaScript(checkbox.getOrGenerateID()) + "\").firstChild.checked";
+		return checkboxValue(checkbox.getID());
 	}
 
-	public static ActionValue elementAttribute(String elementID, String attributeName) {
-		return () -> "WebinterfaceUtils.getElementAttributeById(\"" + StringEscapeUtils.escapeEcmaScript(elementID) + "\",\"" + StringEscapeUtils.escapeEcmaScript(attributeName) + "\")";
+	public static ActionValue elementAttribute(ElementID elementID, String attributeName) {
+		elementID.require();
+		return () -> "WebinterfaceUtils.getElementAttributeById(\"" + StringEscapeUtils.escapeEcmaScript(elementID.get()) + "\",\"" + StringEscapeUtils.escapeEcmaScript(attributeName) + "\")";
 	}
 
 	public static ActionValue elementAttribute(PageElement element, String attributeName) {
-		return () -> "WebinterfaceUtils.getElementAttributeById(\"" + StringEscapeUtils.escapeEcmaScript(element.getOrGenerateID()) + "\",\"" + StringEscapeUtils.escapeEcmaScript(attributeName) + "\")";
+		return elementAttribute(element.getID(), attributeName);
 	}
 
 }

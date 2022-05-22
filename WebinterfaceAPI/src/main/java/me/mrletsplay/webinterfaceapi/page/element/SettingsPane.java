@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import me.mrletsplay.mrcore.json.JSONArray;
 import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.misc.NullableOptional;
 import me.mrletsplay.webinterfaceapi.config.Config;
 import me.mrletsplay.webinterfaceapi.config.setting.Setting;
 import me.mrletsplay.webinterfaceapi.config.setting.SettingsCategory;
-import me.mrletsplay.webinterfaceapi.page.SettingsPage;
 import me.mrletsplay.webinterfaceapi.page.action.Action;
 import me.mrletsplay.webinterfaceapi.page.action.ActionEvent;
 import me.mrletsplay.webinterfaceapi.page.action.ActionResponse;
@@ -160,36 +158,29 @@ public class SettingsPane extends Group {
 	}
 
 	private Action changeSettingAction(Setting<?> setting, ActionValue value) {
-		return SendJSAction.of(requestTarget, requestMethod, ActionValue.array(
-				ActionValue.string(setting.getKey()),
-				value
-			)).onSuccess(ReloadPageAction.delayed(100));
+		return SendJSAction.of(requestTarget, requestMethod, ActionValue.object()
+				.put("setting", ActionValue.string(setting.getKey()))
+				.put("value", value)
+			).onSuccess(ReloadPageAction.delayed(100));
 	}
 
 	public List<SettingsCategory> getSettingsCategories() {
 		return categories;
 	}
 
-	/**
-	 * @deprecated Use {@link SettingsPage#handleSetSettingRequest(Config, ActionEvent)} instead
-	 * @param config
-	 * @param event
-	 * @return
-	 */
-	@Deprecated
 	public static ActionResponse handleSetSettingRequest(Config config, ActionEvent event) {
-		JSONArray keyAndValue = event.getRequestData().getJSONArray("value");
-		Setting<?> set = config.getSetting(keyAndValue.getString(0));
-		SettingsPane.setSetting(config, set, keyAndValue.get(1));
+		String str = event.getData().optString("setting").orElse(null);
+		if(str == null) return ActionResponse.error("Need setting");
+		Setting<?> set = config.getSetting(str);
+		if(set == null) return ActionResponse.error("Invalid setting");
+		SettingsPane.setSetting(config, set, event.getData().get("value"));
 		return ActionResponse.success();
 	}
 
-	@Deprecated
 	private static <T> void setSetting(Config config, Setting<T> setting, Object value) {
 		config.setSetting(setting, setting.getType().cast(value, SettingsPane::jsonCast).get());
 	}
 
-	@Deprecated
 	private static <T> NullableOptional<T> jsonCast(Object o, Class<T> typeClass, Complex<?> exactClass) {
 		if(o == null) return NullableOptional.of(null);
 		if(typeClass.isInstance(o)) return NullableOptional.of(typeClass.cast(o));

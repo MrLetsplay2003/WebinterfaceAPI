@@ -38,7 +38,7 @@ public class ActionCallbackDocument implements HttpDocument {
 			ActionEvent e = new ActionEvent(null, sess, req.getString("target"), req.getString("method"), req.getJSONObject("data"));
 			setResponse(WebinterfaceActionHandlers.handle(e));
 		}catch(Exception e) {
-			Webinterface.getLogger().debug("Failed to handle request", e);
+			Webinterface.getLogger().error("Failed to handle request", e);
 			setResponse(ActionResponse.error("Failed to handle request"));
 			return;
 		}

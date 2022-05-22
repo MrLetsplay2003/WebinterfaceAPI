@@ -11,6 +11,9 @@ public class PasswordLoginDocument implements HttpDocument {
 	@Override
 	public void createContent() {
 		HtmlDocument d = new HtmlDocument();
+		d.setTitle("Login");
+		d.setIcon("/_internal/include/img/" + Webinterface.getConfig().getSetting(DefaultSettings.ICON_IMAGE));
+		d.setLanguage("en");
 
 		HtmlElement cont = new HtmlElement("div");
 		cont.addClass("login-container");

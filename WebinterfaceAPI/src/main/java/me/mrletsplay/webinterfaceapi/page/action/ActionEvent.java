@@ -41,15 +41,15 @@ public class ActionEvent {
 		return session.getAccount();
 	}
 
-	public String getRequestTarget() {
+	public String getTarget() {
 		return target;
 	}
 
-	public String getRequestMethod() {
+	public String getMethod() {
 		return method;
 	}
 
-	public JSONObject getRequestData() {
+	public JSONObject getData() {
 		return data;
 	}
 

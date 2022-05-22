@@ -43,7 +43,7 @@ import me.mrletsplay.webinterfaceapi.config.FileConfig;
 import me.mrletsplay.webinterfaceapi.document.ActionCallbackDocument;
 import me.mrletsplay.webinterfaceapi.document.AuthRequestDocument;
 import me.mrletsplay.webinterfaceapi.document.AuthResponseDocument;
-import me.mrletsplay.webinterfaceapi.document.DocumentProvider;
+import me.mrletsplay.webinterfaceapi.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.document.FileUploadDocument;
 import me.mrletsplay.webinterfaceapi.document.HomeDocument;
 import me.mrletsplay.webinterfaceapi.document.LoginDocument;
@@ -149,7 +149,7 @@ public class Webinterface {
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
 		PHP.setFileExtensions(config.getSetting(DefaultSettings.PHP_FILE_EXTENSIONS));
 
-		if(documentProvider == null) documentProvider = new DocumentProvider();
+		if(documentProvider == null) documentProvider = new WebinterfaceDocumentProvider();
 
 		httpServer = new HttpServer(HttpServer.newConfigurationBuilder()
 			.host(config.getSetting(DefaultSettings.HTTP_BIND))

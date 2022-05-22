@@ -39,7 +39,7 @@ public class DefaultHandler implements ActionHandler {
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "setPermission", permission = DefaultPermissions.MODIFY_USERS)
 	public ActionResponse setOP(ActionEvent event) {
-		JSONObject val = event.getRequestData().getJSONObject("value");
+		JSONObject val = event.getData();
 		String accountID = val.getString("account");
 		String perm = val.getString("permission");
 		boolean b = val.getBoolean("value");
@@ -56,7 +56,7 @@ public class DefaultHandler implements ActionHandler {
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "addPermission", permission = DefaultPermissions.MODIFY_USERS)
 	public ActionResponse addPermission(ActionEvent event) {
-		JSONObject val = event.getRequestData().getJSONObject("value");
+		JSONObject val = event.getData();
 		String permission = val.getString("permission");
 		String accountID = val.getString("account_id");
 		Account acc = Webinterface.getAccountStorage().getAccountByID(accountID);
@@ -67,7 +67,7 @@ public class DefaultHandler implements ActionHandler {
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "removePermission", permission = DefaultPermissions.MODIFY_USERS)
 	public ActionResponse removePermission(ActionEvent event) {
-		JSONObject val = event.getRequestData().getJSONObject("value");
+		JSONObject val = event.getData();
 		String permission = val.getString("permission");
 		String accountID = val.getString("account_id");
 		Account acc = Webinterface.getAccountStorage().getAccountByID(accountID);
@@ -78,7 +78,7 @@ public class DefaultHandler implements ActionHandler {
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "deleteAccount", permission = DefaultPermissions.MODIFY_USERS)
 	public ActionResponse deleteAccount(ActionEvent event) {
-		String accountID = event.getRequestData().getString("value");
+		String accountID = event.getData().getString("account");
 		Account acc = Webinterface.getAccountStorage().getAccountByID(accountID);
 		if(acc == null) return ActionResponse.error("Account doesn't exist");
 		Webinterface.getAccountStorage().deleteAccount(acc);
@@ -88,7 +88,7 @@ public class DefaultHandler implements ActionHandler {
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "removeAccountConnection")
 	public ActionResponse removeAccountConnection(ActionEvent event) {
 		Account account = event.getAccount();
-		String authMethod = event.getRequestData().getString("value");
+		String authMethod = event.getData().getString("connection");
 		if(account.getConnections().size() > 1) account.removeConnection(authMethod);
 		return ActionResponse.success();
 	}
@@ -96,8 +96,8 @@ public class DefaultHandler implements ActionHandler {
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "subscribeToEvent")
 	public ActionResponse subscribeToEvent(ActionEvent event) {
 		Account account = event.getAccount();
-		String target = event.getRequestData().getString("eventTarget");
-		String name = event.getRequestData().getString("eventName");
+		String target = event.getData().getString("eventTarget");
+		String name = event.getData().getString("eventName");
 
 		if(!event.isFromWebSocket()) return ActionResponse.error("Only allowed for WebSockets");
 

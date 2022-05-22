@@ -35,10 +35,6 @@ public class DefaultSettings implements AutoSettings {
 		ICON_IMAGE = general.addString("icon-image", "icon.svg", "Icon Image", "Path of the icon image inside the include/img resource directory"),
 		HEADER_IMAGE = general.addString("header-image", "header.svg", "Header Image", "Path of the header image inside the include/img resource directory");
 
-	public static final StringListSetting
-		INDEX_FILES = general.addStringList("index-files", Arrays.asList("index.php", "index.html"), "Index file names");
-
-
 	// HTTP
 
 	public static final BooleanSetting

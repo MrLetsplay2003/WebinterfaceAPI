@@ -17,8 +17,9 @@ import me.mrletsplay.webinterfaceapi.page.element.layout.ElementLayoutOption;
 
 public abstract class AbstractPageElement implements PageElement {
 
+	private ElementID id;
+
 	private String
-		id,
 		width,
 		height;
 
@@ -37,20 +38,21 @@ public abstract class AbstractPageElement implements PageElement {
 	private boolean isTemplate;
 
 	public AbstractPageElement() {
+		this.id = new ElementID();
 		this.layoutOptions = new HashSet<>();
 		this.attributes = new HashMap<>();
 		this.containerAttributes = new HashMap<>();
-		this.style = new CssElement(new CssSelector(() -> "#" + getOrGenerateID()));
-		this.mobileStyle = new CssElement(new CssSelector(() -> "#" + getOrGenerateID()));
+		this.style = new CssElement(new CssSelector(() -> "#" + id.get()));
+		this.mobileStyle = new CssElement(new CssSelector(() -> "#" + id.get()));
 	}
 
 	@Override
 	public void setID(String id) {
-		this.id = id;
+		this.id.set(id);
 	}
 
 	@Override
-	public String getID() {
+	public ElementID getID() {
 		return id;
 	}
 
@@ -140,25 +142,25 @@ public abstract class AbstractPageElement implements PageElement {
 	public HtmlElement toHtml() {
 		HtmlElement elContainer = new HtmlElement("div");
 		elContainer.addClass("element-container");
-		HtmlElement el = createElement();
-		if(id != null && el.getID() == null) el.setID(id);
 		if(width != null) style.setProperty("width", width);
 		if(height != null) style.setProperty("height", height);
-
-		el.addClass("element");
-		if(onClickAction != null) el.setAttribute("onclick", onClickAction.createAttributeValue());
 
 		WebinterfaceContext ctx = WebinterfaceContext.getCurrentContext();
 		StyleSheet st = ctx.getStyle();
 		if(!style.isEmpty()) {
-			el.setID(getOrGenerateID()); // Set id to safe non-null, because it might have not been set before
+			id.require();
 			st.addElement(style);
 		}
 
 		if(!mobileStyle.isEmpty()) {
-			el.setID(getOrGenerateID()); // Set id to safe non-null, because it might have not been set before
+			id.require();
 			st.addMobileElement(mobileStyle);
 		}
+
+		HtmlElement el = createElement();
+		el.addClass("element");
+		if(id.get() != null) el.setID(id.get());
+		if(onClickAction != null) el.setAttribute("onclick", onClickAction.createAttributeValue());
 
 		attributes.forEach(el::setAttribute);
 		containerAttributes.forEach(elContainer::setAttribute);

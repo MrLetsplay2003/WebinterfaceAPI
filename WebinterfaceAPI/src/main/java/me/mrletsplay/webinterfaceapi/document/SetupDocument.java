@@ -23,6 +23,9 @@ public class SetupDocument implements HttpDocument {
 		if(currentStep == null) currentStep = SETUP_STEP_BASE;
 
 		HtmlDocument d = new HtmlDocument();
+		d.setTitle("Login");
+		d.setIcon("/_internal/include/img/" + Webinterface.getConfig().getSetting(DefaultSettings.ICON_IMAGE));
+		d.setLanguage("en");
 
 		HtmlElement cont = new HtmlElement("div");
 		cont.addClass("setup-container");

@@ -47,7 +47,7 @@ public class WebSocketDocument extends WebSocketEndpoint {
 			ActionResponse response = WebinterfaceActionHandlers.handle(event);
 			send(connection, p, response);
 		}catch(Exception e) {
-			Webinterface.getLogger().debug("Recieved malformed request", e);
+			Webinterface.getLogger().error("Recieved malformed request", e);
 			connection.close(CloseFrame.POLICY_VIOLATION, "Malformed request");
 		}
 	}

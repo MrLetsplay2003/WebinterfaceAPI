@@ -3,14 +3,12 @@ package me.mrletsplay.webinterfaceapi.document;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import me.mrletsplay.simplehttpserver.http.document.DefaultDocumentProvider;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.webinterfaceapi.Webinterface;
-import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
 
-public class DocumentProvider extends DefaultDocumentProvider {
+public class WebinterfaceDocumentProvider extends DefaultDocumentProvider {
 
 	@Override
 	public HttpDocument getDocument(String path) {
@@ -20,17 +18,6 @@ public class DocumentProvider extends DefaultDocumentProvider {
 			return super.getDocument(path);
 		}
 		return doc;
-	}
-
-	@Override
-	public void registerFileDocument(String path, File file) {
-		if(file.isFile()
-				&& Webinterface.getConfig()
-				.getSetting(DefaultSettings.INDEX_FILES)
-				.contains(file.getName().toLowerCase())) {
-			super.registerFileDocument(Paths.get(path).getParent().toString(), file);
-		}
-		super.registerFileDocument(path, file);
 	}
 
 	@Override

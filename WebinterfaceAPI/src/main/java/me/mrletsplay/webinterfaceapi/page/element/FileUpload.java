@@ -35,7 +35,7 @@ public class FileUpload extends AbstractPageElement {
 	}
 
 	public static byte[] getUploadedFileBytes(ActionEvent event) {
-		return Base64.getDecoder().decode(event.getRequestData().getString("value"));
+		return Base64.getDecoder().decode(event.getData().getString("file"));
 	}
 
 	public static class Builder extends AbstractElementBuilder<FileUpload, Builder> {

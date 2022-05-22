@@ -243,7 +243,7 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 	}
 
 	public static <T> ActionResponse handleUpdate(ActionEvent event, ListAdapter<T> adapter) {
-		JSONObject value = event.getRequestData().getJSONObject("value");
+		JSONObject value = event.getData().getJSONObject("value");
 		String action = value.getString("action");
 		switch(action) {
 			case "swap":

@@ -18,7 +18,7 @@ public class SendJSAction implements Action {
 	private Action onSuccess;
 	private Action onError;
 
-	private SendJSAction(String target, String method, ActionValue value) {
+	private SendJSAction(String target, String method, ObjectValue value) {
 		this.target = target;
 		this.method = method;
 		this.value = value;
@@ -68,7 +68,7 @@ public class SendJSAction implements Action {
 		return Collections.singleton(DefaultJSModule.BASE_ACTIONS);
 	}
 
-	public static SendJSAction of(String target, String method, ActionValue value) {
+	public static SendJSAction of(String target, String method, ObjectValue value) {
 		return new SendJSAction(target, method, value);
 	}
 

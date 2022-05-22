@@ -28,6 +28,7 @@ public class AuthResponseDocument implements HttpDocument {
 			c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
 			return;
 		}
+
 		try {
 			AccountConnection acc = method.handleAuthResponse();
 
@@ -50,7 +51,7 @@ public class AuthResponseDocument implements HttpDocument {
 		} catch(AuthException e) {
 			c.getServerHeader().setContent("text/plain", ("Auth failed: " + e.getMessage()).getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 		}catch(Exception e) {
-			Webinterface.getLogger().debug("Unexpected authentication error", e);
+			Webinterface.getLogger().error("Unexpected authentication error", e);
 			c.getServerHeader().setContent("text/plain", "Auth error".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 		}
 	}

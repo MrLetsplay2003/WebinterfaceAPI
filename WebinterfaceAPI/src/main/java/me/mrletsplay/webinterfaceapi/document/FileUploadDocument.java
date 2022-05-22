@@ -42,11 +42,11 @@ public class FileUploadDocument implements HttpDocument {
 			String requestTarget = ctx.getRequestedPath().getQuery().getFirst("target");
 			String requestMethod = ctx.getRequestedPath().getQuery().getFirst("method");
 			JSONObject obj = new JSONObject();
-			obj.put("value", Base64.getEncoder().encodeToString(fileData));
+			obj.put("file", Base64.getEncoder().encodeToString(fileData));
 			ActionEvent event = new ActionEvent(null, sess, requestTarget, requestMethod, obj);
 			setResponse(WebinterfaceActionHandlers.handle(event));
 		}catch(Exception e) {
-			Webinterface.getLogger().debug("Failed to handle request", e);
+			Webinterface.getLogger().error("Failed to handle request", e);
 			setResponse(ActionResponse.error("Failed to handle request"));
 			return;
 		}

@@ -11,7 +11,6 @@ import me.mrletsplay.webinterfaceapi.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.page.Page;
 import me.mrletsplay.webinterfaceapi.page.PageSection;
 import me.mrletsplay.webinterfaceapi.page.action.ConfirmAction;
-import me.mrletsplay.webinterfaceapi.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.page.action.RedirectAction;
 import me.mrletsplay.webinterfaceapi.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.page.action.SendJSAction;
@@ -100,7 +99,7 @@ public class AccountPage extends Page {
 					grp.addElement(Button.builder()
 						.text("Remove connection")
 						.fullWidth()
-						.onClick(ConfirmAction.of(MultiAction.of(SendJSAction.of("webinterface", "removeAccountConnection", ActionValue.string(con.getConnectionName())), ReloadPageAction.delayed(100))))
+						.onClick(ConfirmAction.of(SendJSAction.of("webinterface", "removeAccountConnection", ActionValue.object().put("connection", ActionValue.string(con.getConnectionName()))).onSuccess(ReloadPageAction.delayed(100))))
 						.width("auto")
 						.create());
 				}

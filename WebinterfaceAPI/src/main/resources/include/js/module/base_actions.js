@@ -5,7 +5,7 @@ class WebinterfaceBaseActions {
 	}
 
 	static async sendJS(parameters) {
-		let response = await Webinterface.call(parameters.requestTarget, parameters.requestMethod, {value: parameters.value == null ? null : parameters.value});
+		let response = await Webinterface.call(parameters.requestTarget, parameters.requestMethod, parameters.value == null ? {} : parameters.value);
 		if(response.isSuccess() && parameters.onSuccess != null) {
 			parameters.onSuccess.action(parameters.onSuccess.parameters);
 		}else if(!response.isSuccess() && parameters.onError != null) {

@@ -14,7 +14,7 @@ public interface ActionHandler {
 		for(Method m : getClass().getDeclaredMethods()) {
 			if(m.isAnnotationPresent(WebinterfaceHandler.class)) {
 				WebinterfaceHandler wh = m.getAnnotation(WebinterfaceHandler.class);
-				if(wh.requestTarget().equalsIgnoreCase(event.getRequestTarget()) && Arrays.binarySearch(wh.requestTypes(), event.getRequestMethod()) >= 0) {
+				if(wh.requestTarget().equalsIgnoreCase(event.getTarget()) && Arrays.binarySearch(wh.requestTypes(), event.getMethod()) >= 0) {
 					if(!Arrays.equals(m.getParameterTypes(), new Class[] {ActionEvent.class})
 						|| !m.getReturnType().equals(ActionResponse.class)) {
 						throw new UnsupportedOperationException("Illegal request handler: " + m);
@@ -29,7 +29,7 @@ public interface ActionHandler {
 						return response;
 					}catch(InvocationTargetException | IllegalAccessException | IllegalArgumentException e2) {
 						e2.printStackTrace();
-						Webinterface.getLogger().debug("Malformed request", e2);
+						Webinterface.getLogger().error("Malformed request", e2);
 						return ActionResponse.error("Malformed request");
 					}
 				}

@@ -6,16 +6,15 @@ import me.mrletsplay.simplehttpserver.dom.css.CssElement;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.page.action.Action;
 import me.mrletsplay.webinterfaceapi.page.element.layout.ElementLayoutOption;
-import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 
 public interface PageElement {
 
 	public void setID(String id);
 
-	public String getID();
+	public ElementID getID();
 
-	public default String getOrGenerateID() {
-		if(getID() == null) setID("e_" + WebinterfaceUtils.randomID(16));
+	public default ElementID requireID() {
+		getID().require();
 		return getID();
 	}
 
