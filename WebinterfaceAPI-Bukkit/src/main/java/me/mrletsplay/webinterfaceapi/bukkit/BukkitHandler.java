@@ -72,7 +72,7 @@ public class BukkitHandler implements ActionHandler {
 
 	@WebinterfaceHandler(requestTarget = "bukkit", requestTypes = "connectMinecraftAccount")
 	public static ActionResponse connectMCAccount(ActionEvent event) {
-		String mcAccName = event.getData().getString("value");
+		String mcAccName = event.getData().getString("name");
 		Player p = Bukkit.getPlayer(mcAccName);
 		if(p == null) return ActionResponse.error("Invalid player");
 		Account acc = Session.getCurrentSession().getAccount();

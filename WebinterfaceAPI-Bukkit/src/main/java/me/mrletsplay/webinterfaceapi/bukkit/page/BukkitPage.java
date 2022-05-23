@@ -14,6 +14,7 @@ import me.mrletsplay.webinterfaceapi.bukkit.WebinterfacePlugin;
 import me.mrletsplay.webinterfaceapi.page.Page;
 import me.mrletsplay.webinterfaceapi.page.PageSection;
 import me.mrletsplay.webinterfaceapi.page.action.SendJSAction;
+import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
 import me.mrletsplay.webinterfaceapi.page.element.Group;
 import me.mrletsplay.webinterfaceapi.page.element.Image;
 import me.mrletsplay.webinterfaceapi.page.element.InputField;
@@ -100,7 +101,7 @@ public class BukkitPage extends Page {
 
 				els.add(InputField.builder()
 						.placeholder("Minecraft name")
-						.onChange(f -> SendJSAction.of("bukkit", "connectMinecraftAccount", f.inputValue()))
+						.onChange(f -> SendJSAction.of("bukkit", "connectMinecraftAccount", ActionValue.object().put("name", f.inputValue())))
 						.create());
 			}
 		});
