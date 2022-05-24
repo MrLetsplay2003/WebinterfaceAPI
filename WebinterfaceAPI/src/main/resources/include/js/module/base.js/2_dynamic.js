@@ -180,19 +180,23 @@ function loadDynamicChildren(element, children, template) {
 
 function updateButtons(element) {
 	if(element.previousElementSibling == null) {
-		element.getElementsByClassName("element-list-button-up")[0].setAttribute("disabled", "");
+		element.getElementsByClassName("list-button-up")[0].setAttribute("disabled", "");
 	}else {
-		element.getElementsByClassName("element-list-button-up")[0].removeAttribute("disabled");
+		element.getElementsByClassName("list-button-up")[0].removeAttribute("disabled");
 	}
 	
 	if(element.nextElementSibling == null) {
-		element.getElementsByClassName("element-list-button-down")[0].setAttribute("disabled", "");
+		element.getElementsByClassName("list-button-down")[0].setAttribute("disabled", "");
 	}else {
-		element.getElementsByClassName("element-list-button-down")[0].removeAttribute("disabled");
+		element.getElementsByClassName("list-button-down")[0].removeAttribute("disabled");
 	}
 }
 
-async function dynamicListElementUp(element) {
+function dynamicListOnChange(element, additionalInfo) {
+	console.log("List has changed", element, additionalInfo);
+}
+
+async function dynamicListElementSwap(element, other) {
 	/*let params = dynamicListElementParams(element.parentElement);
 	await WebinterfaceBaseActions.sendJS({
 		requestTarget: params.requestTarget,
@@ -205,12 +209,23 @@ async function dynamicListElementUp(element) {
 	});
 	loadDynamicList(element.parentElement.parentElement);*/
 	
-	let other = element.previousElementSibling;
+	/*let other = element.previousElementSibling;*/
 	if(other == null) return;
+	
+	let listItems = JSON.parse(element.parentElement.getAttribute("data-listItems"));
+	
+	let elIdx = Array.prototype.indexOf.call(element.parentElement.children, element);
+	let otherIdx = Array.prototype.indexOf.call(element.parentElement.children, other);
+	
+	let tmp = listItems[otherIdx];
+	listItems[otherIdx] = listItems[elIdx];
+	listItems[elIdx] = tmp;
+	
 	element.parentElement.insertBefore(element, other);
 	
 	updateButtons(element);
 	updateButtons(other);
+	dynamicListOnChange(element.parentElement, {action: "swap", item1: elIdx, item2: otherIdx});
 }
 
 async function dynamicListElementDown(element) {
@@ -235,7 +250,7 @@ async function dynamicListElementDown(element) {
 }
 
 async function dynamicListElementRemove(element) {
-	let params = dynamicListElementParams(element.parentElement);
+	/*let params = dynamicListElementParams(element.parentElement);
 	await WebinterfaceBaseActions.sendJS({
 		requestTarget: params.requestTarget,
 		requestMethod: params.requestMethod,
@@ -244,7 +259,14 @@ async function dynamicListElementRemove(element) {
 			item: params.id
 		}
 	});
-	loadDynamicList(element.parentElement.parentElement);
+	loadDynamicList(element.parentElement.parentElement);*/
+	
+	let prev = element.previousElementSibling;
+	let next = element.nextElementSibling;
+	element.remove();
+	
+	if(prev != null) updateButtons(prev);
+	if(next != null) updateButtons(next);
 }
 
 function dynamicListElementParams(element) {

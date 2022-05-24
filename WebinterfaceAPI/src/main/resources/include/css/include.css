@@ -365,7 +365,7 @@ img.element {
   }
 }
 
-.element-list-button {
+.list-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -374,26 +374,23 @@ img.element {
 	width: 40px;
 }
 
-.element-list-button > .iconify {
+.list-button > .iconify {
 	width: 1.5em;
 	height: 1.5em;
 }
 
-.element-list-element {
+.list-item {
 	display: grid;
 	margin-top: 5px;
 	grid-template-columns: 1fr min-content min-content min-content;
-}
-
-.element-list-element:first-child {
-	margin-top: 0;
-}
-
-.element-list-element {
 	padding: 4px;
 	border-radius: 5px;
 	border: 1px solid var(--theme-color-content-border);
 	background-color: var(--theme-color-content-bg);
+}
+
+.list-item:first-child {
+	margin-top: 0;
 }
 
 /* Non-mobile styles for side nav responsiveness, 750px breakpoint */
