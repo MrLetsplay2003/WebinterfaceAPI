@@ -33,15 +33,13 @@ class WebinterfaceToast {
 		if(alert.isError) {
 			alertBox.css({backgroundColor: "#e63d00"});
 		}else {
-			alertBox.css({backgroundColor: "#11CC52"});
+			alertBox.css({backgroundColor: "#0eb348"});
 		}
 
 		alertBox.animate({
 			opacity: 1,
 			bottom: 0
-		}, 500, function() {
-			// Finished
-		});
+		}, 500);
 		
 		alertBox.delay(2500).animate({
 			bottom: "-100%"
@@ -61,4 +59,4 @@ WebinterfaceToast.wiData = {
 
 setInterval(function() {
     WebinterfaceToast.updateToasts();
-}, 1000);
+}, 500);

@@ -5,10 +5,12 @@ import java.util.function.Supplier;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 import me.mrletsplay.simplehttpserver.dom.html.element.HtmlButton;
 import me.mrletsplay.webinterfaceapi.page.element.builder.AbstractElementBuilder;
+import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 
 public class Button extends AbstractPageElement {
 
 	private Supplier<String> text;
+	private String icon;
 
 	public Button(Supplier<String> text) {
 		this.text = text;
@@ -32,10 +34,19 @@ public class Button extends AbstractPageElement {
 		return text;
 	}
 
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
 	@Override
 	public HtmlElement createElement() {
 		HtmlButton b = HtmlElement.button();
 		b.setText(text);
+		if(icon != null) b.appendChild(WebinterfaceUtils.iconifyIcon(icon));
 		return b;
 	}
 
@@ -59,9 +70,14 @@ public class Button extends AbstractPageElement {
 			return this;
 		}
 
+		public Builder icon(String icon) {
+			element.setIcon(icon);
+			return this;
+		}
+
 		@Override
 		public Button create() throws IllegalStateException {
-			if(element.getText() == null) throw new IllegalStateException("No text set");
+			if(element.getText() == null && element.getIcon() == null) throw new IllegalStateException("No text or icon set");
 			return super.create();
 		}
 

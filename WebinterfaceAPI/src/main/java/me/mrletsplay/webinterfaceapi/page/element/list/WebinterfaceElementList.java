@@ -78,14 +78,6 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 		return templateElement;
 	}
 
-	public void setElementFunction(Function<T, PageElement> elementFunction) {
-		this.elementFunction = elementFunction;
-	}
-
-	public Function<T, PageElement> getElementFunction() {
-		return elementFunction;
-	}
-
 	public void setRearrangable(boolean rearrangable) {
 		this.rearrangable = rearrangable;
 	}
@@ -141,14 +133,15 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 		if(templateElement != null) {
 			if(!templateElement.isTemplate()) throw new IllegalStateException("Template element is not a template");
 			el.addClass("dynamic-list");
-			el.setAttribute("data-updateRequestTarget", updateRequestTarget);
-			el.setAttribute("data-updateRequestMethod", updateRequestMethod);
+			el.setAttribute("data-listItems", "[]");
+//			el.setAttribute("data-updateRequestTarget", updateRequestTarget);
+//			el.setAttribute("data-updateRequestMethod", updateRequestMethod);
 			el.setAttribute("data-dataRequestTarget", dataRequestTarget);
 			el.setAttribute("data-dataRequestMethod", dataRequestMethod);
 			el.setAttribute("data-template", createDynamicListItem().toString());
 		}else {
 			for(T o : items.getItems()) {
-				el.appendChild(createListItem(o));
+//				el.appendChild(createListItem(o));
 			}
 		}
 
@@ -158,7 +151,7 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 	private HtmlElement createListItem(T item) {
 		String k = items.getIdentifier(item);
 		HtmlElement container = new HtmlElement("div");
-		container.addClass("element-list-element");
+		container.addClass("list-item");
 		container.appendChild(elementFunction.apply(item).toHtml());
 		if(rearrangable) {
 			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is rearrangable");
@@ -201,7 +194,7 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 			remove.put("action", ActionValue.string("remove"));
 			remove.put("item", ActionValue.string(k));
 			removeBtn.setOnClick(MultiAction.of(SendJSAction.of(updateRequestTarget, updateRequestMethod, remove).onSuccess(ReloadPageAction.reload())).createAttributeValue());
-			removeBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:close"));
+			removeBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:delete"));
 			container.appendChild(removeBtn);
 		}
 		return container;
@@ -209,24 +202,19 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 
 	private HtmlElement createDynamicListItem() {
 		HtmlElement container = new HtmlElement("div");
-		container.addClass("element-list-element");
-		container.setAttribute("data-elementId", "${_id}");
-		container.setAttribute("data-elementBefore", "${_before}");
-		container.setAttribute("data-elementAfter", "${_after}");
+		container.addClass("list-item");
 		container.appendChild(templateElement.toHtml());
 		if(rearrangable) {
 			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is rearrangable");
 			HtmlButton upBtn = HtmlElement.button();
-			upBtn.addClass("element-list-button");
-			upBtn.setAttribute("${_first?disabled:}");
-			upBtn.setOnClick("dynamicListElementUp(this)");
+			upBtn.addClass("list-button list-button-up");
+			upBtn.setOnClick("dynamicListElementSwap(this.parentElement, this.parentElement.previousElementSibling)");
 			upBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:chevron-up"));
 			container.appendChild(upBtn);
 
 			HtmlButton downBtn = HtmlElement.button();
-			downBtn.addClass("element-list-button");
-			downBtn.setAttribute("${_last?disabled:}");
-			downBtn.setOnClick("dynamicListElementDown(this)");
+			downBtn.addClass("list-button list-button-down");
+			downBtn.setOnClick("dynamicListElementSwap(this.parentElement, this.parentElement.nextElementSibling)");
 			downBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:chevron-down"));
 			container.appendChild(downBtn);
 		}
@@ -234,16 +222,16 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 		if(removable) {
 			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is removable");
 			HtmlButton removeBtn = HtmlElement.button();
-			removeBtn.addClass("element-list-button");
-			removeBtn.setOnClick("dynamicListElementRemove(this)");
-			removeBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:close"));
+			removeBtn.addClass("list-button");
+			removeBtn.setOnClick("dynamicListElementRemove(this.parentElement)");
+			removeBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:delete"));
 			container.appendChild(removeBtn);
 		}
 		return container;
 	}
 
 	public static <T> ActionResponse handleUpdate(ActionEvent event, ListAdapter<T> adapter) {
-		JSONObject value = event.getData().getJSONObject("value");
+		JSONObject value = event.getData();
 		String action = value.getString("action");
 		switch(action) {
 			case "swap":
@@ -372,7 +360,7 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 		 * @return This builder
 		 */
 		public Builder<T> elementFunction(Function<T, PageElement> elementFunction) {
-			element.setElementFunction(elementFunction);
+//			element.setElementFunction(elementFunction);
 			return this;
 		}
 
@@ -382,11 +370,11 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 			if(element.getItems() != null && element.getTemplateElement() != null) throw new IllegalStateException("Items and template element may not both be set");
 
 			if(!element.isDynamic()) {
-				if(element.getElementFunction() == null) throw new IllegalStateException("Element function must be set if the list is not dynamic");
+//				if(element.getElementFunction() == null) throw new IllegalStateException("Element function must be set if the list is not dynamic");
 				if(element.getDataRequestTarget() != null || element.getDataRequestMethod() != null) throw new IllegalStateException("Data handler may not be set if the list is not dynamic");
 			}else {
 				if(element.getDataRequestTarget() == null || element.getDataRequestMethod() == null) throw new IllegalStateException("Data handler must be set if the list is dynamic");
-				if(element.getElementFunction() != null) throw new IllegalStateException("Element function may not be set if the list is dynamic");
+//				if(element.getElementFunction() != null) throw new IllegalStateException("Element function may not be set if the list is dynamic");
 			}
 
 			if((element.isRearrangable() || element.isRemovable())

@@ -14,6 +14,10 @@ public interface ActionValue {
 
 	public String toJavaScript();
 
+	public static ActionValue nullValue() {
+		return () -> "null";
+	}
+
 	public default ActionValue plus(ActionValue other) {
 		return () -> toJavaScript() + " + " + other.toJavaScript();
 	}

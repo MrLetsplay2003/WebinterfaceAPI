@@ -32,8 +32,8 @@ public class SettingsCategory {
 	
 	public BooleanSetting addBoolean(String path, boolean defaultValue, String friendlyName, String description) {
 		BooleanSetting s = new BooleanSetting(this, path, defaultValue);
-		s.setFriendlyName(friendlyName);
-		if(description != null) s.setDescription(description);
+		s.friendlyName(friendlyName);
+		if(description != null) s.description(description);
 		addSetting(s);
 		return s;
 	}
@@ -44,8 +44,8 @@ public class SettingsCategory {
 	
 	public StringSetting addString(String path, String defaultValue, String friendlyName, String description) {
 		StringSetting s = new StringSetting(this, path, defaultValue);
-		s.setFriendlyName(friendlyName);
-		if(description != null) s.setDescription(description);
+		s.friendlyName(friendlyName);
+		if(description != null) s.description(description);
 		addSetting(s);
 		return s;
 	}
@@ -56,8 +56,8 @@ public class SettingsCategory {
 	
 	public StringListSetting addStringList(String path, List<String> defaultValue, String friendlyName, String description) {
 		StringListSetting s = new StringListSetting(this, path, defaultValue);
-		s.setFriendlyName(friendlyName);
-		if(description != null) s.setDescription(description);
+		s.friendlyName(friendlyName);
+		if(description != null) s.description(description);
 		addSetting(s);
 		return s;
 	}
@@ -68,8 +68,8 @@ public class SettingsCategory {
 	
 	public IntSetting addInt(String path, int defaultValue, String friendlyName, String description) {
 		IntSetting s = new IntSetting(this, path, defaultValue);
-		s.setFriendlyName(friendlyName);
-		if(description != null) s.setDescription(description);
+		s.friendlyName(friendlyName);
+		if(description != null) s.description(description);
 		addSetting(s);
 		return s;
 	}

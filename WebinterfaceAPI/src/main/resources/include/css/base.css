@@ -39,13 +39,17 @@ input:focus {
 	outline: 0;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="number"] {
 	height: 40px;
 	font-family: 'Open Sans', sans-serif;
 	border-width: 1px 1px 1px 1px;
 	border-color: var(--theme-color-content-border);
 	padding: 8px;
 	border-radius: 5px;
+}
+
+input[type="number"] {
+	appearance: textfield; /* Hide increase/decrease buttons */
 }
 
 input[type="checkbox"] {

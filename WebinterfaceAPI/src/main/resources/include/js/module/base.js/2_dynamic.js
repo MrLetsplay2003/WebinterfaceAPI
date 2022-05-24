@@ -178,8 +178,22 @@ function loadDynamicChildren(element, children, template) {
 	}
 }
 
+function updateButtons(element) {
+	if(element.previousElementSibling == null) {
+		element.getElementsByClassName("element-list-button-up")[0].setAttribute("disabled", "");
+	}else {
+		element.getElementsByClassName("element-list-button-up")[0].removeAttribute("disabled");
+	}
+	
+	if(element.nextElementSibling == null) {
+		element.getElementsByClassName("element-list-button-down")[0].setAttribute("disabled", "");
+	}else {
+		element.getElementsByClassName("element-list-button-down")[0].removeAttribute("disabled");
+	}
+}
+
 async function dynamicListElementUp(element) {
-	let params = dynamicListElementParams(element.parentElement);
+	/*let params = dynamicListElementParams(element.parentElement);
 	await WebinterfaceBaseActions.sendJS({
 		requestTarget: params.requestTarget,
 		requestMethod: params.requestMethod,
@@ -189,11 +203,18 @@ async function dynamicListElementUp(element) {
 			item2: params.before
 		}
 	});
-	loadDynamicList(element.parentElement.parentElement);
+	loadDynamicList(element.parentElement.parentElement);*/
+	
+	let other = element.previousElementSibling;
+	if(other == null) return;
+	element.parentElement.insertBefore(element, other);
+	
+	updateButtons(element);
+	updateButtons(other);
 }
 
 async function dynamicListElementDown(element) {
-	let params = dynamicListElementParams(element.parentElement);
+	/*let params = dynamicListElementParams(element.parentElement);
 	await WebinterfaceBaseActions.sendJS({
 		requestTarget: params.requestTarget,
 		requestMethod: params.requestMethod,
@@ -203,7 +224,14 @@ async function dynamicListElementDown(element) {
 			item2: params.after
 		}
 	});
-	loadDynamicList(element.parentElement.parentElement);
+	loadDynamicList(element.parentElement.parentElement);*/
+	
+	let other = element.nextElementSibling;
+	if(other == null) return;
+	element.parentElement.insertBefore(element, other.nextElementSibling);
+	
+	updateButtons(element);
+	updateButtons(other);
 }
 
 async function dynamicListElementRemove(element) {

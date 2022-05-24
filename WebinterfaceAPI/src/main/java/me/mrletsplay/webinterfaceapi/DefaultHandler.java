@@ -12,33 +12,13 @@ import me.mrletsplay.webinterfaceapi.page.event.WebinterfaceEvent;
 
 public class DefaultHandler implements ActionHandler {
 
-	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "restart", permission = DefaultPermissions.RESTART)
-	public ActionResponse restart(ActionEvent event) {
-		new Thread(() -> {
-			Webinterface.getLogger().info("Restarting...");
-			Webinterface.shutdown();
-			Webinterface.start();
-			Webinterface.getLogger().info("Done!");
-		}, "Webinterface-Restart-Thread").start();
-		return ActionResponse.success();
-	}
-
-	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "shutdown", permission = DefaultPermissions.SHUTDOWN)
-	public ActionResponse shutdown(ActionEvent event) {
-		new Thread(() -> {
-			Webinterface.getLogger().info("Shutting down...");
-			Webinterface.shutdown();
-		}, "Webinterface-Shutdown-Thread").start();
-		return ActionResponse.success();
-	}
-
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "setSetting", permission = DefaultPermissions.SETTINGS)
 	public ActionResponse setSetting(ActionEvent event) {
 		return SettingsPage.handleSetSettingRequest(Webinterface.getConfig(), event);
 	}
 
 	@WebinterfaceHandler(requestTarget = "webinterface", requestTypes = "setPermission", permission = DefaultPermissions.MODIFY_USERS)
-	public ActionResponse setOP(ActionEvent event) {
+	public ActionResponse setPermission(ActionEvent event) {
 		JSONObject val = event.getData();
 		String accountID = val.getString("account");
 		String perm = val.getString("permission");

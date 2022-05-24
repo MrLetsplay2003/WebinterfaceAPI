@@ -75,7 +75,7 @@ public class DefaultSettings implements AutoSettings {
 		PHP_CGI_PATH = php.addString("php.cgi-path", "php-cgi", "PHP CGI path");
 
 	public static final StringListSetting
-		PHP_FILE_EXTENSIONS = php.addStringList("php.file-extensions", Arrays.asList(".php"), "PHP file extensions");
+		PHP_FILE_EXTENSIONS = php.addStringList("php.file-extensions", Arrays.asList(".php", ".php2", ".php3"), "PHP file extensions");
 
 
 	//Auth

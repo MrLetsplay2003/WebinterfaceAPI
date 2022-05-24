@@ -43,7 +43,6 @@ import me.mrletsplay.webinterfaceapi.config.FileConfig;
 import me.mrletsplay.webinterfaceapi.document.ActionCallbackDocument;
 import me.mrletsplay.webinterfaceapi.document.AuthRequestDocument;
 import me.mrletsplay.webinterfaceapi.document.AuthResponseDocument;
-import me.mrletsplay.webinterfaceapi.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.document.FileUploadDocument;
 import me.mrletsplay.webinterfaceapi.document.HomeDocument;
 import me.mrletsplay.webinterfaceapi.document.LoginDocument;
@@ -51,6 +50,7 @@ import me.mrletsplay.webinterfaceapi.document.LogoutDocument;
 import me.mrletsplay.webinterfaceapi.document.PasswordLoginDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupSubmitDocument;
+import me.mrletsplay.webinterfaceapi.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.document.websocket.Packet;
 import me.mrletsplay.webinterfaceapi.document.websocket.WebSocketData;
 import me.mrletsplay.webinterfaceapi.document.websocket.WebSocketDocument;
@@ -108,13 +108,6 @@ public class Webinterface {
 		includedFiles = new HashMap<>();
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
 		markdownRenderer = new MarkdownRenderer();
-
-		PageCategory cat = createCategory("WebinterfaceAPI");
-		cat.addPage(new WelcomePage());
-		cat.addPage(new AccountsPage());
-		cat.addPage(new PermissionsPage());
-		cat.addPage(new AccountPage());
-		cat.addPage(new DefaultSettingsPage());
 
 		registerActionHandler(new DefaultHandler());
 
@@ -189,6 +182,13 @@ public class Webinterface {
 		documentProvider.registerDocument("/login", new LoginDocument());
 		documentProvider.registerDocument("/logout", new LogoutDocument());
 		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) documentProvider.registerDocument("/auth/password/login", new PasswordLoginDocument());
+
+		PageCategory cat = createCategory("WebinterfaceAPI");
+		cat.addPage(new WelcomePage());
+		cat.addPage(new AccountsPage());
+		cat.addPage(new PermissionsPage());
+		cat.addPage(new AccountPage());
+		cat.addPage(new DefaultSettingsPage());
 
 		pages.forEach(page -> documentProvider.registerDocument(page.getUrl(), page));
 		categories.forEach(category -> category.getPages().forEach(page -> documentProvider.registerDocument(page.getUrl(), page)));

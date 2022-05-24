@@ -369,7 +369,7 @@ img.element {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--theme-color-sidenav-item);
+	color: var(--theme-color-content-text);
 	margin-left: 5px;
 	width: 40px;
 }
@@ -387,6 +387,13 @@ img.element {
 
 .element-list-element:first-child {
 	margin-top: 0;
+}
+
+.element-list-element {
+	padding: 4px;
+	border-radius: 5px;
+	border: 1px solid var(--theme-color-content-border);
+	background-color: var(--theme-color-content-bg);
 }
 
 /* Non-mobile styles for side nav responsiveness, 750px breakpoint */

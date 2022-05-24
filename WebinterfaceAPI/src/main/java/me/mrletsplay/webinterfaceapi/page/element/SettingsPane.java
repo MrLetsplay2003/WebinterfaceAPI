@@ -13,11 +13,14 @@ import me.mrletsplay.webinterfaceapi.config.setting.SettingsCategory;
 import me.mrletsplay.webinterfaceapi.page.action.Action;
 import me.mrletsplay.webinterfaceapi.page.action.ActionEvent;
 import me.mrletsplay.webinterfaceapi.page.action.ActionResponse;
-import me.mrletsplay.webinterfaceapi.page.action.ReloadPageAction;
 import me.mrletsplay.webinterfaceapi.page.action.SendJSAction;
+import me.mrletsplay.webinterfaceapi.page.action.ShowToastAction;
 import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
+import me.mrletsplay.webinterfaceapi.page.element.list.BasicListAdapter;
+import me.mrletsplay.webinterfaceapi.page.element.list.ListAdapter;
+import me.mrletsplay.webinterfaceapi.page.element.list.WebinterfaceElementList;
 
 public class SettingsPane extends Group {
 
@@ -61,16 +64,23 @@ public class SettingsPane extends Group {
 		boolean oneLineLayout = false;
 
 		if(setting.getType().equals(Complex.value(String.class))) {
-			InputField in = new InputField(() -> {
+			InputField in = new InputField();
+			in.setInitialValue(() -> {
 				String v = (String) config.get().getSetting(setting);
-				return v == null ? "(none)" : v;
+				return v == null ? "" : v;
 			});
 			in.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(in)));
 			el = in;
 			defaultValue = ActionValue.string((String) setting.getDefaultValue());
 		}else if(setting.getType().equals(Complex.value(Integer.class)) || setting.getType().equals(Complex.value(Double.class))) {
-			InputField in = new InputField(() -> config.get().getSetting(setting).toString());
-			in.setOnChangeAction(changeSettingAction(setting, () -> String.format(setting.getType().equals(Complex.value(Integer.class)) ? "parseInt(%s)" : "parseFloat(%s)", in.inputValue().toJavaScript())));
+			boolean isInt = setting.getType().equals(Complex.value(Integer.class));
+			NumberField in = new NumberField(() -> String.valueOf(config.get().getSetting(setting)));
+			in.setInitialValue(() -> {
+				String v = String.valueOf(config.get().getSetting(setting));
+				return v == null ? "" : v;
+			});
+			in.setAllowFloats(!isInt);
+			in.setOnChangeAction(changeSettingAction(setting, in.inputValue()));
 			el = in;
 			defaultValue = () -> setting.getDefaultValue().toString();
 		}else if(setting.getType().equals(Complex.value(Boolean.class))) {
@@ -81,26 +91,27 @@ public class SettingsPane extends Group {
 			defaultValue = () -> setting.getDefaultValue().toString();
 			oneLineLayout = true;
 		}else if(setting.getType().equals(Complex.list(String.class))) {
-			InputField in = new InputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
-			in.setOnChangeAction(changeSettingAction(setting, () -> String.format("%s.split(\",\").map(x=>x.trim())", in.inputValue().toJavaScript())));
-			el = in;
-			defaultValue = ActionValue.array(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
-					.map(s -> ActionValue.string(s))
-					.collect(Collectors.toList()));
-
-//			@SuppressWarnings("unchecked")
-//			ListAdapter<String> la = new BasicListAdapter<>(new ArrayList<>((List<String>) config.get().getSetting(setting)), i -> i);
-//
-//			WebinterfaceElementList<String> list = WebinterfaceElementList.<String>builder()
-//					.items(la)
-//					.elementFunction(s -> WebinterfaceText.builder().text(s).create())
-//					.removable(true)
-//					.create();
-//
-//			el = list;
-//			defaultValue = new ArrayValue(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
-//					.map(s -> new StringValue(s))
+//			InputField in = new InputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
+//			in.setOnChangeAction(changeSettingAction(setting, () -> String.format("%s.split(\",\").map(x=>x.trim())", in.inputValue().toJavaScript())));
+//			el = in;
+//			defaultValue = ActionValue.array(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
+//					.map(s -> ActionValue.string(s))
 //					.collect(Collectors.toList()));
+
+			@SuppressWarnings("unchecked")
+			ListAdapter<String> la = new BasicListAdapter<>(new ArrayList<>((List<String>) config.get().getSetting(setting)), i -> i);
+
+			WebinterfaceElementList<String> list = WebinterfaceElementList.<String>builder()
+				.items(la)
+				.elementFunction(s -> Text.builder().text(s).leftboundText().create())
+				.removable(true)
+				.updateHandler("E", "E") // FIXME: Update handler
+				.create();
+
+			el = list;
+			defaultValue = ActionValue.array(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
+				.map(s -> ActionValue.string(s))
+				.collect(Collectors.toList()));
 		}else if(setting.getType().equals(Complex.list(Integer.class)) || setting.getType().equals(Complex.list(Double.class))) {
 			InputField in = new InputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
 			in.setOnChangeAction(changeSettingAction(setting, () -> String.format("%s.split(\",\").map(x=>x.trim()).map(" + (setting.getType().equals(Complex.list(Integer.class)) ? "x=>parseInt(x)" : "x=>parseFloat(x)") + ")", in.inputValue().toJavaScript())));
@@ -137,8 +148,10 @@ public class SettingsPane extends Group {
 			tEl = tGrp;
 		}
 
-		Button reset = new Button("X");
-		reset.setOnClickAction(changeSettingAction(setting, defaultValue));
+		Button reset = Button.builder()
+			.icon("mdi:undo")
+			.onClick(changeSettingAction(setting, defaultValue))
+			.create();
 
 		Group grp = new Group();
 		grp.getStyle().setProperty("grid-template-columns", oneLineLayout ? "min-content auto" : "auto 50px");
@@ -161,7 +174,7 @@ public class SettingsPane extends Group {
 		return SendJSAction.of(requestTarget, requestMethod, ActionValue.object()
 				.put("setting", ActionValue.string(setting.getKey()))
 				.put("value", value)
-			).onSuccess(ReloadPageAction.delayed(100));
+			).onSuccess(ShowToastAction.info(ActionValue.string("Changed " + setting.getFriendlyName() + " to ").plus(value)));
 	}
 
 	public List<SettingsCategory> getSettingsCategories() {
