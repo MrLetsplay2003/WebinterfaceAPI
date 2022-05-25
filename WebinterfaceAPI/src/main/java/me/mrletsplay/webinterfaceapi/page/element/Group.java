@@ -101,11 +101,11 @@ public class Group extends AbstractPageElement {
 		JSONArray elements = new JSONArray();
 		for(T o : items.getItems()) {
 			JSONObject obj = objectFunction.apply(o);
-			obj.put("_id", items.getIdentifier(o));
-			T before = items.getItemBefore(o);
-			if(before != null) obj.put("_before", items.getIdentifier(before));
-			T after = items.getItemAfter(o);
-			if(after != null) obj.put("_after", items.getIdentifier(after));
+//			obj.put("_id", items.getIdentifier(o));
+//			T before = items.getItemBefore(o);
+//			if(before != null) obj.put("_before", items.getIdentifier(before));
+//			T after = items.getItemAfter(o);
+//			if(after != null) obj.put("_after", items.getIdentifier(after));
 			elements.add(obj);
 		}
 

@@ -1,66 +1,47 @@
 package me.mrletsplay.webinterfaceapi.page.element.list;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import me.mrletsplay.mrcore.json.JSONObject;
+
 public class BasicListAdapter<T> implements ListAdapter<T> {
-	
+
 	private List<T> items;
-	private Function<T, String> identifierFunction;
-	
+	private Function<? super T, JSONObject> toJSON;
+	private Function<JSONObject, ? extends T> fromJSON;
+
 	/**
 	 * Constructs a list adapter using the specified list.<br>
 	 * The list may not contain null values or duplicate values!
 	 * @param items
 	 * @param identifierFunction
 	 */
-	public BasicListAdapter(List<T> items, Function<T, String> identifierFunction) {
+	public BasicListAdapter(List<T> items, Function<? super T, JSONObject> toJSON, Function<JSONObject, ? extends T> fromJSON) {
 		this.items = items;
-		this.identifierFunction = identifierFunction;
+		this.toJSON = toJSON;
+		this.fromJSON = fromJSON;
 	}
 
-	@Override
-	public String getIdentifier(T t) {
-		return identifierFunction.apply(t);
-	}
-	
 	@Override
 	public List<T> getItems() {
 		return items;
 	}
-	
+
 	@Override
-	public T getItemBefore(T t) {
-		int idx = items.indexOf(t);
-		if(idx <= 0) return null;
-		return items.get(idx - 1);
-	}
-	
-	@Override
-	public T getItemAfter(T t) {
-		int idx = items.indexOf(t);
-		if(idx < 0 || idx >= items.size() - 1) return null;
-		return items.get(idx + 1);
+	public JSONObject toJSON(T item) {
+		return toJSON.apply(item);
 	}
 
 	@Override
-	public void swap(String identifier1, String identifier2) {
-		T i1 = getItem(identifier1);
-		T i2 = getItem(identifier2);
-		if(i1 == null || i2 == null) return;
-		Collections.swap(items, items.indexOf(i1), items.indexOf(i2));
+	public T fromJSON(JSONObject json) {
+		return fromJSON.apply(json);
 	}
 
 	@Override
-	public void remove(String identifier) {
-		items.removeIf(i -> identifierFunction.apply(i).equals(identifier));
+	public void onListUpdate(List<T> oldList, List<T> newList) {
+		this.items.clear();
+		this.items.addAll(newList);
 	}
-	
-	protected T getItem(String identifier) {
-		return items.stream()
-				.filter(i -> identifierFunction.apply(i).equals(identifier))
-				.findFirst().orElse(null);
-	}
-	
+
 }

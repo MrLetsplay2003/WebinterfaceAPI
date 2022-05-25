@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.misc.NullableOptional;
 import me.mrletsplay.webinterfaceapi.config.Config;
@@ -99,7 +100,11 @@ public class SettingsPane extends Group {
 //					.collect(Collectors.toList()));
 
 			@SuppressWarnings("unchecked")
-			ListAdapter<String> la = new BasicListAdapter<>(new ArrayList<>((List<String>) config.get().getSetting(setting)), i -> i);
+			ListAdapter<String> la = new BasicListAdapter<>(new ArrayList<>((List<String>) config.get().getSetting(setting)), i -> {
+				JSONObject o = new JSONObject();
+				o.put("value", i);
+				return o;
+			}, obj -> obj.getString("value"));
 
 			WebinterfaceElementList<String> list = WebinterfaceElementList.<String>builder()
 				.items(la)

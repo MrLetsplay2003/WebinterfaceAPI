@@ -115,8 +115,15 @@ async function loadDynamicList(element) {
 		WebinterfaceToast.showErrorToast("Failed to load template object");
 		return;
 	}
+	
+	let items = response.getData().items;
+	element.setAttribute("data-listItems", JSON.stringify(items));
 
-	loadDynamicChildren(element, response.getData().elements, temp);
+	loadDynamicChildren(element, items, temp);
+	
+	for(let child of element.children) {
+		updateButtons(child);
+	}
 }
 
 async function loadDynamicGroup(element) {
@@ -194,72 +201,43 @@ function updateButtons(element) {
 
 function dynamicListOnChange(element, additionalInfo) {
 	console.log("List has changed", element, additionalInfo);
+	
+	let onChange = element.getAttribute("data-onChange");
+	if(onChange != null) eval(onChange);
 }
 
 async function dynamicListElementSwap(element, other) {
-	/*let params = dynamicListElementParams(element.parentElement);
-	await WebinterfaceBaseActions.sendJS({
-		requestTarget: params.requestTarget,
-		requestMethod: params.requestMethod,
-		value: {
-			action: "swap",
-			item1: params.id,
-			item2: params.before
-		}
-	});
-	loadDynamicList(element.parentElement.parentElement);*/
-	
-	/*let other = element.previousElementSibling;*/
 	if(other == null) return;
 	
-	let listItems = JSON.parse(element.parentElement.getAttribute("data-listItems"));
+	let list = element.parentElement;
+	let listItems = JSON.parse(list.getAttribute("data-listItems"));
 	
-	let elIdx = Array.prototype.indexOf.call(element.parentElement.children, element);
-	let otherIdx = Array.prototype.indexOf.call(element.parentElement.children, other);
+	let elIdx = Array.prototype.indexOf.call(list.children, element);
+	let otherIdx = Array.prototype.indexOf.call(list.children, other);
 	
 	let tmp = listItems[otherIdx];
 	listItems[otherIdx] = listItems[elIdx];
 	listItems[elIdx] = tmp;
+	list.setAttribute("data-listItems", JSON.stringify(listItems));
 	
-	element.parentElement.insertBefore(element, other);
+	let moveOther = element.nextElementSibling == other;
 	
-	updateButtons(element);
-	updateButtons(other);
-	dynamicListOnChange(element.parentElement, {action: "swap", item1: elIdx, item2: otherIdx});
-}
-
-async function dynamicListElementDown(element) {
-	/*let params = dynamicListElementParams(element.parentElement);
-	await WebinterfaceBaseActions.sendJS({
-		requestTarget: params.requestTarget,
-		requestMethod: params.requestMethod,
-		value: {
-			action: "swap",
-			item1: params.id,
-			item2: params.after
-		}
-	});
-	loadDynamicList(element.parentElement.parentElement);*/
-	
-	let other = element.nextElementSibling;
-	if(other == null) return;
-	element.parentElement.insertBefore(element, other.nextElementSibling);
+	list.insertBefore(element, other);
+	if(moveOther) list.insertBefore(other, element);
 	
 	updateButtons(element);
 	updateButtons(other);
+	dynamicListOnChange(list, {action: "swap", item1: elIdx, item2: otherIdx});
 }
 
 async function dynamicListElementRemove(element) {
-	/*let params = dynamicListElementParams(element.parentElement);
-	await WebinterfaceBaseActions.sendJS({
-		requestTarget: params.requestTarget,
-		requestMethod: params.requestMethod,
-		value: {
-			action: "remove",
-			item: params.id
-		}
-	});
-	loadDynamicList(element.parentElement.parentElement);*/
+	let list = element.parentElement;
+	let listItems = JSON.parse(list.getAttribute("data-listItems"));
+	
+	let elIdx = Array.prototype.indexOf.call(list.children, element);
+	
+	listItems.splice(elIdx, 1);
+	list.setAttribute("data-listItems", JSON.stringify(listItems));
 	
 	let prev = element.previousElementSibling;
 	let next = element.nextElementSibling;
@@ -267,6 +245,8 @@ async function dynamicListElementRemove(element) {
 	
 	if(prev != null) updateButtons(prev);
 	if(next != null) updateButtons(next);
+	
+	dynamicListOnChange(list, {action: "remove", item: elIdx});
 }
 
 function dynamicListElementParams(element) {

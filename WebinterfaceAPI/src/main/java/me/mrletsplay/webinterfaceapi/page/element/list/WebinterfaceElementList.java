@@ -8,12 +8,7 @@ import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 import me.mrletsplay.simplehttpserver.dom.html.element.HtmlButton;
 import me.mrletsplay.webinterfaceapi.page.action.ActionEvent;
 import me.mrletsplay.webinterfaceapi.page.action.ActionResponse;
-import me.mrletsplay.webinterfaceapi.page.action.MultiAction;
-import me.mrletsplay.webinterfaceapi.page.action.ReloadPageAction;
-import me.mrletsplay.webinterfaceapi.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.page.action.UpdateElementAction;
-import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
-import me.mrletsplay.webinterfaceapi.page.action.value.ObjectValue;
 import me.mrletsplay.webinterfaceapi.page.element.AbstractPageElement;
 import me.mrletsplay.webinterfaceapi.page.element.PageElement;
 import me.mrletsplay.webinterfaceapi.page.element.builder.AbstractElementBuilder;
@@ -148,57 +143,57 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 		return el;
 	}
 
-	private HtmlElement createListItem(T item) {
-		String k = items.getIdentifier(item);
-		HtmlElement container = new HtmlElement("div");
-		container.addClass("list-item");
-		container.appendChild(elementFunction.apply(item).toHtml());
-		if(rearrangable) {
-			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is rearrangable");
-			HtmlButton upBtn = HtmlElement.button();
-			upBtn.addClass("element-list-button");
-			T itemBefore = items.getItemBefore(item);
-			if(itemBefore != null) {
-				ObjectValue moveUp = ActionValue.object();
-				moveUp.put("action", ActionValue.string("swap"));
-				moveUp.put("item1", ActionValue.string(k));
-				moveUp.put("item2", ActionValue.string(items.getIdentifier(itemBefore)));
-				upBtn.setOnClick(MultiAction.of(SendJSAction.of(updateRequestTarget, updateRequestMethod, moveUp).onSuccess(ReloadPageAction.reload())).createAttributeValue());
-			}else {
-				upBtn.setAttribute("disabled");
-			}
-			upBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:chevron-up"));
-			container.appendChild(upBtn);
-
-			HtmlButton downBtn = HtmlElement.button();
-			downBtn.addClass("element-list-button");
-			T itemAfter = items.getItemAfter(item);
-			if(itemAfter != null) {
-				ObjectValue moveDown = ActionValue.object();
-				moveDown.put("action", ActionValue.string("swap"));
-				moveDown.put("item1", ActionValue.string(k));
-				moveDown.put("item2", ActionValue.string(items.getIdentifier(itemAfter)));
-				downBtn.setOnClick(MultiAction.of(SendJSAction.of(updateRequestTarget, updateRequestMethod, moveDown).onSuccess(ReloadPageAction.reload())).createAttributeValue());
-			}else {
-				downBtn.setAttribute("disabled");
-			}
-			downBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:chevron-down"));
-			container.appendChild(downBtn);
-		}
-
-		if(removable) {
-			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is removable");
-			HtmlButton removeBtn = HtmlElement.button();
-			removeBtn.addClass("element-list-button");
-			ObjectValue remove = ActionValue.object();
-			remove.put("action", ActionValue.string("remove"));
-			remove.put("item", ActionValue.string(k));
-			removeBtn.setOnClick(MultiAction.of(SendJSAction.of(updateRequestTarget, updateRequestMethod, remove).onSuccess(ReloadPageAction.reload())).createAttributeValue());
-			removeBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:delete"));
-			container.appendChild(removeBtn);
-		}
-		return container;
-	}
+//	private HtmlElement createListItem(T item) {
+//		String k = items.getIdentifier(item);
+//		HtmlElement container = new HtmlElement("div");
+//		container.addClass("list-item");
+//		container.appendChild(elementFunction.apply(item).toHtml());
+//		if(rearrangable) {
+//			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is rearrangable");
+//			HtmlButton upBtn = HtmlElement.button();
+//			upBtn.addClass("element-list-button");
+//			T itemBefore = items.getItemBefore(item);
+//			if(itemBefore != null) {
+//				ObjectValue moveUp = ActionValue.object();
+//				moveUp.put("action", ActionValue.string("swap"));
+//				moveUp.put("item1", ActionValue.string(k));
+//				moveUp.put("item2", ActionValue.string(items.getIdentifier(itemBefore)));
+//				upBtn.setOnClick(MultiAction.of(SendJSAction.of(updateRequestTarget, updateRequestMethod, moveUp).onSuccess(ReloadPageAction.reload())).createAttributeValue());
+//			}else {
+//				upBtn.setAttribute("disabled");
+//			}
+//			upBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:chevron-up"));
+//			container.appendChild(upBtn);
+//
+//			HtmlButton downBtn = HtmlElement.button();
+//			downBtn.addClass("element-list-button");
+//			T itemAfter = items.getItemAfter(item);
+//			if(itemAfter != null) {
+//				ObjectValue moveDown = ActionValue.object();
+//				moveDown.put("action", ActionValue.string("swap"));
+//				moveDown.put("item1", ActionValue.string(k));
+//				moveDown.put("item2", ActionValue.string(items.getIdentifier(itemAfter)));
+//				downBtn.setOnClick(MultiAction.of(SendJSAction.of(updateRequestTarget, updateRequestMethod, moveDown).onSuccess(ReloadPageAction.reload())).createAttributeValue());
+//			}else {
+//				downBtn.setAttribute("disabled");
+//			}
+//			downBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:chevron-down"));
+//			container.appendChild(downBtn);
+//		}
+//
+//		if(removable) {
+//			if(updateRequestTarget == null || updateRequestMethod == null) throw new IllegalStateException("Update handler must be set if the list is removable");
+//			HtmlButton removeBtn = HtmlElement.button();
+//			removeBtn.addClass("element-list-button");
+//			ObjectValue remove = ActionValue.object();
+//			remove.put("action", ActionValue.string("remove"));
+//			remove.put("item", ActionValue.string(k));
+//			removeBtn.setOnClick(MultiAction.of(SendJSAction.of(updateRequestTarget, updateRequestMethod, remove).onSuccess(ReloadPageAction.reload())).createAttributeValue());
+//			removeBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:delete"));
+//			container.appendChild(removeBtn);
+//		}
+//		return container;
+//	}
 
 	private HtmlElement createDynamicListItem() {
 		HtmlElement container = new HtmlElement("div");
@@ -231,40 +226,40 @@ public class WebinterfaceElementList<T> extends AbstractPageElement {
 	}
 
 	public static <T> ActionResponse handleUpdate(ActionEvent event, ListAdapter<T> adapter) {
-		JSONObject value = event.getData();
-		String action = value.getString("action");
-		switch(action) {
-			case "swap":
-				adapter.swap(value.getString("item1"), value.getString("item2"));
-				break;
-			case "remove":
-				adapter.remove(value.getString("item"));
-		}
+//		JSONObject value = event.getData();
+//		String action = value.getString("action");
+//		switch(action) {
+//			case "swap":
+//				adapter.swap(value.getString("item1"), value.getString("item2"));
+//				break;
+//			case "remove":
+//				adapter.remove(value.getString("item"));
+//		}
 		return ActionResponse.success();
 	}
 
 	public static <T> ActionResponse handleData(ActionEvent event, ListAdapter<T> items, Function<T, JSONObject> objectFunction) {
-		JSONArray elements = new JSONArray();
-		for(T o : items.getItems()) {
-			String k = items.getIdentifier(o);
-			JSONObject obj = objectFunction.apply(o);
-
-			String before = items.getIdentifier(items.getItemBefore(o));
-			String after = items.getIdentifier(items.getItemAfter(o));
-
-			obj.put("_id", k);
-			obj.put("_before", before);
-			obj.put("_after", after);
-			elements.add(obj);
-		}
-
-		if(!elements.isEmpty()) {
-			elements.getJSONObject(0).put("_first", true);
-			elements.getJSONObject(elements.size() - 1).put("_last", true);
-		}
+		JSONArray itemsJSON = new JSONArray();
+//		for(T o : items.getItems()) {
+//			String k = items.getIdentifier(o);
+//			JSONObject obj = objectFunction.apply(o);
+//
+//			String before = items.getIdentifier(items.getItemBefore(o));
+//			String after = items.getIdentifier(items.getItemAfter(o));
+//
+////			obj.put("_id", k);
+////			obj.put("_before", before);
+////			obj.put("_after", after);
+//			itemsJSON.add(obj);
+//		}
+//
+////		if(!itemsJSON.isEmpty()) {
+////			itemsJSON.getJSONObject(0).put("_first", true);
+////			itemsJSON.getJSONObject(itemsJSON.size() - 1).put("_last", true);
+////		}
 
 		JSONObject obj = new JSONObject();
-		obj.put("elements", elements);
+		obj.put("items", itemsJSON);
 		return ActionResponse.success(obj);
 	}
 
