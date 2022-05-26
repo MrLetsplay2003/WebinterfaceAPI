@@ -1,5 +1,7 @@
 function convertTemplateString(templateObject, templateString) {
 	return templateString.replaceAll(/\$\{([a-zA-Z0-9\?\:_]+)\}/g, (match, expr, offset, string) => {
+		if(expr == "this") return templateObject;
+		
 		if(expr.includes("?")) {
 			let condExpr = expr.split("?");
 			let cond = condExpr[0];
@@ -50,6 +52,8 @@ function convertTemplateElement(templateObject, templateElement) {
 }
 
 function updateElement(destination, source) {
+	if(destination.classList.contains("iconify")) return; // Updating breaks Iconify icons
+	
 	let attrsSet = [];
 	for(let i = 0; i < source.attributes.length; i++) {
 		let a = source.attributes[i];
@@ -106,18 +110,23 @@ async function loadDynamicList(element) {
 	let temp = document.createElement("template");
 	temp.innerHTML = element.getAttribute("data-template");
 
-	// Load new data into template
-	let requestTarget = element.getAttribute("data-dataRequestTarget");
-	let requestMethod = element.getAttribute("data-dataRequestMethod");
+	let items = [];
+	if(element.hasAttribute("data-dataRequestTarget")) {
+		// Load new data into template
+		let requestTarget = element.getAttribute("data-dataRequestTarget");
+		let requestMethod = element.getAttribute("data-dataRequestMethod");
 
-	let response = await Webinterface.call(requestTarget, requestMethod, null, false);
-	if(!response.isSuccess()) {
-		WebinterfaceToast.showErrorToast("Failed to load template object");
-		return;
-	}
+		let response = await Webinterface.call(requestTarget, requestMethod, null, false);
+		if(!response.isSuccess()) {
+			WebinterfaceToast.showErrorToast("Failed to load template object");
+			return;
+		}
 	
-	let items = response.getData().items;
-	element.setAttribute("data-listItems", JSON.stringify(items));
+		items = response.getData().items;
+		element.setAttribute("data-listItems", JSON.stringify(items));
+	}else {
+		items = getListItems(element);
+	}
 
 	loadDynamicChildren(element, items, temp);
 	
@@ -145,7 +154,7 @@ async function loadDynamicGroup(element) {
 }
 
 function loadDynamicChildren(element, children, template) {
-	let newIDs = children.map(el => el._id);
+	/*let newIDs = children.map(el => el._id);
 
 	// Remove all elements that no longer exist
 	for(let c of element.children) {
@@ -182,20 +191,51 @@ function loadDynamicChildren(element, children, template) {
 		}
 
 		element.insertBefore(el, element.children[i + 1]);
+	}*/
+	
+	while(element.children.length > children.length) {
+		element.children[element.children.length - 1].remove();
+	}
+	
+	for(let i = 0; i < children.length; i++) {
+		let oldEl = element.children[i];
+		let elData = children[i];
+		let newEl = template.content.firstChild.cloneNode(true);
+		convertTemplateElement(elData, newEl);
+		
+		if(oldEl != null) {
+			updateElement(oldEl, newEl);
+		}else {
+			element.appendChild(newEl);
+		}
 	}
 }
 
+function getListItems(element) {
+	return JSON.parse(element.getAttribute("data-listItems"));
+}
+
+function getListItemsByID(elementID) {
+	return getListItems(document.getElementById(elementID));
+}
+
 function updateButtons(element) {
-	if(element.previousElementSibling == null) {
-		element.getElementsByClassName("list-button-up")[0].setAttribute("disabled", "");
-	}else {
-		element.getElementsByClassName("list-button-up")[0].removeAttribute("disabled");
+	let upBtn = element.getElementsByClassName("list-button-up")[0];
+	if(upBtn != null) {
+		if(element.previousElementSibling == null) {
+			upBtn.setAttribute("disabled", "");
+		}else {
+			upBtn.removeAttribute("disabled");
+		}
 	}
 	
-	if(element.nextElementSibling == null) {
-		element.getElementsByClassName("list-button-down")[0].setAttribute("disabled", "");
-	}else {
-		element.getElementsByClassName("list-button-down")[0].removeAttribute("disabled");
+	let downBtn = element.getElementsByClassName("list-button-down")[0];
+	if(downBtn != null) {
+		if(element.nextElementSibling == null) {
+			downBtn.setAttribute("disabled", "");
+		}else {
+			downBtn.removeAttribute("disabled");
+		}
 	}
 }
 
@@ -210,7 +250,7 @@ async function dynamicListElementSwap(element, other) {
 	if(other == null) return;
 	
 	let list = element.parentElement;
-	let listItems = JSON.parse(list.getAttribute("data-listItems"));
+	let listItems = getListItems(list);
 	
 	let elIdx = Array.prototype.indexOf.call(list.children, element);
 	let otherIdx = Array.prototype.indexOf.call(list.children, other);
@@ -232,7 +272,7 @@ async function dynamicListElementSwap(element, other) {
 
 async function dynamicListElementRemove(element) {
 	let list = element.parentElement;
-	let listItems = JSON.parse(list.getAttribute("data-listItems"));
+	let listItems = getListItems(list);
 	
 	let elIdx = Array.prototype.indexOf.call(list.children, element);
 	

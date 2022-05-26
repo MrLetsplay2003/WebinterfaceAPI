@@ -9,6 +9,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import me.mrletsplay.webinterfaceapi.page.element.CheckBox;
 import me.mrletsplay.webinterfaceapi.page.element.ElementID;
 import me.mrletsplay.webinterfaceapi.page.element.PageElement;
+import me.mrletsplay.webinterfaceapi.page.element.list.ElementList;
 
 public interface ActionValue {
 
@@ -69,6 +70,15 @@ public interface ActionValue {
 
 	public static ActionValue checkboxValue(CheckBox checkbox) {
 		return checkboxValue(checkbox.getID());
+	}
+
+	public static ActionValue listValue(ElementID elementID) {
+		elementID.require();
+		return () -> "getListItemsByID(\"" + StringEscapeUtils.escapeEcmaScript(elementID.get()) + "\")";
+	}
+
+	public static ActionValue listValue(ElementList<?> list) {
+		return listValue(list.getID());
 	}
 
 	public static ActionValue elementAttribute(ElementID elementID, String attributeName) {

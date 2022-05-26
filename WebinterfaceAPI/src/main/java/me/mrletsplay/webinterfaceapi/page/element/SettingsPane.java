@@ -21,7 +21,7 @@ import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
 import me.mrletsplay.webinterfaceapi.page.element.list.BasicListAdapter;
 import me.mrletsplay.webinterfaceapi.page.element.list.ListAdapter;
-import me.mrletsplay.webinterfaceapi.page.element.list.WebinterfaceElementList;
+import me.mrletsplay.webinterfaceapi.page.element.list.StringList;
 
 public class SettingsPane extends Group {
 
@@ -106,11 +106,11 @@ public class SettingsPane extends Group {
 				return o;
 			}, obj -> obj.getString("value"));
 
-			WebinterfaceElementList<String> list = WebinterfaceElementList.<String>builder()
-				.items(la)
-				.elementFunction(s -> Text.builder().text(s).leftboundText().create())
+			@SuppressWarnings("unchecked")
+			StringList list = StringList.builder()
+				.initialItems((List<String>) config.get().getSetting(setting))
 				.removable(true)
-				.updateHandler("E", "E") // FIXME: Update handler
+				.onChange(l -> ShowToastAction.info(ActionValue.string("New items: ").plus(ActionValue.listValue(l))))
 				.create();
 
 			el = list;

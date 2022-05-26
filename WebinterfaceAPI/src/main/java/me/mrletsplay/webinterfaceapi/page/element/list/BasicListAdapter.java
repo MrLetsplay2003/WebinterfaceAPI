@@ -38,10 +38,4 @@ public class BasicListAdapter<T> implements ListAdapter<T> {
 		return fromJSON.apply(json);
 	}
 
-	@Override
-	public void onListUpdate(List<T> oldList, List<T> newList) {
-		this.items.clear();
-		this.items.addAll(newList);
-	}
-
 }

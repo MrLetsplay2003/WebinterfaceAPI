@@ -10,7 +10,7 @@ import me.mrletsplay.webinterfaceapi.page.action.value.ObjectValue;
 import me.mrletsplay.webinterfaceapi.page.element.ElementID;
 import me.mrletsplay.webinterfaceapi.page.element.Group;
 import me.mrletsplay.webinterfaceapi.page.element.UpdateableElement;
-import me.mrletsplay.webinterfaceapi.page.element.list.WebinterfaceElementList;
+import me.mrletsplay.webinterfaceapi.page.element.list.ElementList;
 
 public class UpdateElementAction implements Action {
 
@@ -46,8 +46,7 @@ public class UpdateElementAction implements Action {
 		return new UpdateElementAction(element.requireID());
 	}
 
-	public static UpdateElementAction of(WebinterfaceElementList<?> element) {
-		if(!element.isDynamic()) throw new IllegalArgumentException("Can only update dynamic lists");
+	public static UpdateElementAction of(ElementList<?> element) {
 		return new UpdateElementAction(element.requireID());
 	}
 
