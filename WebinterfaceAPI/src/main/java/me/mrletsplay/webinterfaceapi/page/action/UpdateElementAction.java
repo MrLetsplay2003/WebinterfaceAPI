@@ -28,7 +28,7 @@ public class UpdateElementAction implements Action {
 	@Override
 	public ObjectValue getParameters() {
 		ObjectValue o = ActionValue.object();
-		o.put("element", ActionValue.string(elementID.get()));
+		o.put("element", elementID == null ? ActionValue.nullValue() : ActionValue.string(elementID.get()));
 		return o;
 	}
 
@@ -53,6 +53,10 @@ public class UpdateElementAction implements Action {
 	public static UpdateElementAction of(Group element) {
 		if(!element.isDynamic()) throw new IllegalArgumentException("Can only update dynamic groups");
 		return new UpdateElementAction(element.requireID());
+	}
+
+	public static UpdateElementAction updateAll() {
+		return new UpdateElementAction(null);
 	}
 
 }

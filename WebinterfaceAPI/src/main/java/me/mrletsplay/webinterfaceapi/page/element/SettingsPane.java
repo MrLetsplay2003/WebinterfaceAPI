@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.misc.NullableOptional;
 import me.mrletsplay.webinterfaceapi.config.Config;
@@ -14,13 +13,14 @@ import me.mrletsplay.webinterfaceapi.config.setting.SettingsCategory;
 import me.mrletsplay.webinterfaceapi.page.action.Action;
 import me.mrletsplay.webinterfaceapi.page.action.ActionEvent;
 import me.mrletsplay.webinterfaceapi.page.action.ActionResponse;
+import me.mrletsplay.webinterfaceapi.page.action.AddValueAction;
+import me.mrletsplay.webinterfaceapi.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.page.action.SendJSAction;
+import me.mrletsplay.webinterfaceapi.page.action.SetValueAction;
 import me.mrletsplay.webinterfaceapi.page.action.ShowToastAction;
 import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
-import me.mrletsplay.webinterfaceapi.page.element.list.BasicListAdapter;
-import me.mrletsplay.webinterfaceapi.page.element.list.ListAdapter;
 import me.mrletsplay.webinterfaceapi.page.element.list.StringList;
 
 public class SettingsPane extends Group {
@@ -92,28 +92,30 @@ public class SettingsPane extends Group {
 			defaultValue = () -> setting.getDefaultValue().toString();
 			oneLineLayout = true;
 		}else if(setting.getType().equals(Complex.list(String.class))) {
-//			InputField in = new InputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
-//			in.setOnChangeAction(changeSettingAction(setting, () -> String.format("%s.split(\",\").map(x=>x.trim())", in.inputValue().toJavaScript())));
-//			el = in;
-//			defaultValue = ActionValue.array(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
-//					.map(s -> ActionValue.string(s))
-//					.collect(Collectors.toList()));
-
-			@SuppressWarnings("unchecked")
-			ListAdapter<String> la = new BasicListAdapter<>(new ArrayList<>((List<String>) config.get().getSetting(setting)), i -> {
-				JSONObject o = new JSONObject();
-				o.put("value", i);
-				return o;
-			}, obj -> obj.getString("value"));
+			Group grp = new Group();
 
 			@SuppressWarnings("unchecked")
 			StringList list = StringList.builder()
-				.initialItems((List<String>) config.get().getSetting(setting))
+				.initialItems(() -> (List<String>) config.get().getSetting(setting))
 				.removable(true)
-				.onChange(l -> ShowToastAction.info(ActionValue.string("New items: ").plus(ActionValue.listValue(l))))
+				.onChange(l -> changeSettingAction(setting, l.itemsValue()))
+				.fullWidth()
 				.create();
+			grp.addElement(list);
 
-			el = list;
+			InputField field = InputField.builder()
+				.withLayoutOptions(DefaultLayoutOption.FULL_NOT_LAST_COLUMN)
+				.placeholder("Add value")
+				.create();
+			grp.addElement(field);
+
+			Button btn = Button.builder()
+				.text("Add")
+				.onClick(MultiAction.of(AddValueAction.of(list, field.inputValue()), SetValueAction.of(field, ActionValue.nullValue())))
+				.create();
+			grp.addElement(btn);
+
+			el = grp;
 			defaultValue = ActionValue.array(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
 				.map(s -> ActionValue.string(s))
 				.collect(Collectors.toList()));

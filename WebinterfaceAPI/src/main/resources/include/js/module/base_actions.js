@@ -54,14 +54,24 @@ class WebinterfaceBaseActions {
 	}
 
 	static async updateElement(parameters) {
-		let el = document.getElementById(parameters.element);
-		if(el.classList.contains("updateable-element")) {
-			loadUpdateableElement(el);
-		}else if(el.classList.contains("dynamic-list")) {
-			loadDynamicList(el);
-		}else if(el.classList.contains("dynamic-group")) {
-			loadDynamicGroup(el);
+		let elID = parameters.element;
+		
+		if(elID != null) {
+			let el = document.getElementById(parameters.element);
+			if(el.classList.contains("updateable-element")) {
+				loadUpdateableElement(el);
+			}else if(el.classList.contains("dynamic-list")) {
+				loadList(el);
+			}else if(el.classList.contains("dynamic-group")) {
+				loadGroup(el);
+			}
+		}else {
+			loadUpdateableElements();
 		}
+	}
+
+	static addValue(parameters) {
+		listAddItem(document.getElementById(parameters.element), parameters.value);
 	}
 	
 	static showToast(parameters) {

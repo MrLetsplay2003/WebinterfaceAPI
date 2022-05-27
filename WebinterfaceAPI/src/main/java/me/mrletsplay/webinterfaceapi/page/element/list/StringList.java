@@ -5,7 +5,7 @@ import me.mrletsplay.webinterfaceapi.page.element.Text;
 public class StringList extends ElementList<String> {
 
 	public StringList() {
-		super(Text.builder().template(true).text("${this}").leftboundText().create(), s -> s);
+		super(Text.builder().template(true).text("${this}").leftboundText().create());
 	}
 
 	@SuppressWarnings("unchecked")

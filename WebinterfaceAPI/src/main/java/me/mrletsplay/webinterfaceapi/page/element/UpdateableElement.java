@@ -1,19 +1,17 @@
 package me.mrletsplay.webinterfaceapi.page.element;
 
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
+import me.mrletsplay.webinterfaceapi.page.data.DataHandler;
 import me.mrletsplay.webinterfaceapi.page.element.builder.AbstractElementBuilder;
 
 public class UpdateableElement extends AbstractPageElement {
 
 	private PageElement templateElement;
-	private String
-		dataRequestTarget,
-		dataRequestMethod;
+	private DataHandler dataHandler;
 
-	public UpdateableElement(PageElement templateElement, String dataRequestTarget, String dataRequestMethod) {
+	public UpdateableElement(PageElement templateElement, DataHandler dataHandler) {
 		this.templateElement = templateElement;
-		this.dataRequestTarget = dataRequestTarget;
-		this.dataRequestMethod = dataRequestMethod;
+		this.dataHandler = dataHandler;
 	}
 
 	private UpdateableElement() {}
@@ -26,17 +24,12 @@ public class UpdateableElement extends AbstractPageElement {
 		return templateElement;
 	}
 
-	public void setDataHandler(String requestTarget, String requestMethod) {
-		this.dataRequestTarget = requestTarget;
-		this.dataRequestMethod = requestMethod;
+	public void setDataHandler(DataHandler dataHandler) {
+		this.dataHandler = dataHandler;
 	}
 
-	public String getDataRequestTarget() {
-		return dataRequestTarget;
-	}
-
-	public String getDataRequestMethod() {
-		return dataRequestMethod;
+	public DataHandler getDataHandler() {
+		return dataHandler;
 	}
 
 	@Override
@@ -44,8 +37,7 @@ public class UpdateableElement extends AbstractPageElement {
 		HtmlElement div = new HtmlElement("div");
 		if(!templateElement.isTemplate()) throw new IllegalStateException("Template element is not a template");
 		div.addClass("updateable-element");
-		div.setAttribute("data-dataRequestTarget", dataRequestTarget);
-		div.setAttribute("data-dataRequestMethod", dataRequestMethod);
+		div.setAttribute("data-dataHandler", dataHandler.toObject().toJavaScript());
 		HtmlElement templateHTML = templateElement.toHtml();
 		div.setAttribute("data-template", templateHTML.toString());
 		div.appendChild(templateHTML);
@@ -67,15 +59,15 @@ public class UpdateableElement extends AbstractPageElement {
 			return this;
 		}
 
-		public Builder dataHandler(String requestTarget, String requestMethod) {
-			element.setDataHandler(requestTarget, requestMethod);
+		public Builder dataHandler(DataHandler dataHandler) {
+			element.setDataHandler(dataHandler);
 			return this;
 		}
 
 		@Override
 		public UpdateableElement create() {
 			if(element.getTemplateElement() == null) throw new IllegalStateException("No template element set");
-			if(element.getDataRequestTarget() == null || element.getDataRequestMethod() == null) throw new IllegalStateException("No data handler set");
+			if(element.getDataHandler() == null) throw new IllegalStateException("No data handler set");
 			return super.create();
 		}
 

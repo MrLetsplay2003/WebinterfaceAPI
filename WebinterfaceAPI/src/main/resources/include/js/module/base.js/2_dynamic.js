@@ -1,3 +1,17 @@
+async function invokeDataHandler(dataHandler) {
+	let handler = Function("return (" + dataHandler + ")")();
+
+	let response = await Webinterface.call(handler.requestTarget, handler.requestMethod, handler.data, false);
+	if(!response.isSuccess()) {
+		WebinterfaceToast.showErrorToast("Failed to load element data");
+		return null;
+	}
+
+	let data = response.getData();
+	if(handler.key != null) data = data[handler.key];
+	return data;
+}
+
 function convertTemplateString(templateObject, templateString) {
 	return templateString.replaceAll(/\$\{([a-zA-Z0-9\?\:_]+)\}/g, (match, expr, offset, string) => {
 		if(expr == "this") return templateObject;
@@ -89,110 +103,57 @@ async function loadUpdateableElement(element) {
 	temp.innerHTML = element.getAttribute("data-template");
 
 	// Load new data into template
-	let requestTarget = element.getAttribute("data-dataRequestTarget");
-	let requestMethod = element.getAttribute("data-dataRequestMethod");
-
-	let response = await Webinterface.call(requestTarget, requestMethod, null, false);
-	if(!response.isSuccess()) {
-		WebinterfaceToast.showErrorToast("Failed to load template object");
-		return;
-	}
-
-	convertTemplateElement(response.getData(), temp.content.firstChild);
+	if(!element.hasAttribute("data-dataHandler")) return;
+	
+	let data = await invokeDataHandler(element.getAttribute("data-dataHandler"));
+	if(data == null) return;
+	
+	convertTemplateElement(data, temp.content.firstChild);
 
 	// Replace old element with new element
 	element.innerHTML = "";
 	element.appendChild(temp.content);
 }
 
-async function loadDynamicList(element) {
+async function loadList(element) {
 	// Create template
 	let temp = document.createElement("template");
 	temp.innerHTML = element.getAttribute("data-template");
 
 	let items = [];
-	if(element.hasAttribute("data-dataRequestTarget")) {
+	if(element.hasAttribute("data-dataHandler")) {
 		// Load new data into template
-		let requestTarget = element.getAttribute("data-dataRequestTarget");
-		let requestMethod = element.getAttribute("data-dataRequestMethod");
-
-		let response = await Webinterface.call(requestTarget, requestMethod, null, false);
-		if(!response.isSuccess()) {
-			WebinterfaceToast.showErrorToast("Failed to load template object");
-			return;
-		}
-	
-		items = response.getData().items;
+		items = await invokeDataHandler(element.getAttribute("data-dataHandler"));
+		if(items == null) return;
+		if(!Array.isArray(items)) console.log("Data handler returned non-array type", items);
 		element.setAttribute("data-listItems", JSON.stringify(items));
 	}else {
-		items = getListItems(element);
+		items = listGetItems(element);
 	}
 
-	loadDynamicChildren(element, items, temp);
+	loadChildren(element, items, temp);
 	
 	for(let child of element.children) {
-		updateButtons(child);
+		listUpdateButtons(child);
 	}
 }
 
-async function loadDynamicGroup(element) {
+async function loadGroup(element) {
 	// Create template
 	let temp = document.createElement("template");
 	temp.innerHTML = element.getAttribute("data-template");
 
 	// Load new data into template
-	let requestTarget = element.getAttribute("data-dataRequestTarget");
-	let requestMethod = element.getAttribute("data-dataRequestMethod");
+	if(!element.hasAttribute("data-dataHandler")) return;
+	
+	let elements = await invokeDataHandler(element.getAttribute("data-dataHandler"));
+	if(elements == null) return;
+	
 
-	let response = await Webinterface.call(requestTarget, requestMethod, null, false);
-	if(!response.isSuccess()) {
-		WebinterfaceToast.showErrorToast("Failed to load template object");
-		return;
-	}
-
-	loadDynamicChildren(element, response.getData().elements, temp);
+	loadChildren(element, elements, temp);
 }
 
-function loadDynamicChildren(element, children, template) {
-	/*let newIDs = children.map(el => el._id);
-
-	// Remove all elements that no longer exist
-	for(let c of element.children) {
-		if(newIDs.includes(c.getAttribute("data-elementId"))) continue; // Element still exists
-		c.remove();
-	}
-
-	// Update existing elements
-	for(let i = 0; i < element.children.length; i++) {
-		let oldEl = element.children[i];
-		let elData = children.find(e => e._id == oldEl.getAttribute("data-elementId"));
-		let newEl = template.content.firstChild.cloneNode(true);
-		convertTemplateElement(elData, newEl);
-		updateElement(oldEl, newEl);
-	}
-
-	// Reorder elements and insert new ones
-	for(let i = 0; i < newIDs.length; i++) {
-		if(element.children[i] != null && element.children[i].getAttribute("data-elementId") == newIDs[i]) continue; // Correct element in the correct place
-
-		// Search for existing element
-		let el = null;
-		for(let c of element.children) {
-			if(c.getAttribute("data-elementId") == newIDs[i]) {
-				el = c;
-				break;
-			}
-		}
-
-		if(el == null) {
-			el = template.content.firstChild.cloneNode(true);
-			el.setAttribute("data-elementId", children[i]._id);
-			convertTemplateElement(children[i], el);
-		}
-
-		element.insertBefore(el, element.children[i + 1]);
-	}*/
-	
+function loadChildren(element, children, template) {
 	while(element.children.length > children.length) {
 		element.children[element.children.length - 1].remove();
 	}
@@ -211,15 +172,15 @@ function loadDynamicChildren(element, children, template) {
 	}
 }
 
-function getListItems(element) {
+function listGetItems(element) {
 	return JSON.parse(element.getAttribute("data-listItems"));
 }
 
-function getListItemsByID(elementID) {
-	return getListItems(document.getElementById(elementID));
+function listGetItemsByID(elementID) {
+	return listGetItems(document.getElementById(elementID));
 }
 
-function updateButtons(element) {
+function listUpdateButtons(element) {
 	let upBtn = element.getElementsByClassName("list-button-up")[0];
 	if(upBtn != null) {
 		if(element.previousElementSibling == null) {
@@ -239,18 +200,16 @@ function updateButtons(element) {
 	}
 }
 
-function dynamicListOnChange(element, additionalInfo) {
-	console.log("List has changed", element, additionalInfo);
-	
+function listOnChange(element, additionalInfo) {
 	let onChange = element.getAttribute("data-onChange");
 	if(onChange != null) eval(onChange);
 }
 
-async function dynamicListElementSwap(element, other) {
+function listSwapElements(element, other) {
 	if(other == null) return;
 	
 	let list = element.parentElement;
-	let listItems = getListItems(list);
+	let listItems = listGetItems(list);
 	
 	let elIdx = Array.prototype.indexOf.call(list.children, element);
 	let otherIdx = Array.prototype.indexOf.call(list.children, other);
@@ -265,14 +224,14 @@ async function dynamicListElementSwap(element, other) {
 	list.insertBefore(element, other);
 	if(moveOther) list.insertBefore(other, element);
 	
-	updateButtons(element);
-	updateButtons(other);
-	dynamicListOnChange(list, {action: "swap", item1: elIdx, item2: otherIdx});
+	listUpdateButtons(element);
+	listUpdateButtons(other);
+	listOnChange(list, {action: "swap", item1: elIdx, item2: otherIdx});
 }
 
-async function dynamicListElementRemove(element) {
+function listRemoveItem(element) {
 	let list = element.parentElement;
-	let listItems = getListItems(list);
+	let listItems = listGetItems(list);
 	
 	let elIdx = Array.prototype.indexOf.call(list.children, element);
 	
@@ -283,20 +242,32 @@ async function dynamicListElementRemove(element) {
 	let next = element.nextElementSibling;
 	element.remove();
 	
-	if(prev != null) updateButtons(prev);
-	if(next != null) updateButtons(next);
+	if(prev != null) listUpdateButtons(prev);
+	if(next != null) listUpdateButtons(next);
 	
-	dynamicListOnChange(list, {action: "remove", item: elIdx});
+	listOnChange(list, {action: "remove", item: elIdx});
 }
 
-function dynamicListElementParams(element) {
-	return {
-		requestTarget: element.parentElement.getAttribute("data-updateRequestTarget"),
-		requestMethod: element.parentElement.getAttribute("data-updateRequestMethod"),
-		id: element.getAttribute("data-elementId"),
-		before: element.getAttribute("data-elementBefore"),
-		after: element.getAttribute("data-elementAfter")
-	};
+function listAddItem(element, data) {
+	let listItems = listGetItems(element);
+	
+	listItems.push(data);
+	element.setAttribute("data-listItems", JSON.stringify(listItems));
+	
+	// Create template
+	let temp = document.createElement("template");
+	temp.innerHTML = element.getAttribute("data-template");
+	
+	let newEl = temp.content.firstChild.cloneNode(true);
+	convertTemplateElement(data, newEl);
+	
+	element.appendChild(newEl);
+	
+	listOnChange(element, {action: "add", item: data});
+}
+
+function listSetItems(element, items) {
+	
 }
 
 async function loadUpdateableElements() {
@@ -304,10 +275,10 @@ async function loadUpdateableElements() {
 		await loadUpdateableElement(el);
 	}
 	for(let el of document.getElementsByClassName("dynamic-list")) {
-		await loadDynamicList(el);
+		await loadList(el);
 	}
 	for(let el of document.getElementsByClassName("dynamic-group")) {
-		await loadDynamicGroup(el);
+		await loadGroup(el);
 	}
 }
 

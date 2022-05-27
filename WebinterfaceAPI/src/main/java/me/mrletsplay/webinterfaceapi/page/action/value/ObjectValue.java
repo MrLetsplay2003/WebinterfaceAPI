@@ -11,7 +11,7 @@ public class ObjectValue implements ActionValue {
 	private Map<String, ActionValue> values;
 
 	protected ObjectValue(Map<String, ActionValue> values) {
-		this.values = values;
+		this.values = new HashMap<>(values);
 	}
 
 	protected ObjectValue() {
@@ -26,8 +26,8 @@ public class ObjectValue implements ActionValue {
 	@Override
 	public String toJavaScript() {
 		return "{" + values.entrySet().stream()
-					.map(v -> "\"" + StringEscapeUtils.escapeEcmaScript(v.getKey()) + "\":" + (v.getValue() == null ? null : v.getValue().toJavaScript()))
-					.collect(Collectors.joining(",")) + "}";
+			.map(v -> "\"" + StringEscapeUtils.escapeEcmaScript(v.getKey()) + "\":" + (v.getValue() == null ? null : v.getValue().toJavaScript()))
+			.collect(Collectors.joining(",")) + "}";
 	}
 
 }

@@ -10,7 +10,7 @@ public class ArrayValue implements ActionValue {
 	private List<ActionValue> values;
 
 	protected ArrayValue(List<ActionValue> values) {
-		this.values = values;
+		this.values = new ArrayList<>(values);
 	}
 
 	protected ArrayValue(ActionValue... values) {

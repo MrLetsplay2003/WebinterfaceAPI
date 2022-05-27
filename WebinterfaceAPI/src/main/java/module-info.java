@@ -21,6 +21,7 @@ open module me.mrletsplay.webinterfaceapi {
 	exports me.mrletsplay.webinterfaceapi.page.action.value;
 	exports me.mrletsplay.webinterfaceapi.util;
 	exports me.mrletsplay.webinterfaceapi.page;
+	exports me.mrletsplay.webinterfaceapi.page.data;
 
 	requires transitive me.mrletsplay.mrcore;
 	requires transitive simplehttpserver;

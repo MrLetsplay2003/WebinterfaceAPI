@@ -27,6 +27,14 @@ public interface ActionValue {
 		return () -> "parseInt(" + toJavaScript() + ")";
 	}
 
+	public default ActionValue key(String key) {
+		return () -> toJavaScript() + "[" + StringEscapeUtils.escapeEcmaScript(key) + "]";
+	}
+
+	public default ActionValue index(int index) {
+		return key(String.valueOf(index));
+	}
+
 	public static ActionValue string(Supplier<String> string) {
 		return () -> {
 			String str = string.get();
@@ -72,13 +80,13 @@ public interface ActionValue {
 		return checkboxValue(checkbox.getID());
 	}
 
-	public static ActionValue listValue(ElementID elementID) {
+	public static ActionValue listItems(ElementID elementID) {
 		elementID.require();
-		return () -> "getListItemsByID(\"" + StringEscapeUtils.escapeEcmaScript(elementID.get()) + "\")";
+		return () -> "listGetItemsByID(\"" + StringEscapeUtils.escapeEcmaScript(elementID.get()) + "\")";
 	}
 
-	public static ActionValue listValue(ElementList<?> list) {
-		return listValue(list.getID());
+	public static ActionValue listItems(ElementList<?> list) {
+		return listItems(list.getID());
 	}
 
 	public static ActionValue elementAttribute(ElementID elementID, String attributeName) {

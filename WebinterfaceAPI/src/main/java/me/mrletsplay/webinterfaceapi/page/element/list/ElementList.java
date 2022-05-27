@@ -2,25 +2,29 @@ package me.mrletsplay.webinterfaceapi.page.element.list;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 import me.mrletsplay.mrcore.json.JSONArray;
-import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 import me.mrletsplay.simplehttpserver.dom.html.element.HtmlButton;
 import me.mrletsplay.webinterfaceapi.page.action.Action;
-import me.mrletsplay.webinterfaceapi.page.action.ActionResponse;
 import me.mrletsplay.webinterfaceapi.page.action.UpdateElementAction;
+import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
+import me.mrletsplay.webinterfaceapi.page.data.DataHandler;
 import me.mrletsplay.webinterfaceapi.page.element.AbstractPageElement;
 import me.mrletsplay.webinterfaceapi.page.element.PageElement;
 import me.mrletsplay.webinterfaceapi.page.element.builder.AbstractElementBuilder;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 
+/**
+ *
+ * @author mr
+ *
+ * @param <T> The type of items in this list. This must be a JSON-compatible type
+ */
 public class ElementList<T> extends AbstractPageElement {
 
-	private List<T> items;
-
-	private Function<T, Object> toJSON;
+	private Supplier<List<T>> items;
 
 	private boolean
 		rearrangable,
@@ -28,15 +32,12 @@ public class ElementList<T> extends AbstractPageElement {
 
 	private PageElement templateElement;
 
-	private String
-		dataRequestTarget,
-		dataRequestMethod;
+	private DataHandler dataHandler;
 
 	private Action onChange;
 
-	public ElementList(PageElement templateElement, Function<T, Object> toJSON) {
+	public ElementList(PageElement templateElement) {
 		this.templateElement = templateElement;
-		this.toJSON = toJSON;
 	}
 
 	protected ElementList() {}
@@ -45,11 +46,19 @@ public class ElementList<T> extends AbstractPageElement {
 	 * Sets the initial items for the list
 	 * @param items The initial items
 	 */
-	public void setInitialItems(List<T> items) {
+	public void setInitialItems(Supplier<List<T>> items) {
 		this.items = items;
 	}
 
-	public List<T> getItems() {
+	/**
+	 * Sets the initial items for the list
+	 * @param items The initial items
+	 */
+	public void setInitialItems(List<T> items) {
+		this.items = () -> items;
+	}
+
+	public Supplier<List<T>> getInitialItems() {
 		return items;
 	}
 
@@ -63,14 +72,6 @@ public class ElementList<T> extends AbstractPageElement {
 
 	public PageElement getTemplateElement() {
 		return templateElement;
-	}
-
-	public void setToJSONFunction(Function<T, Object> toJSON) {
-		this.toJSON = toJSON;
-	}
-
-	public Function<T, Object> getToJSONFunction() {
-		return toJSON;
 	}
 
 	public void setRearrangable(boolean rearrangable) {
@@ -89,17 +90,12 @@ public class ElementList<T> extends AbstractPageElement {
 		return removable;
 	}
 
-	public void setDataHandler(String requestTarget, String requestMethod) {
-		this.dataRequestTarget = requestTarget;
-		this.dataRequestMethod = requestMethod;
+	public void setDataHandler(DataHandler dataHandler) {
+		this.dataHandler = dataHandler;
 	}
 
-	public String getDataRequestTarget() {
-		return dataRequestTarget;
-	}
-
-	public String getDataRequestMethod() {
-		return dataRequestMethod;
+	public DataHandler getDataHandler() {
+		return dataHandler;
 	}
 
 	public void setOnChangeAction(Action onChange) {
@@ -110,10 +106,8 @@ public class ElementList<T> extends AbstractPageElement {
 		return onChange;
 	}
 
-	public static <T> ActionResponse handleItems(List<T> items, Function<T, Object> toJSON) {
-		JSONObject res = new JSONObject();
-		res.put("items", items.stream().map(toJSON::apply).collect(Collectors.toCollection(JSONArray::new)));
-		return ActionResponse.success(res);
+	public ActionValue itemsValue() {
+		return ActionValue.listItems(this);
 	}
 
 	@Override
@@ -126,10 +120,9 @@ public class ElementList<T> extends AbstractPageElement {
 
 		if(!templateElement.isTemplate()) throw new IllegalStateException("Template element is not a template");
 		el.addClass("dynamic-list");
-		el.setAttribute("data-listItems", items == null ? "[]" : items.stream().map(toJSON::apply).collect(Collectors.toCollection(JSONArray::new)).toString());
-		if(dataRequestTarget != null && dataRequestMethod != null) {
-			el.setAttribute("data-dataRequestTarget", dataRequestTarget);
-			el.setAttribute("data-dataRequestMethod", dataRequestMethod);
+		el.setAttribute("data-listItems", items == null ? "[]" : new JSONArray(items.get()).toString());
+		if(dataHandler != null) {
+			el.setAttribute("data-dataHandler", dataHandler.toObject().toJavaScript());
 		}
 		el.setAttribute("data-template", createDynamicListItem().toString());
 		if(onChange != null) el.setAttribute("data-onChange", onChange.createAttributeValue());
@@ -144,13 +137,13 @@ public class ElementList<T> extends AbstractPageElement {
 		if(rearrangable) {
 			HtmlButton upBtn = HtmlElement.button();
 			upBtn.addClass("list-button list-button-up");
-			upBtn.setOnClick("dynamicListElementSwap(this.parentElement, this.parentElement.previousElementSibling)");
+			upBtn.setOnClick("listSwapItems(this.parentElement, this.parentElement.previousElementSibling)");
 			upBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:chevron-up"));
 			container.appendChild(upBtn);
 
 			HtmlButton downBtn = HtmlElement.button();
 			downBtn.addClass("list-button list-button-down");
-			downBtn.setOnClick("dynamicListElementSwap(this.parentElement, this.parentElement.nextElementSibling)");
+			downBtn.setOnClick("listSwapItems(this.parentElement, this.parentElement.nextElementSibling)");
 			downBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:chevron-down"));
 			container.appendChild(downBtn);
 		}
@@ -158,7 +151,7 @@ public class ElementList<T> extends AbstractPageElement {
 		if(removable) {
 			HtmlButton removeBtn = HtmlElement.button();
 			removeBtn.addClass("list-button");
-			removeBtn.setOnClick("dynamicListElementRemove(this.parentElement)");
+			removeBtn.setOnClick("listRemoveItem(this.parentElement)");
 			removeBtn.appendChild(WebinterfaceUtils.iconifyIcon("mdi:delete"));
 			container.appendChild(removeBtn);
 		}
@@ -186,13 +179,12 @@ public class ElementList<T> extends AbstractPageElement {
 		}
 
 		/**
-		 * Sets the function that will be used to convert the initial list items to a JSON compatible type
-		 * @param toJSON The function to use
+		 * Sets the items used for the list
+		 * @param items A list of initial items
 		 * @return This builder
-		 * @see #initialItems(List)
 		 */
-		public S toJSONFunction(Function<T, Object> toJSON) {
-			element.setToJSONFunction(toJSON);
+		public S initialItems(Supplier<List<T>> items) {
+			element.setInitialItems(items);
 			return getSelf();
 		}
 
@@ -228,12 +220,11 @@ public class ElementList<T> extends AbstractPageElement {
 
 		/**
 		 * Sets a data handler for this list to retrieve data when it is updated (when initially loading or by using an {@link UpdateElementAction}
-		 * @param requestTarget The request target of the data handler
-		 * @param requestMethod The request method of the data handler
+		 * @param dataHandler The data handler to use
 		 * @return This builder
 		 */
-		public S dataHandler(String requestTarget, String requestMethod) {
-			element.setDataHandler(requestTarget, requestMethod);
+		public S dataHandler(DataHandler dataHandler) {
+			element.setDataHandler(dataHandler);
 			return getSelf();
 		}
 
@@ -249,8 +240,7 @@ public class ElementList<T> extends AbstractPageElement {
 
 		@Override
 		public ElementList<T> create() throws IllegalStateException {
-			if(element.getItems() != null && (element.getDataRequestTarget() != null || element.getDataRequestMethod() != null)) throw new IllegalStateException("Items and data handler may not both be set");
-			if(element.getItems() != null && element.getToJSONFunction() == null) throw new IllegalStateException("To JSON function must be set if the list contains initial items");
+			if(element.getInitialItems() != null && element.getDataHandler() != null) throw new IllegalStateException("Items and data handler may not both be set");
 
 			return super.create();
 		}
