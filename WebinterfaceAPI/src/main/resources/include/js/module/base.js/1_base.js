@@ -42,7 +42,14 @@ class Webinterface {
 			};
 
 			Webinterface.webSocket.onclose = function(event) {
-				WebinterfaceToast.showErrorToast("Connection closed: " + event.code + (event.reason != "" ? " (" + event.reason + ")" : ""));
+				if(event.code == 1006) {
+					WebinterfaceToast.showErrorToast("Lost connection: " + event.code + (event.reason != "" ? " (" + event.reason + ")" : ""));
+				}else if(event.code == 1008) {
+					WebinterfaceToast.showErrorToast("Unknown error: " + event.code + (event.reason != "" ? " (" + event.reason + ")" : ""));
+				}else {
+					WebinterfaceToast.showErrorToast("Connection closed: " + event.code + (event.reason != "" ? " (" + event.reason + ")" : ""));
+				}
+				
 				Webinterface.webSocket = null;
 			};
 
@@ -211,4 +218,33 @@ function getCookie(cname) {
 		}
 	}
 	return "";
+}
+
+function checkInputValidity(element) {
+	if(!element.checkValidity()) {
+		element.style.border = "1px solid orangered";
+		
+		let errEl = element.parentElement.getElementsByClassName("error-message")[0];
+		if(errEl == null) {
+			errEl = document.createElement("span");
+			errEl.classList.add("error-message");
+			errEl.innerText = element.validationMessage;
+			errEl.style.position = "absolute";
+			errEl.style.zIndex = 100;
+			errEl.style.borderBottomLeftRadius = "5px";
+			errEl.style.borderBottomRightRadius = "5px";
+			
+			let elHeight = $(element).outerHeight();
+			let marginTop = parseInt($(element).css("marginTop"));
+			errEl.style.top = (elHeight + marginTop) + "px";
+			errEl.style.backgroundColor = "orangered";
+			element.parentElement.appendChild(errEl);
+		}else {
+			errEl.innerText = element.validationMessage;
+		}
+	}else {
+		element.style.border = null;
+		let errEl = element.parentElement.getElementsByClassName("error-message")[0];
+		if(errEl != null) errEl.remove();
+	}
 }

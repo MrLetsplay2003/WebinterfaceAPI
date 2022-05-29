@@ -14,6 +14,10 @@ public class InputField extends AbstractPageElement {
 		placeholder,
 		initialValue;
 
+	private Integer
+		minLength,
+		maxLength;
+
 	private Action onChangeAction;
 
 	public InputField(Supplier<String> placeholder, Supplier<String> initialValue) {
@@ -61,6 +65,22 @@ public class InputField extends AbstractPageElement {
 		return initialValue;
 	}
 
+	public void setMinLength(Integer minLength) {
+		this.minLength = minLength;
+	}
+
+	public Integer getMinLength() {
+		return minLength;
+	}
+
+	public void setMaxLength(Integer maxLength) {
+		this.maxLength = maxLength;
+	}
+
+	public Integer getMaxLength() {
+		return maxLength;
+	}
+
 	public void setOnChangeAction(Action onChangeAction) {
 		this.onChangeAction = onChangeAction;
 	}
@@ -76,6 +96,11 @@ public class InputField extends AbstractPageElement {
 		b.setAttribute("type", "text");
 		b.setAttribute("placeholder", placeholder);
 		b.setAttribute("aria-label", placeholder);
+		b.setAttribute("oninput", "checkInputValidity(this)");
+
+		if(minLength != null) b.setAttribute("minlength", String.valueOf(minLength));
+		if(maxLength != null) b.setAttribute("maxlength", String.valueOf(maxLength));
+
 		if(initialValue != null) {
 			String v = initialValue.get();
 			if(v != null) b.setAttribute("value", v);
@@ -111,6 +136,16 @@ public class InputField extends AbstractPageElement {
 
 		public Builder initialValue(Supplier<String> placeholder) {
 			element.setInitialValue(placeholder);
+			return this;
+		}
+
+		public Builder minLength(Integer minLength) {
+			element.setMinLength(minLength);
+			return this;
+		}
+
+		public Builder maxLength(Integer maxLength) {
+			element.setMaxLength(maxLength);
 			return this;
 		}
 

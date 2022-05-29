@@ -248,7 +248,7 @@ function listRemoveItem(element) {
 	listOnChange(list, {action: "remove", item: elIdx});
 }
 
-function listAddItem(element, data) {
+function listAddItem(element, data, triggerUpdate = true) {
 	let listItems = listGetItems(element);
 	
 	listItems.push(data);
@@ -263,11 +263,26 @@ function listAddItem(element, data) {
 	
 	element.appendChild(newEl);
 	
-	listOnChange(element, {action: "add", item: data});
+	let prev = newEl.previousElementSibling;
+	if(prev != null) listUpdateButtons(prev);
+	listUpdateButtons(newEl);
+	
+	if(triggerUpdate) listOnChange(element, {action: "add", item: data});
 }
 
-function listSetItems(element, items) {
+function listSetItems(element, items, triggerUpdate = true) {
+	element.setAttribute("data-listItems", JSON.stringify(items));
 	
+	let temp = document.createElement("template");
+	temp.innerHTML = element.getAttribute("data-template");
+	
+	loadChildren(element, items, temp);
+	
+	for(let child of element.children) {
+		listUpdateButtons(child);
+	}
+	
+	if(triggerUpdate) listOnChange(element, {action: "set", items: items});
 }
 
 async function loadUpdateableElements() {

@@ -46,6 +46,30 @@ public interface ActionValue {
 		return string(() -> string);
 	}
 
+	public static ActionValue integer(Supplier<Integer> integer) {
+		return () -> String.valueOf(integer.get());
+	}
+
+	public static ActionValue integer(int integer) {
+		return integer(() -> integer);
+	}
+
+	public static ActionValue decimal(Supplier<Double> decimal) {
+		return () -> String.valueOf(decimal.get());
+	}
+
+	public static ActionValue decimal(double decimal) {
+		return decimal(() -> decimal);
+	}
+
+	public static ActionValue bool(Supplier<Boolean> bool) {
+		return () -> String.valueOf(bool.get());
+	}
+
+	public static ActionValue bool(boolean bool) {
+		return bool(() -> bool);
+	}
+
 	public static ArrayValue array(List<ActionValue> values) {
 		return new ArrayValue(values);
 	}

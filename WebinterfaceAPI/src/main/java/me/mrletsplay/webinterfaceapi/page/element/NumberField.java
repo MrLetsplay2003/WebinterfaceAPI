@@ -10,20 +10,24 @@ import me.mrletsplay.webinterfaceapi.page.element.builder.AbstractElementBuilder
 
 public class NumberField extends AbstractPageElement {
 
-	private boolean allowFloats;
+	private Supplier<String> placeholder;
 
-	private Supplier<String>
-		placeholder,
-		initialValue;
+	private Supplier<Double> initialValue;
+
+	private int allowedDecimals;
+
+	private Double
+		min,
+		max;
 
 	private Action onChangeAction;
 
-	public NumberField(Supplier<String> placeholder, Supplier<String> initialValue) {
+	public NumberField(Supplier<String> placeholder, Supplier<Double> initialValue) {
 		this.placeholder = placeholder;
 		this.initialValue = initialValue;
 	}
 
-	public NumberField(String placeholder, String initialValue) {
+	public NumberField(String placeholder, Double initialValue) {
 		this(() -> placeholder, () -> initialValue);
 	}
 
@@ -39,10 +43,6 @@ public class NumberField extends AbstractPageElement {
 		this(() -> "Text");
 	}
 
-	public void setAllowFloats(boolean allowFloats) {
-		this.allowFloats = allowFloats;
-	}
-
 	public void setPlaceholder(Supplier<String> placeholder) {
 		this.placeholder = placeholder;
 	}
@@ -55,16 +55,40 @@ public class NumberField extends AbstractPageElement {
 		return placeholder;
 	}
 
-	public void setInitialValue(Supplier<String> initialValue) {
+	public void setInitialValue(Supplier<Double> initialValue) {
 		this.initialValue = initialValue;
 	}
 
-	public void setInitialValue(String initialValue) {
+	public void setInitialValue(Double initialValue) {
 		setInitialValue(() -> initialValue);
 	}
 
-	public Supplier<String> getInitialValue() {
+	public Supplier<Double> getInitialValue() {
 		return initialValue;
+	}
+
+	public void setAllowedDecimals(int allowedDecimals) {
+		this.allowedDecimals = allowedDecimals;
+	}
+
+	public int getAllowedDecimals() {
+		return allowedDecimals;
+	}
+
+	public void setMin(Double min) {
+		this.min = min;
+	}
+
+	public Double getMin() {
+		return min;
+	}
+
+	public void setMax(Double max) {
+		this.max = max;
+	}
+
+	public Double getMax() {
+		return max;
 	}
 
 	public void setOnChangeAction(Action onChangeAction) {
@@ -73,7 +97,7 @@ public class NumberField extends AbstractPageElement {
 
 	public ActionValue inputValue() {
 		ActionValue v = ActionValue.elementValue(this);
-		return () -> (allowFloats ? "parseInt(" : "parseFloat(") + v.toJavaScript() + ")";
+		return () -> (allowedDecimals > 0 ? "parseInt(" : "parseFloat(") + v.toJavaScript() + ")";
 	}
 
 	@Override
@@ -83,9 +107,18 @@ public class NumberField extends AbstractPageElement {
 		b.setAttribute("type", "number");
 		b.setAttribute("placeholder", placeholder);
 		b.setAttribute("aria-label", placeholder);
+		b.setAttribute("oninput", "checkInputValidity(this)");
+
+		if(min != null) b.setAttribute("min", min.toString());
+		if(max != null) b.setAttribute("max", max.toString());
+		if(allowedDecimals != 0) b.setAttribute("step", String.valueOf(Math.pow(10, -allowedDecimals)));
+
 		if(initialValue != null) {
-			String v = initialValue.get();
-			if(v != null) b.setAttribute("value", v);
+			Double v = initialValue.get();
+			if(v != null) {
+				Number val = v == v.longValue() ? (Number) v.longValue() : (Number) v;
+				b.setAttribute("value", String.valueOf(val));
+			}
 		}
 		if(onChangeAction != null) b.setAttribute("onchange", onChangeAction.createAttributeValue());
 		return b;
@@ -111,13 +144,28 @@ public class NumberField extends AbstractPageElement {
 			return this;
 		}
 
-		public Builder initialValue(String placeholder) {
-			element.setInitialValue(placeholder);
+		public Builder initialValue(Double initialValue) {
+			element.setInitialValue(initialValue);
 			return this;
 		}
 
-		public Builder initialValue(Supplier<String> placeholder) {
-			element.setInitialValue(placeholder);
+		public Builder initialValue(Supplier<Double> initialValue) {
+			element.setInitialValue(initialValue);
+			return this;
+		}
+
+		public Builder allowedDecimals(int allowedDecimals) {
+			element.setAllowedDecimals(allowedDecimals);
+			return this;
+		}
+
+		public Builder min(Double min) {
+			element.setMin(min);
+			return this;
+		}
+
+		public Builder max(Double max) {
+			element.setMax(max);
 			return this;
 		}
 

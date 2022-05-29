@@ -1,7 +1,19 @@
 class WebinterfaceBaseActions {
 
 	static setValue(parameters) {
-		document.getElementById(parameters.element).value = parameters.value;
+		let element = document.getElementById(parameters.element);
+		if(element.tagName == "INPUT") {
+			if(element.type == "checkbox") {
+				element.checked = parameters.value;
+				if(parameters.triggerUpdate) $(element).trigger("change");
+			}else {
+				element.value = parameters.value;
+				if(parameters.triggerUpdate) $(element).trigger("change");
+				checkInputValidity(element); // Update possible error message
+			}
+		}else if(element.classList.contains("dynamic-list")) {
+			listSetItems(element, parameters.value, parameters.triggerUpdate);
+		}
 	}
 
 	static async sendJS(parameters) {
@@ -71,7 +83,7 @@ class WebinterfaceBaseActions {
 	}
 
 	static addValue(parameters) {
-		listAddItem(document.getElementById(parameters.element), parameters.value);
+		listAddItem(document.getElementById(parameters.element), parameters.value, parameters.triggerUpdate);
 	}
 	
 	static showToast(parameters) {
@@ -104,6 +116,24 @@ class WebinterfaceBaseActions {
 		if(response.isSuccess() && parameters.onSuccess != null) {
 			parameters.onSuccess.action(parameters.onSuccess.parameters);
 		}else if(!response.isSuccess() && parameters.onError != null) {
+			parameters.onError.action(parameters.onError.parameters);
+		}
+	}
+	
+	static validateElements(parameters) {
+		let valid = true;
+		
+		for(let elID of parameters.elements) {
+			let el = document.getElementById(elID);
+			if(!el.checkValidity()) {
+				valid = false;
+				break;
+			}
+		}
+		
+		if(valid && parameters.onSuccess != null) {
+			parameters.onSuccess.action(parameters.onSuccess.parameters);
+		}else if(!valid && parameters.onError != null) {
 			parameters.onError.action(parameters.onError.parameters);
 		}
 	}

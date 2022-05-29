@@ -10,6 +10,14 @@ import me.mrletsplay.mrcore.misc.NullableOptional;
 import me.mrletsplay.webinterfaceapi.config.Config;
 import me.mrletsplay.webinterfaceapi.config.setting.Setting;
 import me.mrletsplay.webinterfaceapi.config.setting.SettingsCategory;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.BooleanListSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.BooleanSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.DoubleListSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.DoubleSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.IntListSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.IntSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.StringListSetting;
+import me.mrletsplay.webinterfaceapi.config.setting.impl.StringSetting;
 import me.mrletsplay.webinterfaceapi.page.action.Action;
 import me.mrletsplay.webinterfaceapi.page.action.ActionEvent;
 import me.mrletsplay.webinterfaceapi.page.action.ActionResponse;
@@ -18,9 +26,13 @@ import me.mrletsplay.webinterfaceapi.page.action.MultiAction;
 import me.mrletsplay.webinterfaceapi.page.action.SendJSAction;
 import me.mrletsplay.webinterfaceapi.page.action.SetValueAction;
 import me.mrletsplay.webinterfaceapi.page.action.ShowToastAction;
+import me.mrletsplay.webinterfaceapi.page.action.ValidateElementsAction;
 import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
+import me.mrletsplay.webinterfaceapi.page.element.list.DoubleList;
+import me.mrletsplay.webinterfaceapi.page.element.list.ElementList;
+import me.mrletsplay.webinterfaceapi.page.element.list.IntegerList;
 import me.mrletsplay.webinterfaceapi.page.element.list.StringList;
 
 public class SettingsPane extends Group {
@@ -61,46 +73,76 @@ public class SettingsPane extends Group {
 	private void addSetting(Setting<?> setting) {
 		PageElement el = null;
 		ActionValue defaultValue = null;
+		Action resetAction = null;
 
 		boolean oneLineLayout = false;
 
-		if(setting.getType().equals(Complex.value(String.class))) {
+		if(setting instanceof StringSetting) {
+			StringSetting s = (StringSetting) setting;
+
 			InputField in = new InputField();
 			in.setInitialValue(() -> {
-				String v = (String) config.get().getSetting(setting);
+				String v = config.get().getSetting(s);
 				return v == null ? "" : v;
 			});
 			in.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(in)));
 			el = in;
 			defaultValue = ActionValue.string((String) setting.getDefaultValue());
-		}else if(setting.getType().equals(Complex.value(Integer.class)) || setting.getType().equals(Complex.value(Double.class))) {
-			boolean isInt = setting.getType().equals(Complex.value(Integer.class));
+
+			resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+		}else if(setting instanceof IntSetting) {
+			IntSetting s = (IntSetting) setting;
+
 			NumberField in = new NumberField(() -> String.valueOf(config.get().getSetting(setting)));
 			in.setInitialValue(() -> {
-				String v = String.valueOf(config.get().getSetting(setting));
-				return v == null ? "" : v;
+				Integer v = config.get().getSetting(s);
+				return v == null ? null : v.doubleValue();
 			});
-			in.setAllowFloats(!isInt);
-			in.setOnChangeAction(changeSettingAction(setting, in.inputValue()));
+
+			if(s.getMin() != null) in.setMin(s.getMin().doubleValue());
+			if(s.getMax() != null) in.setMax(s.getMax().doubleValue());
+
+			in.setOnChangeAction(ValidateElementsAction.of(in).onSuccess(changeSettingAction(setting, in.inputValue())));
 			el = in;
 			defaultValue = () -> setting.getDefaultValue().toString();
-		}else if(setting.getType().equals(Complex.value(Boolean.class))) {
+
+			resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+		}else if(setting instanceof DoubleSetting) {
+			DoubleSetting s = (DoubleSetting) setting;
+
+			NumberField in = new NumberField(() -> String.valueOf(config.get().getSetting(setting)));
+			in.setInitialValue(() -> config.get().getSetting(s));
+
+			if(s.getMin() != null) in.setMin(s.getMin());
+			if(s.getMax() != null) in.setMax(s.getMax());
+
+			in.setAllowedDecimals(2);
+			in.setOnChangeAction(ValidateElementsAction.of(in).onSuccess(changeSettingAction(setting, in.inputValue())));
+			el = in;
+			defaultValue = () -> setting.getDefaultValue().toString();
+
+			resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+		}else if(setting instanceof BooleanSetting) {
 			CheckBox in = new CheckBox(() -> (Boolean) config.get().getSetting(setting));
 			in.addLayoutOptions(DefaultLayoutOption.LEFTBOUND_TEXT);
 			in.setOnChangeAction(changeSettingAction(setting, in.checkedValue()));
 			el = in;
 			defaultValue = () -> setting.getDefaultValue().toString();
 			oneLineLayout = true;
-		}else if(setting.getType().equals(Complex.list(String.class))) {
+
+			resetAction = SetValueAction.of(in, defaultValue);
+		}else if(setting instanceof StringListSetting) {
+			StringListSetting s = (StringListSetting) setting;
+
 			Group grp = new Group();
 
-			@SuppressWarnings("unchecked")
-			StringList list = StringList.builder()
-				.initialItems(() -> (List<String>) config.get().getSetting(setting))
+			ElementList<?> list = StringList.builder()
+				.initialItems(() -> config.get().getSetting(s))
 				.removable(true)
 				.onChange(l -> changeSettingAction(setting, l.itemsValue()))
 				.fullWidth()
 				.create();
+
 			grp.addElement(list);
 
 			InputField field = InputField.builder()
@@ -115,24 +157,92 @@ public class SettingsPane extends Group {
 				.create();
 			grp.addElement(btn);
 
-			el = grp;
-			defaultValue = ActionValue.array(Complex.list(String.class).cast(setting.getDefaultValue()).get().stream()
-				.map(s -> ActionValue.string(s))
+			defaultValue = ActionValue.array(s.getDefaultValue().stream()
+				.map(str -> ActionValue.string(str))
 				.collect(Collectors.toList()));
-		}else if(setting.getType().equals(Complex.list(Integer.class)) || setting.getType().equals(Complex.list(Double.class))) {
-			InputField in = new InputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
-			in.setOnChangeAction(changeSettingAction(setting, () -> String.format("%s.split(\",\").map(x=>x.trim()).map(" + (setting.getType().equals(Complex.list(Integer.class)) ? "x=>parseInt(x)" : "x=>parseFloat(x)") + ")", in.inputValue().toJavaScript())));
-			el = in;
-			defaultValue = ActionValue.array(((List<?>) setting.getDefaultValue()).stream()
-					.map(s -> (ActionValue) () -> s.toString())
-					.collect(Collectors.toList()));
-		}else if(setting.getType().equals(Complex.list(Boolean.class))) {
+
+			el = grp;
+
+			resetAction = SetValueAction.of(list, defaultValue).triggerUpdate(false);
+		}else if(setting instanceof IntListSetting) {
+			IntListSetting s = (IntListSetting) setting;
+
+			Group grp = new Group();
+
+			ElementList<?> list = IntegerList.builder()
+				.initialItems(() -> config.get().getSetting(s))
+				.removable(true)
+				.onChange(l -> changeSettingAction(setting, l.itemsValue()))
+				.fullWidth()
+				.create();
+
+			grp.addElement(list);
+
+			NumberField field = NumberField.builder()
+				.withLayoutOptions(DefaultLayoutOption.FULL_NOT_LAST_COLUMN)
+				.placeholder("Add value")
+				.create();
+			grp.addElement(field);
+
+			Button btn = Button.builder()
+				.text("Add")
+				.onClick(MultiAction.of(AddValueAction.of(list, field.inputValue()), SetValueAction.of(field, ActionValue.nullValue())))
+				.create();
+			grp.addElement(btn);
+
+			defaultValue = ActionValue.array(s.getDefaultValue().stream()
+				.map(i -> ActionValue.integer(i))
+				.collect(Collectors.toList()));
+
+			el = grp;
+
+			resetAction = SetValueAction.of(list, defaultValue).triggerUpdate(false);
+		}else if(setting instanceof DoubleListSetting) {
+			DoubleListSetting s = (DoubleListSetting) setting;
+
+			Group grp = new Group();
+
+			DoubleList list = DoubleList.builder()
+				.initialItems(() -> config.get().getSetting(s))
+				.removable(true)
+				.onChange(l -> changeSettingAction(setting, l.itemsValue()))
+				.fullWidth()
+				.create();
+
+			grp.addElement(list);
+
+			NumberField field = NumberField.builder()
+				.withLayoutOptions(DefaultLayoutOption.FULL_NOT_LAST_COLUMN)
+				.allowedDecimals(2)
+				.placeholder("Add value")
+				.create();
+			grp.addElement(field);
+
+			Button btn = Button.builder()
+				.text("Add")
+				.onClick(MultiAction.of(AddValueAction.of(list, field.inputValue()), SetValueAction.of(field, ActionValue.nullValue())))
+				.create();
+			grp.addElement(btn);
+
+			defaultValue = ActionValue.array(s.getDefaultValue().stream()
+				.map(d -> ActionValue.decimal(d))
+				.collect(Collectors.toList()));
+
+			el = grp;
+
+			resetAction = SetValueAction.of(list, defaultValue).triggerUpdate(false);
+		}else if(setting instanceof BooleanListSetting) {
 			InputField in = new InputField(() -> ((List<?>) config.get().getSetting(setting)).stream().map(Object::toString).collect(Collectors.joining(", ")));
 			in.setOnChangeAction(changeSettingAction(setting, () -> String.format("%s.split(\",\").map(x=>x.trim()).map(x=>x==\"true\")", in.inputValue().toJavaScript())));
 			el = in;
+
 			defaultValue = ActionValue.array(((List<?>) setting.getDefaultValue()).stream()
-					.map(s -> (ActionValue) () -> s.toString())
-					.collect(Collectors.toList()));
+				.map(s -> ActionValue.bool((boolean) s))
+				.collect(Collectors.toList()));
+
+			resetAction = SetValueAction.of(in, () -> ((List<?>)setting.getDefaultValue()).stream().map(s -> s.toString()).collect(Collectors.joining(","))).triggerUpdate(false);
+		}else {
+			throw new UnsupportedOperationException("Unsupported setting type: " + setting.getClass().getName());
 		}
 
 		if(el == null || defaultValue == null) return;
@@ -157,7 +267,7 @@ public class SettingsPane extends Group {
 
 		Button reset = Button.builder()
 			.icon("mdi:undo")
-			.onClick(changeSettingAction(setting, defaultValue))
+			.onClick(MultiAction.of(resetAction, changeSettingAction(setting, defaultValue)))
 			.create();
 
 		Group grp = new Group();

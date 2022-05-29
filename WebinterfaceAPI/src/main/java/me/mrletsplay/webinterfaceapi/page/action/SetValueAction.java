@@ -14,10 +14,17 @@ public class SetValueAction implements Action {
 
 	private ElementID elementID;
 	private ActionValue value;
+	private boolean triggerUpdate;
 
 	private SetValueAction(ElementID elementID, ActionValue value) {
 		this.elementID = elementID;
 		this.value = value;
+		this.triggerUpdate = true;
+	}
+
+	public SetValueAction triggerUpdate(boolean triggerUpdate) {
+		this.triggerUpdate = triggerUpdate;
+		return this;
 	}
 
 	@Override
@@ -30,6 +37,7 @@ public class SetValueAction implements Action {
 		ObjectValue o = ActionValue.object();
 		o.put("element", ActionValue.string(elementID.get()));
 		o.put("value", value);
+		o.put("triggerUpdate", ActionValue.bool(triggerUpdate));
 		return o;
 	}
 

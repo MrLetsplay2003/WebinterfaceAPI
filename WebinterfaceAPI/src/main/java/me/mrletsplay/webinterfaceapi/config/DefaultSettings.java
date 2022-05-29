@@ -45,7 +45,7 @@ public class DefaultSettings implements AutoSettings {
 		HTTP_HOST = http.addString("server.http.host", "localhost", "HTTP Host");
 
 	public static final IntSetting
-		HTTP_PORT = http.addInt("server.http.port", 8880, "HTTP Port");
+		HTTP_PORT = http.addInt("server.http.port", 8880, "HTTP Port").min(1).max(65535);
 
 
 	// HTTPS
@@ -58,7 +58,7 @@ public class DefaultSettings implements AutoSettings {
 		HTTPS_HOST = https.addString("server.https.host", "localhost", "HTTPS Host");
 
 	public static final IntSetting
-		HTTPS_PORT = https.addInt("server.https.port", 8881, "HTTPS Port");
+		HTTPS_PORT = https.addInt("server.https.port", 8881, "HTTPS Port").min(1).max(65535);
 
 	public static final StringSetting
 		HTTPS_CERTIFICATE_PATH = https.addString("server.https.certificate.path", null, "HTTPS Certificate path"),
