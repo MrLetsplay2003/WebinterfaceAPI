@@ -393,6 +393,14 @@ img.element {
 	margin-top: 0;
 }
 
+.error-message {
+	position: absolute;
+	z-index: 100;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	background-color: orangered;
+}
+
 /* Non-mobile styles for side nav responsiveness, 750px breakpoint */
 @media only screen and (min-width: 46.875em) {
 	.sidenav {

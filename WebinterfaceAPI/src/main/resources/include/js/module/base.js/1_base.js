@@ -229,15 +229,14 @@ function checkInputValidity(element) {
 			errEl = document.createElement("span");
 			errEl.classList.add("error-message");
 			errEl.innerText = element.validationMessage;
-			errEl.style.position = "absolute";
-			errEl.style.zIndex = 100;
-			errEl.style.borderBottomLeftRadius = "5px";
-			errEl.style.borderBottomRightRadius = "5px";
+			
+			element.style.borderBottomLeftRadius = "0px";
+			element.style.borderBottomRightRadius = "0px";
 			
 			let elHeight = $(element).outerHeight();
 			let marginTop = parseInt($(element).css("marginTop"));
 			errEl.style.top = (elHeight + marginTop) + "px";
-			errEl.style.backgroundColor = "orangered";
+			errEl.style.width = $(element).outerWidth() + "px";
 			element.parentElement.appendChild(errEl);
 		}else {
 			errEl.innerText = element.validationMessage;
