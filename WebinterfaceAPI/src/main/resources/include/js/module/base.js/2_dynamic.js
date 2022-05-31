@@ -205,7 +205,7 @@ function listOnChange(element, additionalInfo) {
 	if(onChange != null) eval(onChange);
 }
 
-function listSwapElements(element, other) {
+function listSwapItems(element, other) {
 	if(other == null) return;
 	
 	let list = element.parentElement;
