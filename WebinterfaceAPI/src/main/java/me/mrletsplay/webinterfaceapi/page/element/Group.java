@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.page.data.DataHandler;
+import me.mrletsplay.webinterfaceapi.page.element.builder.AbstractElementBuilder;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
 
 public class Group extends AbstractPageElement {
@@ -82,6 +83,46 @@ public class Group extends AbstractPageElement {
 		}
 
 		return el;
+	}
+
+	public static class Builder extends AbstractElementBuilder<Group, Builder> {
+
+		private Builder(Group element) {
+			super(element);
+		}
+
+		public Builder title(String title) {
+			element.addTitle(title);
+			return this;
+		}
+
+		public Builder title(Supplier<String> title) {
+			element.addTitle(title);
+			return this;
+		}
+
+		public Builder addElement(PageElement element) {
+			this.element.addElement(element);
+			return this;
+		}
+
+		public Builder templateElement(PageElement templateElement) {
+			this.element.setTemplateElement(templateElement);
+			return this;
+		}
+
+		public Builder dataHandler(DataHandler dataHandler) {
+			this.element.setDataHandler(dataHandler);
+			return this;
+		}
+
+		@Override
+		public Group create() {
+			if(!element.getElements().isEmpty() && element.isDynamic()) throw new IllegalStateException("Data handler and elements may not both be set");
+
+			return super.create();
+		}
+
 	}
 
 }

@@ -28,12 +28,6 @@ import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 
 public class Page implements HttpDocument {
 
-//	public static final String
-//		CONTEXT_PROPERTY_DOCUMENT = "webinterface-document",
-//		CONTEXT_PROPERTY_SCRIPT = "webinterface-script",
-//		CONTEXT_PROPERTY_STYLE = "webinterface-style",
-//		CONTEXT_PROPERTY_REQUIRED_MODULES = "webinterface-required-modules";
-
 	private String
 		name,
 		url,
