@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import me.mrletsplay.simplehttpserver.dom.css.CssElement;
 import me.mrletsplay.simplehttpserver.dom.css.CssSelector;
@@ -19,6 +20,7 @@ import me.mrletsplay.webinterfaceapi.page.element.PageElement;
 import me.mrletsplay.webinterfaceapi.page.element.TitleText;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.page.element.layout.ElementLayoutOption;
+import me.mrletsplay.webinterfaceapi.page.element.layout.Grid;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 
 public class PageSection {
@@ -125,6 +127,12 @@ public class PageSection {
 	 */
 	public boolean isSlimLayout() {
 		return slimLayout;
+	}
+
+	public void setGrid(Grid grid) {
+		getStyle().setProperty("grid-template-columns", grid.getColumns() == null ? null : Arrays.stream(grid.getColumns()).collect(Collectors.joining(" ")));
+		getStyle().setProperty("grid-template-rows", grid.getRows() == null ? null : Arrays.stream(grid.getRows()).collect(Collectors.joining(" ")));
+		getStyle().setProperty("grid-gap", grid.getGap());
 	}
 
 	public HtmlElement toHtml() {

@@ -5,15 +5,42 @@ import java.util.stream.Collectors;
 
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 
-public class GridLayout implements ElementLayoutOption {
+public class Grid {
 
 	private String[] columns;
+	private String[] rows;
+	private String gap;
 
-	public GridLayout(String... columns) {
-		this.columns = columns;
+	public Grid() {
 	}
 
-	@Override
+	public Grid setColumns(String... columns) {
+		this.columns = columns;
+		return this;
+	}
+
+	public String[] getColumns() {
+		return columns;
+	}
+
+	public Grid setRows(String... rows) {
+		this.rows = rows;
+		return this;
+	}
+
+	public String[] getRows() {
+		return rows;
+	}
+
+	public Grid setGap(String gap) {
+		this.gap = gap;
+		return this;
+	}
+
+	public String getGap() {
+		return gap;
+	}
+
 	public void apply(HtmlElement elementContainer, HtmlElement element) {
 		element.appendAttribute("style", "grid-template-columns: " + Arrays.stream(columns).collect(Collectors.joining(" ")) + ";");
 	}

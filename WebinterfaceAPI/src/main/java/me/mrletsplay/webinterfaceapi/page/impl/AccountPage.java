@@ -21,7 +21,7 @@ import me.mrletsplay.webinterfaceapi.page.element.Text;
 import me.mrletsplay.webinterfaceapi.page.element.TitleText;
 import me.mrletsplay.webinterfaceapi.page.element.VerticalSpacer;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
-import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
+import me.mrletsplay.webinterfaceapi.page.element.layout.Grid;
 import me.mrletsplay.webinterfaceapi.session.Session;
 
 public class AccountPage extends Page {
@@ -35,7 +35,7 @@ public class AccountPage extends Page {
 		sc.setSlimLayout(true);
 
 		sc.addHeading("Account connections", 2);
-		sc.addLayoutOptions(new GridLayout("1fr"));
+		sc.setGrid(new Grid().setColumns("1fr"));
 
 		sc.dynamic(els -> {
 			Account account = Session.getCurrentSession().getAccount();
@@ -52,7 +52,7 @@ public class AccountPage extends Page {
 				AuthMethod mth = loginCons.get(con);
 
 				Group grp = new Group();
-				grp.addLayoutOptions(new GridLayout("min-content", "auto"));
+				grp.setGrid(new Grid().setColumns("min-content", "auto"));
 
 				TitleText title = TitleText.builder()
 					.text(con.getUserName())

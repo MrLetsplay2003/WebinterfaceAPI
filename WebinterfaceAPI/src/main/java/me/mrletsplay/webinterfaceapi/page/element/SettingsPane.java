@@ -29,7 +29,7 @@ import me.mrletsplay.webinterfaceapi.page.action.ShowToastAction;
 import me.mrletsplay.webinterfaceapi.page.action.ValidateElementsAction;
 import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
-import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
+import me.mrletsplay.webinterfaceapi.page.element.layout.Grid;
 import me.mrletsplay.webinterfaceapi.page.element.list.DoubleList;
 import me.mrletsplay.webinterfaceapi.page.element.list.ElementList;
 import me.mrletsplay.webinterfaceapi.page.element.list.IntegerList;
@@ -255,7 +255,7 @@ public class SettingsPane extends Group {
 		PageElement tEl = t;
 		if(setting.getDescription() != null) {
 			Group tGrp = new Group();
-			tGrp.addLayoutOptions(new GridLayout("1fr"));
+			tGrp.setGrid(new Grid().setColumns("1fr"));
 			tGrp.addElement(t);
 			Text tDesc = new Text(setting.getDescription());
 			tDesc.getStyle().setProperty("font-size", "0.8em");

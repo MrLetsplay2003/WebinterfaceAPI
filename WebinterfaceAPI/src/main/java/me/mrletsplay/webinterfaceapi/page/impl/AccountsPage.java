@@ -18,7 +18,7 @@ import me.mrletsplay.webinterfaceapi.page.element.TitleText;
 import me.mrletsplay.webinterfaceapi.page.element.VerticalSpacer;
 import me.mrletsplay.webinterfaceapi.page.element.builder.Align;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
-import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
+import me.mrletsplay.webinterfaceapi.page.element.layout.Grid;
 
 public class AccountsPage extends Page {
 
@@ -39,7 +39,7 @@ public class AccountsPage extends Page {
 				grp.getStyle().setProperty("border", "1px solid var(--theme-color-content-border)");
 				grp.getStyle().setProperty("border-radius", "5px");
 				grp.getStyle().setProperty("margin", "5px 0px");
-				grp.addLayoutOptions(new GridLayout("min-content", "auto"));
+				grp.setGrid(new Grid().setColumns("min-content", "auto"));
 
 				TitleText tt = TitleText.builder()
 					.text(acc.getName())

@@ -1,13 +1,16 @@
 package me.mrletsplay.webinterfaceapi.page.element;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 import me.mrletsplay.webinterfaceapi.page.data.DataHandler;
 import me.mrletsplay.webinterfaceapi.page.element.builder.AbstractElementBuilder;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
+import me.mrletsplay.webinterfaceapi.page.element.layout.Grid;
 
 public class Group extends AbstractPageElement {
 
@@ -64,6 +67,13 @@ public class Group extends AbstractPageElement {
 
 	public boolean isDynamic() {
 		return templateElement != null;
+	}
+
+	public void setGrid(Grid grid) {
+		getStyle().setProperty("grid-template-columns", grid.getColumns() == null ? null : Arrays.stream(grid.getColumns()).collect(Collectors.joining(" ")));
+		getMobileStyle().setProperty("grid-template-columns", "1fr");
+		getStyle().setProperty("grid-template-rows", grid.getRows() == null ? null : Arrays.stream(grid.getRows()).collect(Collectors.joining(" ")));
+		getStyle().setProperty("grid-gap", grid.getGap());
 	}
 
 	@Override

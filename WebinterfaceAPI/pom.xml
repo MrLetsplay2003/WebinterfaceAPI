@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
 			<artifactId>MrCore</artifactId>
-			<version>4.0.1</version>
+			<version>4.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
 			<artifactId>SimpleHTTPServer</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -21,7 +21,7 @@ import me.mrletsplay.webinterfaceapi.page.element.InputField;
 import me.mrletsplay.webinterfaceapi.page.element.Text;
 import me.mrletsplay.webinterfaceapi.page.element.TitleText;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
-import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
+import me.mrletsplay.webinterfaceapi.page.element.layout.Grid;
 import me.mrletsplay.webinterfaceapi.session.Session;
 
 public class BukkitPage extends Page {
@@ -57,7 +57,7 @@ public class BukkitPage extends Page {
 					Webinterface.getLogger().warn("Statistics are enabled on Bukkit Home page but PlaceholderAPI is missing");
 				}else {
 					Group stats = new Group();
-					stats.addLayoutOptions(new GridLayout("auto", "auto"));
+					stats.setGrid(new Grid().setColumns("auto", "auto"));
 
 					for(String el : Webinterface.getConfig().getSetting(BukkitSettings.STATS_ELEMENTS)) {
 						String[] spl = el.split(":");

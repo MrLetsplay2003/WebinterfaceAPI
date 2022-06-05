@@ -29,7 +29,7 @@ import me.mrletsplay.webinterfaceapi.page.element.TitleText;
 import me.mrletsplay.webinterfaceapi.page.element.VerticalSpacer;
 import me.mrletsplay.webinterfaceapi.page.element.builder.Align;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
-import me.mrletsplay.webinterfaceapi.page.element.layout.GridLayout;
+import me.mrletsplay.webinterfaceapi.page.element.layout.Grid;
 import me.mrletsplay.webinterfaceapi.session.Session;
 
 public class PermissionsPage extends Page {
@@ -51,7 +51,7 @@ public class PermissionsPage extends Page {
 			Account account = accID == null ? null : Webinterface.getAccountStorage().getAccountByID(accID);
 
 			Group group = new Group();
-			group.addLayoutOptions(new GridLayout("auto", "75fr"));
+			group.setGrid(new Grid().setColumns("auto", "75fr"));
 			group.addLayoutOptions(DefaultLayoutOption.NO_PADDING);
 			group.addElement(Text.builder()
 				.text("Select an account")
@@ -69,7 +69,7 @@ public class PermissionsPage extends Page {
 
 			if(account != null) {
 				Group permsGrp = new Group();
-				permsGrp.addLayoutOptions(new GridLayout("max-content", "auto"));
+				permsGrp.setGrid(new Grid().setColumns("max-content", "auto"));
 				Set<String> permsSet = new HashSet<>(Webinterface.getActionHandlers().stream()
 					.map(h -> h.getPermissions())
 					.flatMap(s -> s.stream())
