@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,15 @@ public class PermissionsPage extends Page {
 				Set<String> permsSet = new HashSet<>(Webinterface.getActionHandlers().stream()
 					.map(h -> h.getPermissions())
 					.flatMap(s -> s.stream())
+					.collect(Collectors.toSet()));
+				permsSet.addAll(Webinterface.getPages().stream()
+					.map(p -> p.getPermission())
+					.filter(Objects::nonNull)
+					.collect(Collectors.toSet()));
+				permsSet.addAll(Webinterface.getCategories().stream()
+					.flatMap(c -> c.getPages().stream())
+					.map(p -> p.getPermission())
+					.filter(Objects::nonNull)
 					.collect(Collectors.toSet()));
 
 				permsSet.add("*");
