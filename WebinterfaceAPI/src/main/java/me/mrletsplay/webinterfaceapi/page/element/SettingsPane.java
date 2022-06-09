@@ -85,6 +85,7 @@ public class SettingsPane extends Group {
 				String v = config.get().getSetting(s);
 				return v == null ? "" : v;
 			});
+			in.setPlaceholder(s.getFriendlyName());
 			in.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(in)));
 			el = in;
 			defaultValue = ActionValue.string((String) setting.getDefaultValue());
@@ -98,6 +99,7 @@ public class SettingsPane extends Group {
 				Integer v = config.get().getSetting(s);
 				return v == null ? null : v.doubleValue();
 			});
+			in.setPlaceholder(s.getFriendlyName());
 
 			if(s.getMin() != null) in.setMin(s.getMin().doubleValue());
 			if(s.getMax() != null) in.setMax(s.getMax().doubleValue());
@@ -112,6 +114,7 @@ public class SettingsPane extends Group {
 
 			NumberField in = new NumberField(() -> String.valueOf(config.get().getSetting(setting)));
 			in.setInitialValue(() -> config.get().getSetting(s));
+			in.setPlaceholder(s.getFriendlyName());
 
 			if(s.getMin() != null) in.setMin(s.getMin());
 			if(s.getMax() != null) in.setMax(s.getMax());
