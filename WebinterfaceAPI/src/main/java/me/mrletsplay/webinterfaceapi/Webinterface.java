@@ -9,9 +9,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -43,14 +41,15 @@ import me.mrletsplay.webinterfaceapi.config.FileConfig;
 import me.mrletsplay.webinterfaceapi.document.ActionCallbackDocument;
 import me.mrletsplay.webinterfaceapi.document.AuthRequestDocument;
 import me.mrletsplay.webinterfaceapi.document.AuthResponseDocument;
+import me.mrletsplay.webinterfaceapi.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.document.FileUploadDocument;
 import me.mrletsplay.webinterfaceapi.document.HomeDocument;
+import me.mrletsplay.webinterfaceapi.document.IncludedFilesDocument;
 import me.mrletsplay.webinterfaceapi.document.LoginDocument;
 import me.mrletsplay.webinterfaceapi.document.LogoutDocument;
 import me.mrletsplay.webinterfaceapi.document.PasswordLoginDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupSubmitDocument;
-import me.mrletsplay.webinterfaceapi.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.document.websocket.Packet;
 import me.mrletsplay.webinterfaceapi.document.websocket.WebSocketData;
 import me.mrletsplay.webinterfaceapi.document.websocket.WebSocketDocument;
@@ -87,10 +86,10 @@ public class Webinterface {
 	private static List<WebinterfaceEvent> events;
 	private static List<AuthMethod> authMethods;
 	private static List<JSModule> jsModules;
-	private static Map<String, File> includedFiles;
 
 	private static boolean initialized = false;
 	private static File rootDirectory;
+	private static Path includePath;
 	private static AccountStorage accountStorage;
 	private static SessionStorage sessionStorage;
 	private static CredentialsStorage credentialsStorage;
@@ -105,8 +104,8 @@ public class Webinterface {
 		events = new ArrayList<>();
 		authMethods = new ArrayList<>();
 		jsModules = new ArrayList<>();
-		includedFiles = new HashMap<>();
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
+		includePath = new File(rootDirectory, "include").toPath();
 		markdownRenderer = new MarkdownRenderer();
 
 		registerActionHandler(new DefaultHandler());
@@ -122,7 +121,6 @@ public class Webinterface {
 			System.setProperty("webinterface.log-dir", new File(rootDirectory, "logs").getAbsolutePath());
 		logger = LoggerFactory.getLogger(Webinterface.class);
 
-		includeFile("/_internal/include", new File(rootDirectory, "include"));
 		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
 		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
 		credentialsStorage = new FileCredentialsStorage(new File(rootDirectory, "data/credentials.yml"));
@@ -172,8 +170,7 @@ public class Webinterface {
 			}
 		}
 
-		loadIncludedFiles();
-
+		documentProvider.registerDocumentPattern("/_internal/include/{path...}", new IncludedFilesDocument());
 		documentProvider.registerDocument("/_internal/call", new ActionCallbackDocument());
 		documentProvider.registerDocument("/_internal/fileupload", new FileUploadDocument());
 		webSocketEndpoint = new WebSocketDocument();
@@ -323,7 +320,7 @@ public class Webinterface {
 		return httpsServer;
 	}
 
-	public static void setDocumentProvider(HttpDocumentProvider documentProvider) {
+	public static void setDocumentProvider(WebinterfaceDocumentProvider documentProvider) {
 		Webinterface.documentProvider = documentProvider;
 	}
 
@@ -332,11 +329,17 @@ public class Webinterface {
 	}
 
 	public static void setRootDirectory(File rootDirectory) {
+		if(initialized) throw new IllegalStateException("Webinterface is running");
 		Webinterface.rootDirectory = rootDirectory;
+		includePath = new File(rootDirectory, "include").toPath();
 	}
 
 	public static File getRootDirectory() {
 		return rootDirectory;
+	}
+
+	public static Path getIncludePath() {
+		return includePath;
 	}
 
 	public static File getConfigurationDirectory() {
@@ -485,20 +488,6 @@ public class Webinterface {
 
 	public static MarkdownRenderer getMarkdownRenderer() {
 		return markdownRenderer;
-	}
-
-	public static void includeFile(String path, File file) {
-		includedFiles.put(path, file);
-	}
-
-	public static void loadIncludedFiles() {
-		for(Map.Entry<String, File> v : includedFiles.entrySet()) {
-			documentProvider.registerFileDocument(v.getKey(), v.getValue());
-		}
-	}
-
-	public static Map<String, File> getIncludedFiles() {
-		return includedFiles;
 	}
 
 	public static void shutdown() {

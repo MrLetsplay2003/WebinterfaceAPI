@@ -6,19 +6,8 @@ import java.nio.file.Files;
 
 import me.mrletsplay.simplehttpserver.http.document.DefaultDocumentProvider;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
-import me.mrletsplay.webinterfaceapi.Webinterface;
 
 public class WebinterfaceDocumentProvider extends DefaultDocumentProvider {
-
-	@Override
-	public HttpDocument getDocument(String path) {
-		HttpDocument doc = super.getDocument(path);
-		if(doc == null) {
-			Webinterface.loadIncludedFiles(); // Try refreshing included files TODO: better method?
-			return super.getDocument(path);
-		}
-		return doc;
-	}
 
 	@Override
 	public HttpDocument createFileDocument(File file) {
