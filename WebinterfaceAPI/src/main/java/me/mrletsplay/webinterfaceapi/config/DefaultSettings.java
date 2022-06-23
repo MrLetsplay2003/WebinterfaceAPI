@@ -26,7 +26,7 @@ public class DefaultSettings implements AutoSettings {
 	// General
 
 	public static final BooleanSetting
-		ENABLE_INITIAL_SETUP = general.addBoolean("initial-setup.enable", true, "Enable initial setup"),
+		ENABLE_SETUP = general.addBoolean("setup.enable", true, "Enable setup"),
 		ENABLE_DEBUG_MODE = general.addBoolean("debug.enable", false, "Enable debug mode");
 
 	public static final StringSetting
@@ -81,18 +81,18 @@ public class DefaultSettings implements AutoSettings {
 	//Auth
 
 	public static final BooleanSetting
-		ALLOW_REGISTRATION = auth.addBoolean("allow-registration", true, "Allow registration"),
-		ALLOW_ANONYMOUS = auth.addBoolean("allow-anonymous", true, "Allow anonymous login"),
-		ENABLE_DISCORD_AUTH = auth.addBoolean("use-auth.discord", true, "Enable Discord auth"),
-		ENABLE_GITHUB_AUTH = auth.addBoolean("use-auth.github", true, "Enable GitHub auth"),
-		ENABLE_GOOGLE_AUTH = auth.addBoolean("use-auth.google", true, "Enable Google auth"),
-		ENABLE_PASSWORD_AUTH = auth.addBoolean("use-auth.password", true, "Enable Password auth");
+		ALLOW_REGISTRATION = auth.addBoolean("auth.allow-register", true, "Allow registration"),
+		ALLOW_ANONYMOUS = auth.addBoolean("auth.anonymous", true, "Allow anonymous login"),
+		ENABLE_DISCORD_AUTH = auth.addBoolean("auth.discord", true, "Enable Discord auth"),
+		ENABLE_GITHUB_AUTH = auth.addBoolean("auth.github", true, "Enable GitHub auth"),
+		ENABLE_GOOGLE_AUTH = auth.addBoolean("auth.google", true, "Enable Google auth"),
+		ENABLE_PASSWORD_AUTH = auth.addBoolean("auth.password", true, "Enable Password auth");
 
 
 	// Performance
 
 	public static final BooleanSetting
-		ENABLE_FILE_CACHING = performance.addBoolean("enable-file-caching", true, "Enable file caching");
+		ENABLE_FILE_CACHING = performance.addBoolean("performance.file-caching", true, "Enable file caching");
 
 	private DefaultSettings() {}
 

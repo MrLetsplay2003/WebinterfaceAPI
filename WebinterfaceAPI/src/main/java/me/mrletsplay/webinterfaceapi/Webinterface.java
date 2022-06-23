@@ -21,8 +21,11 @@ import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
 import me.mrletsplay.mrcore.misc.ByteUtils;
 import me.mrletsplay.simplehttpserver.http.HttpServer;
+import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
 import me.mrletsplay.simplehttpserver.http.HttpsServer;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocumentProvider;
+import me.mrletsplay.simplehttpserver.http.header.HttpServerHeader;
+import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.simplehttpserver.http.websocket.WebSocketEndpoint;
 import me.mrletsplay.simplehttpserver.php.PHP;
 import me.mrletsplay.webinterfaceapi.auth.AccountStorage;
@@ -41,7 +44,6 @@ import me.mrletsplay.webinterfaceapi.config.FileConfig;
 import me.mrletsplay.webinterfaceapi.document.ActionCallbackDocument;
 import me.mrletsplay.webinterfaceapi.document.AuthRequestDocument;
 import me.mrletsplay.webinterfaceapi.document.AuthResponseDocument;
-import me.mrletsplay.webinterfaceapi.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.document.FileUploadDocument;
 import me.mrletsplay.webinterfaceapi.document.HomeDocument;
 import me.mrletsplay.webinterfaceapi.document.IncludedFilesDocument;
@@ -50,6 +52,7 @@ import me.mrletsplay.webinterfaceapi.document.LogoutDocument;
 import me.mrletsplay.webinterfaceapi.document.PasswordLoginDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupSubmitDocument;
+import me.mrletsplay.webinterfaceapi.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.document.websocket.Packet;
 import me.mrletsplay.webinterfaceapi.document.websocket.WebSocketData;
 import me.mrletsplay.webinterfaceapi.document.websocket.WebSocketDocument;
@@ -68,6 +71,7 @@ import me.mrletsplay.webinterfaceapi.page.impl.WelcomePage;
 import me.mrletsplay.webinterfaceapi.session.FileSessionStorage;
 import me.mrletsplay.webinterfaceapi.session.Session;
 import me.mrletsplay.webinterfaceapi.session.SessionStorage;
+import me.mrletsplay.webinterfaceapi.setup.Setup;
 
 public class Webinterface {
 
@@ -96,6 +100,7 @@ public class Webinterface {
 	private static Config config;
 	private static MarkdownRenderer markdownRenderer;
 	private static WebSocketEndpoint webSocketEndpoint;
+	private static Setup setup;
 
 	static {
 		pages = new ArrayList<>();
@@ -107,6 +112,7 @@ public class Webinterface {
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
 		includePath = new File(rootDirectory, "include").toPath();
 		markdownRenderer = new MarkdownRenderer();
+		setup = new Setup();
 
 		registerActionHandler(new DefaultHandler());
 
@@ -193,8 +199,7 @@ public class Webinterface {
 		authMethods.forEach(Webinterface::registerAuthPages);
 		jsModules.forEach(Webinterface::registerJSModulePage);
 
-		Integer setupStep = config.getOverride(SetupDocument.SETUP_STEP_OVERRIDE_PATH, Integer.class);
-		if(config.getSetting(DefaultSettings.ENABLE_INITIAL_SETUP) && (setupStep == null || setupStep < SetupDocument.SETUP_STEP_DONE)) {
+		if(setup.getNextStep() != null) {
 			documentProvider.registerDocument("/setup", new SetupDocument());
 			documentProvider.registerDocument("/setup/submit", new SetupSubmitDocument());
 		}
@@ -488,6 +493,18 @@ public class Webinterface {
 
 	public static MarkdownRenderer getMarkdownRenderer() {
 		return markdownRenderer;
+	}
+
+	public static Setup getSetup() {
+		return setup;
+	}
+
+	public static boolean checkSetupDone() {
+		if(Webinterface.getSetup().getNextStep() == null) return true;
+		HttpServerHeader h = HttpRequestContext.getCurrentContext().getServerHeader();
+		h.setStatusCode(HttpStatusCodes.SEE_OTHER_303);
+		h.getFields().set("Location", "/setup");
+		return false;
 	}
 
 	public static void shutdown() {

@@ -2,28 +2,33 @@ package me.mrletsplay.webinterfaceapi.document;
 
 import me.mrletsplay.simplehttpserver.dom.html.HtmlDocument;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
+import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
+import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
+import me.mrletsplay.webinterfaceapi.setup.SetupElement;
+import me.mrletsplay.webinterfaceapi.setup.SetupElementType;
+import me.mrletsplay.webinterfaceapi.setup.SetupStep;
 
 public class SetupDocument implements HttpDocument {
 
-	public static final String
-		SETUP_STEP_OVERRIDE_PATH = "initial-setup.current-step";
-
-	public static final int
-		SETUP_STEP_BASE = 0,
-		SETUP_STEP_HTTP = 1,
-		SETUP_STEP_AUTH = 2,
-		SETUP_STEP_DONE = 3;
-
 	@Override
 	public void createContent() {
-		Integer currentStep = Webinterface.getConfig().getOverride(SETUP_STEP_OVERRIDE_PATH, Integer.class);
-		if(currentStep == null) currentStep = SETUP_STEP_BASE;
+		SetupStep step = Webinterface.getSetup().getNextStep();
+		if(step == null) {
+			HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
+			ctx.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
+			ctx.getServerHeader().getFields().set("Location", "/");
+
+			Webinterface.getDocumentProvider().unregisterDocument("/setup");
+			Webinterface.getDocumentProvider().unregisterDocument("/setup/submit");
+
+			return;
+		}
 
 		HtmlDocument d = new HtmlDocument();
-		d.setTitle("Login");
+		d.setTitle("Setup");
 		d.setIcon("/_internal/include/img/" + Webinterface.getConfig().getSetting(DefaultSettings.ICON_IMAGE));
 		d.setLanguage("en");
 
@@ -38,10 +43,7 @@ public class SetupDocument implements HttpDocument {
 		ttx.setText("WebinterfaceAPI Setup");
 		tt.appendChild(ttx);
 
-		HtmlElement ul = new HtmlElement("form");
-		ul.setID("setup-form");
-		ul.setAttribute("method", "post");
-		ul.setAttribute("action", "/setup/submit");
+		HtmlElement ul = new HtmlElement("div");
 		ul.addClass("setup-list");
 		cont.appendChild(ul);
 
@@ -49,63 +51,65 @@ public class SetupDocument implements HttpDocument {
 		c2.setID("setup-form-container");
 		ul.appendChild(c2);
 
-		switch(currentStep) {
-			case SETUP_STEP_BASE:
-			{
-				addTitle(c2, "Create an Administrator account");
-				addDescription(c2, "This account will be used to make further changes to the configuration");
-				addInputField(c2, "admin-name", "Username", false);
-				addInputField(c2, "admin-password", "Password", true);
-				addInputField(c2, "admin-password-repeat", "Repeat Password", true);
-				addButton(ul, "Confirm", "createAdminAccount()");
-				break;
-			}
-			case SETUP_STEP_HTTP:
-			{
-				addTitle(c2, "Set up the web server");
-				addDescription(c2, "Configure your server so it works as smoothly as possible");
-				addSubTitle(c2, "HTTP");
-				addInputField(c2, "http-bind", "HTTP IP Bind", DefaultSettings.HTTP_BIND.getDefaultValue(), false);
-				addInputField(c2, "http-host", "HTTP Host", DefaultSettings.HTTP_HOST.getDefaultValue(), false);
-				addInputField(c2, "http-port", "HTTP Port", String.valueOf(DefaultSettings.HTTP_PORT.getDefaultValue()), false);
-				addSubTitle(c2, "HTTPS");
-				addCheckbox(c2, "enable-https", "Enable HTTPS", false);
-				addInputField(c2, "https-bind", "HTTPS IP Bind", DefaultSettings.HTTPS_BIND.getDefaultValue(), false);
-				addInputField(c2, "https-host", "HTTPS Host", DefaultSettings.HTTPS_HOST.getDefaultValue(), false);
-				addInputField(c2, "https-port", "HTTPS Port", String.valueOf(DefaultSettings.HTTPS_PORT.getDefaultValue()), false);
-				addInputField(c2, "https-cert-path", "HTTPS Certificate Path", false);
-				addInputField(c2, "https-cert-password", "HTTPS Certificate Password (leave empty for none)", false);
-				addInputField(c2, "https-cert-key-path", "HTTPS Certificate Key Path", false);
-				addButton(ul, "Confirm", "configureHTTP()");
-				break;
-			}
-			case SETUP_STEP_AUTH:
-			{
-				addTitle(c2, "Configure authentication methods");
-				addDescription(c2, "Set up authentication methods for people to log in with");
-				addCheckbox(c2, "no-auth", "Allow anonymous login", true);
-				addSubTitle(c2, "Discord");
-				addCheckbox(c2, "discord-auth", "Enable Discord auth", false);
-				addInputField(c2, "discord-client-id", "Discord client ID", false);
-				addInputField(c2, "discord-client-secret", "Discord client secret", false);
-				addSubTitle(c2, "Google");
-				addCheckbox(c2, "google-auth", "Enable Google auth", false);
-				addInputField(c2, "google-client-id", "Google client ID", false);
-				addInputField(c2, "google-client-secret", "Google client secret", false);
-				addSubTitle(c2, "GitHub");
-				addCheckbox(c2, "github-auth", "Enable GitHub auth", false);
-				addInputField(c2, "github-client-id", "GitHub client ID", false);
-				addInputField(c2, "github-client-secret", "GitHub client secret", false);
-				addButton(ul, "Confirm", "configureAuth()");
-				break;
-			}
-			default:
-			{
-				addTitle(ul, "Setup is done");
-				addButton(ul, "Confirm", "setupDone()");
-				break;
+		addTitle(c2, step.getName());
+		if(step.getDescription() != null) addDescription(c2, step.getDescription());
+		for(SetupElement e : step.getElements()) {
+			switch(e.getType()) {
+				case STRING:
+					addInputField(c2, e.getID(), e.getName(), (String) e.getInitialValue(), e.getType());
+					break;
+				case PASSWORD:
+					addInputField(c2, e.getID(), e.getName(), null, e.getType());
+					break;
+				case INTEGER:
+					addInputField(c2, e.getID(), e.getName(), e.getInitialValue() == null ? null : String.valueOf(e.getInitialValue()), e.getType());
+					break;
+				case DOUBLE:
+					addInputField(c2, e.getID(), e.getName(), e.getInitialValue() == null ? null : String.valueOf(e.getInitialValue()), e.getType());
+					break;
+				case BOOLEAN:
+					addCheckbox(c2, e.getID(), e.getName(), e.getInitialValue() == null ? false : (boolean) e.getInitialValue());
+					break;
+				case CHOICE:
+					break; // TODO: implement
+				case HEADING:
+					addSubTitle(c2, e.getName());
+					break;
+				default:
+					throw new UnsupportedOperationException("Unsupported setup element type: " + e.getType());
 			}
 		}
+
+		addButton(ul, "Confirm", "setupConfirm()");
+
+//		switch(currentStep) {
+//			case SETUP_STEP_AUTH:
+//			{
+//				addTitle(c2, "Configure authentication methods");
+//				addDescription(c2, "Set up authentication methods for people to log in with");
+//				addCheckbox(c2, "no-auth", "Allow anonymous login", true);
+//				addSubTitle(c2, "Discord");
+//				addCheckbox(c2, "discord-auth", "Enable Discord auth", false);
+//				addInputField(c2, "discord-client-id", "Discord client ID", false);
+//				addInputField(c2, "discord-client-secret", "Discord client secret", false);
+//				addSubTitle(c2, "Google");
+//				addCheckbox(c2, "google-auth", "Enable Google auth", false);
+//				addInputField(c2, "google-client-id", "Google client ID", false);
+//				addInputField(c2, "google-client-secret", "Google client secret", false);
+//				addSubTitle(c2, "GitHub");
+//				addCheckbox(c2, "github-auth", "Enable GitHub auth", false);
+//				addInputField(c2, "github-client-id", "GitHub client ID", false);
+//				addInputField(c2, "github-client-secret", "GitHub client secret", false);
+//				addButton(ul, "Confirm", "configureAuth()");
+//				break;
+//			}
+//			default:
+//			{
+//				addTitle(ul, "Setup is done");
+//				addButton(ul, "Confirm", "setupDone()");
+//				break;
+//			}
+//		}
 
 		HtmlElement alertBox = new HtmlElement("div");
 		alertBox.setID("alert-box");
@@ -122,7 +126,7 @@ public class SetupDocument implements HttpDocument {
 		d.createContent();
 	}
 
-	private void addInputField(HtmlElement element, String name, String title, String defaultValue, boolean password) {
+	private void addInputField(HtmlElement element, String name, String title, String defaultValue, SetupElementType type) {
 		HtmlElement a = new HtmlElement("span");
 		a.addClass("setup-label");
 		a.setText(title);
@@ -130,15 +134,13 @@ public class SetupDocument implements HttpDocument {
 
 		HtmlElement input = new HtmlElement("input");
 		input.setSelfClosing(true);
-		input.setID(name);
-		input.setAttribute("type", password ? "password" : "text");
+		input.addClass("setup-element");
+		input.setAttribute("data-name", name);
+		input.setAttribute("data-type", type.name().toLowerCase());
+		input.setAttribute("type", type == SetupElementType.PASSWORD ? "password" : "text");
 		input.setAttribute("name", name);
 		if(defaultValue != null) input.setAttribute("value", defaultValue);
 		element.appendChild(input);
-	}
-
-	private void addInputField(HtmlElement element, String name, String title, boolean password) {
-		addInputField(element, name, title, null, password);
 	}
 
 	private void addTitle(HtmlElement element, String title) {
@@ -178,10 +180,11 @@ public class SetupDocument implements HttpDocument {
 		label.addClass("checkbox-container");
 		HtmlElement ch = new HtmlElement("input");
 		ch.setSelfClosing(true);
-		ch.setID(name);
-		ch.setAttribute("name", name);
+		ch.addClass("setup-element");
+		ch.setAttribute("data-name", name);
+		ch.setAttribute("data-type", "boolean");
 		ch.setAttribute("type", "checkbox");
-		ch.setAttribute("aria-label", "Yes/No"); // TODO aria-label
+		ch.setAttribute("aria-label", name); // TODO aria-label
 		if(initialState) ch.setAttribute("checked");
 		label.appendChild(ch);
 		HtmlElement sp = new HtmlElement("span");
