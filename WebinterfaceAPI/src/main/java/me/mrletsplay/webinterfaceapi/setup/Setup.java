@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.webinterfaceapi.Webinterface;
+import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
 import me.mrletsplay.webinterfaceapi.setup.impl.AccountSetupStep;
 import me.mrletsplay.webinterfaceapi.setup.impl.AuthSetupStep;
 import me.mrletsplay.webinterfaceapi.setup.impl.HTTPSetupStep;
@@ -31,6 +32,7 @@ public class Setup {
 	}
 
 	public SetupStep getNextStep() {
+		if(!Webinterface.getConfig().getSetting(DefaultSettings.ENABLE_SETUP)) return null;
 		List<String> steps = Complex.castList(Webinterface.getConfig().getOverride(OVERRIDE_SETUP_STEPS_DONE, List.class), String.class).get();
 		return this.steps.stream()
 			.filter(s -> steps == null || !steps.contains(s.getID()))

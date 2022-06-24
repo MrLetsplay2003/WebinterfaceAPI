@@ -2,11 +2,10 @@ package me.mrletsplay.webinterfaceapi.setup;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import me.mrletsplay.mrcore.json.JSONObject;
 
-public class SetupStep {
+public abstract class SetupStep {
 
 	private String
 		id,
@@ -14,8 +13,6 @@ public class SetupStep {
 		description;
 
 	private List<SetupElement> elements;
-
-	private Function<JSONObject, String> callback;
 
 	public SetupStep(String id, String name) {
 		this.id = id;
@@ -71,12 +68,6 @@ public class SetupStep {
 		return elements;
 	}
 
-	public void setCallback(Function<JSONObject, String> callback) {
-		this.callback = callback;
-	}
-
-	public Function<JSONObject, String> getCallback() {
-		return callback;
-	}
+	public abstract String callback(JSONObject data);
 
 }
