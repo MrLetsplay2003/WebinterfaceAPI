@@ -60,6 +60,10 @@ public abstract class SetupStep {
 		addElement(new SetupElement(id, name, SetupElementType.BOOLEAN, initialValue));
 	}
 
+	public void addChoice(String id, String name, ChoiceList choices, String initialValue) {
+		addElement(new SetupElement(id, name, SetupElementType.CHOICE, choices, initialValue));
+	}
+
 	public void addHeading(String heading) {
 		addElement(new SetupElement(null, heading, SetupElementType.HEADING, null));
 	}

@@ -85,6 +85,7 @@ select {
 	border-radius: 5px;
 	padding: 8px;
 	padding-left: 4px;
+	color: var(--theme-color-content-text)
 }
 
 select[disabled] {

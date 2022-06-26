@@ -2,11 +2,13 @@ package me.mrletsplay.webinterfaceapi.document;
 
 import me.mrletsplay.simplehttpserver.dom.html.HtmlDocument;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
+import me.mrletsplay.simplehttpserver.dom.html.element.HtmlSelect;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
+import me.mrletsplay.webinterfaceapi.setup.ChoiceList;
 import me.mrletsplay.webinterfaceapi.setup.SetupElement;
 import me.mrletsplay.webinterfaceapi.setup.SetupElementType;
 import me.mrletsplay.webinterfaceapi.setup.SetupStep;
@@ -71,6 +73,7 @@ public class SetupDocument implements HttpDocument {
 					addCheckbox(c2, e.getID(), e.getName(), e.getInitialValue() == null ? false : (boolean) e.getInitialValue());
 					break;
 				case CHOICE:
+					addSelect(c2, e.getID(), e.getName(), e.getChoices(), (String) e.getInitialValue());
 					break; // TODO: implement
 				case HEADING:
 					addSubTitle(c2, e.getName());
@@ -138,7 +141,21 @@ public class SetupDocument implements HttpDocument {
 		input.setAttribute("data-name", name);
 		input.setAttribute("data-type", type.name().toLowerCase());
 		input.setAttribute("type", type == SetupElementType.PASSWORD ? "password" : "text");
-		input.setAttribute("name", name);
+		if(defaultValue != null) input.setAttribute("value", defaultValue);
+		element.appendChild(input);
+	}
+
+	private void addSelect(HtmlElement element, String name, String title, ChoiceList choices, String defaultValue) {
+		HtmlElement a = new HtmlElement("span");
+		a.addClass("setup-label");
+		a.setText(title);
+		element.appendChild(a);
+
+		HtmlSelect input = HtmlElement.select();
+		input.addClass("setup-element");
+		input.setAttribute("data-name", name);
+		input.setAttribute("data-type", "choice");
+		choices.getChoices().forEach((id, nm) -> input.addOption(nm, id, id.equals(defaultValue)));
 		if(defaultValue != null) input.setAttribute("value", defaultValue);
 		element.appendChild(input);
 	}

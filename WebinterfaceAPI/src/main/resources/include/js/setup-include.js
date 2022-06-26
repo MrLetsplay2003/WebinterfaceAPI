@@ -7,6 +7,7 @@ function setupConfirm() {
 		switch(type) {
 			case "string":
 			case "password":
+			case "choice":
 				data[el.getAttribute("data-name")] = el.value;
 				break;
 			case "boolean":

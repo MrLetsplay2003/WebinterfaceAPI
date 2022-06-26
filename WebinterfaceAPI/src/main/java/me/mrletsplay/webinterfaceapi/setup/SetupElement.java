@@ -10,10 +10,20 @@ public class SetupElement {
 
 	private Object initialValue;
 
+	private ChoiceList choices;
+
 	public SetupElement(String id, String name, SetupElementType type, Object initialValue) {
 		this.id = id;
 		this.name = name;
 		this.type = type;
+		this.initialValue = initialValue;
+	}
+
+	public SetupElement(String id, String name, SetupElementType type, ChoiceList choices, String initialValue) {
+		this.id = id;
+		this.name = name;
+		this.type = type;
+		this.choices = choices;
 		this.initialValue = initialValue;
 	}
 
@@ -31,6 +41,10 @@ public class SetupElement {
 
 	public Object getInitialValue() {
 		return initialValue;
+	}
+
+	public ChoiceList getChoices() {
+		return choices;
 	}
 
 }
