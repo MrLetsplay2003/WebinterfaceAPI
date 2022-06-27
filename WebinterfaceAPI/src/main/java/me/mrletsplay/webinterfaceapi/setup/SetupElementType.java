@@ -7,7 +7,7 @@ public enum SetupElementType {
 	INTEGER,
 	DOUBLE,
 	BOOLEAN,
-	CHOICE, // TODO: implement
+	CHOICE,
 	HEADING;
 
 }

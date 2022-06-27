@@ -85,35 +85,6 @@ public class SetupDocument implements HttpDocument {
 
 		addButton(ul, "Confirm", "setupConfirm()");
 
-//		switch(currentStep) {
-//			case SETUP_STEP_AUTH:
-//			{
-//				addTitle(c2, "Configure authentication methods");
-//				addDescription(c2, "Set up authentication methods for people to log in with");
-//				addCheckbox(c2, "no-auth", "Allow anonymous login", true);
-//				addSubTitle(c2, "Discord");
-//				addCheckbox(c2, "discord-auth", "Enable Discord auth", false);
-//				addInputField(c2, "discord-client-id", "Discord client ID", false);
-//				addInputField(c2, "discord-client-secret", "Discord client secret", false);
-//				addSubTitle(c2, "Google");
-//				addCheckbox(c2, "google-auth", "Enable Google auth", false);
-//				addInputField(c2, "google-client-id", "Google client ID", false);
-//				addInputField(c2, "google-client-secret", "Google client secret", false);
-//				addSubTitle(c2, "GitHub");
-//				addCheckbox(c2, "github-auth", "Enable GitHub auth", false);
-//				addInputField(c2, "github-client-id", "GitHub client ID", false);
-//				addInputField(c2, "github-client-secret", "GitHub client secret", false);
-//				addButton(ul, "Confirm", "configureAuth()");
-//				break;
-//			}
-//			default:
-//			{
-//				addTitle(ul, "Setup is done");
-//				addButton(ul, "Confirm", "setupDone()");
-//				break;
-//			}
-//		}
-
 		HtmlElement alertBox = new HtmlElement("div");
 		alertBox.setID("alert-box");
 		d.getBodyNode().appendChild(alertBox);
