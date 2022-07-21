@@ -1,5 +1,7 @@
 package me.mrletsplay.webinterfaceapi.document;
 
+import java.util.Locale;
+
 import me.mrletsplay.simplehttpserver.dom.html.HtmlDocument;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 import me.mrletsplay.simplehttpserver.dom.html.element.HtmlSelect;
@@ -110,7 +112,7 @@ public class SetupDocument implements HttpDocument {
 		input.setSelfClosing(true);
 		input.addClass("setup-element");
 		input.setAttribute("data-name", name);
-		input.setAttribute("data-type", type.name().toLowerCase());
+		input.setAttribute("data-type", type.name().toLowerCase(Locale.US));
 		input.setAttribute("type", type == SetupElementType.PASSWORD ? "password" : "text");
 		if(defaultValue != null) input.setAttribute("value", defaultValue);
 		element.appendChild(input);

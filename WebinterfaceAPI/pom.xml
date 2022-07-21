@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>WebinterfaceAPI-Parent</artifactId>
 		<groupId>me.mrletsplay</groupId>
-		<version>3.0</version>
+		<version>3.0.1</version>
 	</parent>
 
 	<artifactId>WebinterfaceAPI</artifactId>
@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
 			<artifactId>MrCore</artifactId>
-			<version>4.0.2</version>
+			<version>4.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
