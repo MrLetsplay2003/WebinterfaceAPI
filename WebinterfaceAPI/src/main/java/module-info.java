@@ -31,4 +31,5 @@ open module me.mrletsplay.webinterfaceapi {
 	requires org.apache.commons.text;
 	requires java.sql;
 	requires commons.dbcp2;
+    requires java.management;
 }
