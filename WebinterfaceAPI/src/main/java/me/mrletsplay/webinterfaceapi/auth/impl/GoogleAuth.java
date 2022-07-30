@@ -40,7 +40,8 @@ public class GoogleAuth implements AuthMethod {
 		clientID,
 		clientSecret;
 
-	public GoogleAuth() {
+	@Override
+	public void initialize() {
 		File cfgFile = new File(getConfigurationDirectory(), "credentials.json");
 		try {
 			IOUtils.createFile(cfgFile);

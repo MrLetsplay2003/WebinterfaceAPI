@@ -13,7 +13,7 @@ public class WelcomePage extends Page {
 		setIcon("mdi:party-popper");
 
 		PageSection sc = new PageSection();
-		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + Session.getCurrentSession().getAccount().getName());
+		sc.addTitle(() -> "Welcome to WebinterfaceAPI, " + Session.getCurrentSession().getAccount().getUsername());
 		sc.addElement(Text.builder()
 			.text("You can set a custom home page using the \"Home page path\" setting")
 			.fullWidth()

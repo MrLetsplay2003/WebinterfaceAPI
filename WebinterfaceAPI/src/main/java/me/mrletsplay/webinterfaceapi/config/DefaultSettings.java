@@ -17,6 +17,7 @@ public class DefaultSettings implements AutoSettings {
 	@AutoSetting
 	private static SettingsCategory
 		general = new SettingsCategory("General"),
+		mySQL = new SettingsCategory("MySQL"),
 		http = new SettingsCategory("HTTP"),
 		https = new SettingsCategory("HTTPS"),
 		auth = new SettingsCategory("Auth"),
@@ -33,7 +34,23 @@ public class DefaultSettings implements AutoSettings {
 		THEME = general.addString("theme", "dark", "Theme"),
 		HOME_PAGE_PATH = general.addString("home-page.path", "/wiapi/welcome", "Home page path"),
 		ICON_IMAGE = general.addString("icon-image", "icon.svg", "Icon Image", "Path of the icon image inside the include/img resource directory"),
-		HEADER_IMAGE = general.addString("header-image", "header.svg", "Header Image", "Path of the header image inside the include/img resource directory");
+		HEADER_IMAGE = general.addString("header-image", "header.svg", "Header Image", "Path of the header image inside the include/img resource directory"),
+		DATABASE = general.addString("database", "file", "Database (requires restart)").allowedValues(Arrays.asList("file", "sql"));
+
+	// MySQL
+
+	public static final StringSetting
+		MYSQL_PROVIDER = mySQL.addString("mysql.provider", "mysql", "MySQL Provider").allowedValues(Arrays.asList("mysql", "mariadb")),
+		MYSQL_HOST = mySQL.addString("mysql.host", "localhost", "MySQL Host");
+
+	public static final IntSetting
+		MYSQL_PORT = mySQL.addInt("mysql.port", 3306, "MySQL Port");
+
+	public static final StringSetting
+		MYSQL_USER = mySQL.addString("mysql.user", "webinterfaceapi", "MySQL User"),
+		MYSQL_PASSWORD = mySQL.addString("mysql.password", "password", "MySQL Password"),
+		MYSQL_DATABASE = mySQL.addString("mysql.database", "webinterfaceapi", "MySQL Database"),
+		MYSQL_TABLE_PREFIX = mySQL.addString("mysql.table-prefix", null, "MySQL Table Prefix");
 
 	// HTTP
 

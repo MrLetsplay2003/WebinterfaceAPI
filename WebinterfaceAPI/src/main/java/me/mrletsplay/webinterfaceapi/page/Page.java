@@ -200,14 +200,14 @@ public class Page implements HttpDocument {
 		ac.setAttribute("onclick", "toggleProfileOptions()");
 		header.appendChild(ac);
 
-		if(account.getAvatarUrl() != null) {
-			HtmlElement av = HtmlElement.img(account.getAvatarUrl(), "User Avatar");
+		if(account.getAvatar() != null) {
+			HtmlElement av = HtmlElement.img(account.getAvatar(), "User Avatar");
 			av.setSelfClosing(true);
 			ac.appendChild(av);
 		}
 
 		HtmlElement usrn = new HtmlElement("a");
-		usrn.setText(account.getName());
+		usrn.setText(account.getUsername());
 		ac.appendChild(usrn);
 
 		HtmlElement main = new HtmlElement("main");

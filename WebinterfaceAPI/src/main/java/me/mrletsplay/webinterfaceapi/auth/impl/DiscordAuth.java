@@ -38,7 +38,8 @@ public class DiscordAuth implements AuthMethod {
 		clientID,
 		clientSecret;
 
-	public DiscordAuth() {
+	@Override
+	public void initialize() {
 		File cfgFile = new File(getConfigurationDirectory(), "credentials.yml");
 		FileCustomConfig cfg = ConfigLoader.loadFileConfig(cfgFile);
 		try {

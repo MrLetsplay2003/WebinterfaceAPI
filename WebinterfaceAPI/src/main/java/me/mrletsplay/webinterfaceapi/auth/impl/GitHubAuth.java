@@ -38,7 +38,8 @@ public class GitHubAuth implements AuthMethod {
 		clientID,
 		clientSecret;
 
-	public GitHubAuth() {
+	@Override
+	public void initialize() {
 		File cfgFile = new File(getConfigurationDirectory(), "credentials.yml");
 		FileCustomConfig cfg = ConfigLoader.loadFileConfig(cfgFile);
 		try {

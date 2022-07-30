@@ -85,8 +85,7 @@ public class Session {
 				throw new AuthException("Registration not allowed");
 			}
 
-			acc = Webinterface.getAccountStorage().createAccount();
-			acc.addConnection(accountData);
+			acc = Webinterface.getAccountStorage().createAccount(accountData);
 		}
 		if(acc.getConnection(accountData.getConnectionName()) == null) acc.addConnection(accountData);
 		Session s = new Session(sID, acc.getID(), expiresAt, new HashMap<>());

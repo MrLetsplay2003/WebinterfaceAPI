@@ -29,4 +29,6 @@ open module me.mrletsplay.webinterfaceapi {
 	requires transitive org.commonmark;
 
 	requires org.apache.commons.text;
+	requires java.sql;
+	requires commons.dbcp2;
 }

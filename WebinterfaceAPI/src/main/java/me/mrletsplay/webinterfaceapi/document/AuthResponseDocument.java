@@ -33,7 +33,7 @@ public class AuthResponseDocument implements HttpDocument {
 			AccountConnection acc = method.handleAuthResponse();
 
 			Session sess = Session.getCurrentSession();
-			if(sess != null && !acc.isTemporary() && method.getShouldConnect()) {
+			if(sess != null && method.canConnect() && method.getShouldConnect()) {
 				Account other = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(acc.getConnectionName(), acc.getUserID());
 
 				if(other == null) {

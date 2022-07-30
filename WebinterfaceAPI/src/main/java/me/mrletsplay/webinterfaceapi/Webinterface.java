@@ -33,6 +33,8 @@ import me.mrletsplay.webinterfaceapi.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.auth.CredentialsStorage;
 import me.mrletsplay.webinterfaceapi.auth.FileAccountStorage;
 import me.mrletsplay.webinterfaceapi.auth.FileCredentialsStorage;
+import me.mrletsplay.webinterfaceapi.auth.MySQLAccountStorage;
+import me.mrletsplay.webinterfaceapi.auth.MySQLCredentialsStorage;
 import me.mrletsplay.webinterfaceapi.auth.impl.DiscordAuth;
 import me.mrletsplay.webinterfaceapi.auth.impl.GitHubAuth;
 import me.mrletsplay.webinterfaceapi.auth.impl.GoogleAuth;
@@ -69,6 +71,7 @@ import me.mrletsplay.webinterfaceapi.page.impl.DefaultSettingsPage;
 import me.mrletsplay.webinterfaceapi.page.impl.PermissionsPage;
 import me.mrletsplay.webinterfaceapi.page.impl.WelcomePage;
 import me.mrletsplay.webinterfaceapi.session.FileSessionStorage;
+import me.mrletsplay.webinterfaceapi.session.MySQLSessionStorage;
 import me.mrletsplay.webinterfaceapi.session.Session;
 import me.mrletsplay.webinterfaceapi.session.SessionStorage;
 import me.mrletsplay.webinterfaceapi.setup.Setup;
@@ -127,12 +130,32 @@ public class Webinterface {
 			System.setProperty("webinterface.log-dir", new File(rootDirectory, "logs").getAbsolutePath());
 		logger = LoggerFactory.getLogger(Webinterface.class);
 
-		accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
-		sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
-		credentialsStorage = new FileCredentialsStorage(new File(rootDirectory, "data/credentials.yml"));
-
 		config = new FileConfig(new File(getConfigurationDirectory(), "config.yml"));
 		config.registerSettings(DefaultSettings.INSTANCE);
+
+		switch(config.getSetting(DefaultSettings.DATABASE)) {
+			case "file":
+				accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
+				sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
+				credentialsStorage = new FileCredentialsStorage(new File(rootDirectory, "data/credentials.yml"));
+				break;
+			case "sql":
+				String provider = config.getSetting(DefaultSettings.MYSQL_PROVIDER);
+				String host = config.getSetting(DefaultSettings.MYSQL_HOST);
+				int port = config.getSetting(DefaultSettings.MYSQL_PORT);
+				String user = config.getSetting(DefaultSettings.MYSQL_USER);
+				String pass = config.getSetting(DefaultSettings.MYSQL_PASSWORD);
+				String database = config.getSetting(DefaultSettings.MYSQL_DATABASE);
+				String prefix = config.getSetting(DefaultSettings.MYSQL_TABLE_PREFIX);
+
+				String url = "jdbc:" + provider + "://" + host + ":" + port;
+				accountStorage = new MySQLAccountStorage(url, user, pass, database, prefix);
+				sessionStorage = new MySQLSessionStorage(url, user, pass, database, prefix);
+				credentialsStorage = new MySQLCredentialsStorage(url, user, pass, database, prefix);
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid database configured in config");
+		}
 
 		registerAuthMethod(new NoAuth());
 		registerAuthMethod(new DiscordAuth());
@@ -217,6 +240,7 @@ public class Webinterface {
 		accountStorage.initialize();
 		sessionStorage.initialize();
 		credentialsStorage.initialize();
+		authMethods.forEach(AuthMethod::initialize);
 
 		try {
 			httpServer.start();
@@ -428,7 +452,10 @@ public class Webinterface {
 	public static void registerAuthMethod(AuthMethod method) {
 		if(authMethods.stream().anyMatch(a -> a.getID().equals(method.getID()))) return;
 		authMethods.add(method);
-		if(initialized) registerAuthPages(method);
+		if(initialized) {
+			registerAuthPages(method);
+			method.initialize();
+		}
 	}
 
 	private static void registerAuthPages(AuthMethod method) {

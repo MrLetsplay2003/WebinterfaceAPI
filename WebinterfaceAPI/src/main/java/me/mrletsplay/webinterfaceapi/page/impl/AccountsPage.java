@@ -42,7 +42,7 @@ public class AccountsPage extends Page {
 				grp.setGrid(new Grid().setColumns("min-content", "auto"));
 
 				TitleText tt = TitleText.builder()
-					.text(acc.getName())
+					.text(acc.getUsername())
 					.leftboundText()
 					.noLineBreaks()
 					.create();
@@ -67,18 +67,7 @@ public class AccountsPage extends Page {
 					.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
 					.create());
 				grp.addElement(Text.builder()
-					.text(acc.getPrimaryEmail() == null ? "-" : acc.getPrimaryEmail())
-					.leftboundText()
-					.create());
-
-				grp.addElement(TitleText.builder()
-					.text("Is Temporary")
-					.noLineBreaks()
-					.leftboundText()
-					.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
-					.create());
-				grp.addElement(Text.builder()
-					.text(acc.isTemporary() ? "yes" : "no")
+					.text(acc.getEmail() == null ? "-" : acc.getEmail())
 					.leftboundText()
 					.create());
 

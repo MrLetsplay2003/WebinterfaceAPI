@@ -15,17 +15,17 @@ import me.mrletsplay.mrcore.config.FileCustomConfig;
 import me.mrletsplay.mrcore.misc.FriendlyException;
 
 public class FileCredentialsStorage implements CredentialsStorage {
-	
+
 	private File file;
 	private FileCustomConfig config;
-	
+
 	private SecureRandom random;
-	
+
 	public FileCredentialsStorage(File file) {
 		this.file = file;
 		this.random = new SecureRandom();
 	}
-	
+
 	@Override
 	public void initialize() {
 		this.config = ConfigLoader.loadFileConfig(file);
@@ -37,6 +37,11 @@ public class FileCredentialsStorage implements CredentialsStorage {
 		config.set(id + ".salt", Base64.getEncoder().encodeToString(salt));
 		config.set(id + ".hash", hash(plainCredentials, salt));
 		config.saveToFile();
+	}
+
+	@Override
+	public void deleteCredentials(String id) {
+		config.unset(id);
 	}
 
 	@Override
@@ -52,7 +57,7 @@ public class FileCredentialsStorage implements CredentialsStorage {
 		random.nextBytes(salt);
 		return salt;
 	}
-	
+
 	private String hash(String raw, byte[] salt) {
 		try {
 			KeySpec spec = new PBEKeySpec(raw.toCharArray(), salt, 65536, 128);

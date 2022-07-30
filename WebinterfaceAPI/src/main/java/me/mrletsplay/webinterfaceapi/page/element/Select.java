@@ -19,6 +19,10 @@ public class Select extends AbstractPageElement {
 		this.options = ArrayList::new;
 	}
 
+	public void setOptions(Supplier<List<Option>> options) {
+		this.options = options;
+	}
+
 	public void addOption(String name, String value, boolean selected, boolean enabled) {
 		Supplier<List<Option>> o = this.options;
 		this.options = () -> {

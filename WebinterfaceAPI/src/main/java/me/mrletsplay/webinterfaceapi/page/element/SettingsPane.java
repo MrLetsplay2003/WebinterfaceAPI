@@ -2,6 +2,7 @@ package me.mrletsplay.webinterfaceapi.page.element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import me.mrletsplay.webinterfaceapi.page.action.SetValueAction;
 import me.mrletsplay.webinterfaceapi.page.action.ShowToastAction;
 import me.mrletsplay.webinterfaceapi.page.action.ValidateElementsAction;
 import me.mrletsplay.webinterfaceapi.page.action.value.ActionValue;
+import me.mrletsplay.webinterfaceapi.page.element.Select.Option;
 import me.mrletsplay.webinterfaceapi.page.element.layout.DefaultLayoutOption;
 import me.mrletsplay.webinterfaceapi.page.element.layout.Grid;
 import me.mrletsplay.webinterfaceapi.page.element.list.DoubleList;
@@ -79,36 +81,62 @@ public class SettingsPane extends Group {
 
 		if(setting instanceof StringSetting) {
 			StringSetting s = (StringSetting) setting;
-
-			InputField in = new InputField();
-			in.setInitialValue(() -> {
-				String v = config.get().getSetting(s);
-				return v == null ? "" : v;
-			});
-			in.setPlaceholder(s.getFriendlyName());
-			in.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(in)));
-			el = in;
 			defaultValue = ActionValue.string((String) setting.getDefaultValue());
 
-			resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+			if(s.getAllowedValues() == null) {
+				InputField in = new InputField();
+				in.setInitialValue(() -> {
+					String v = config.get().getSetting(s);
+					return v == null ? "" : v;
+				});
+				in.setPlaceholder(s.getFriendlyName());
+				in.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(in)));
+				el = in;
+				resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+			}else {
+				Select sel = new Select();
+				sel.setOptions(() -> {
+					List<Option> ops = new ArrayList<>();
+					for(String str : s.getAllowedValues()) {
+						ops.add(new Option(str, str, Objects.equals(config.get().getSetting(s), str), true));
+					}
+					return ops;
+				});
+				sel.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(sel)));
+				el = sel;
+				resetAction = SetValueAction.of(sel, defaultValue).triggerUpdate(false);
+			}
 		}else if(setting instanceof IntSetting) {
 			IntSetting s = (IntSetting) setting;
-
-			NumberField in = new NumberField(() -> String.valueOf(config.get().getSetting(setting)));
-			in.setInitialValue(() -> {
-				Integer v = config.get().getSetting(s);
-				return v == null ? null : v.doubleValue();
-			});
-			in.setPlaceholder(s.getFriendlyName());
-
-			if(s.getMin() != null) in.setMin(s.getMin().doubleValue());
-			if(s.getMax() != null) in.setMax(s.getMax().doubleValue());
-
-			in.setOnChangeAction(ValidateElementsAction.of(in).onSuccess(changeSettingAction(setting, in.inputValue())));
-			el = in;
 			defaultValue = () -> setting.getDefaultValue().toString();
 
-			resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+			if(s.getAllowedValues() == null) {
+				NumberField in = new NumberField(() -> String.valueOf(config.get().getSetting(setting)));
+				in.setInitialValue(() -> {
+					Integer v = config.get().getSetting(s);
+					return v == null ? null : v.doubleValue();
+				});
+				in.setPlaceholder(s.getFriendlyName());
+
+				if(s.getMin() != null) in.setMin(s.getMin().doubleValue());
+				if(s.getMax() != null) in.setMax(s.getMax().doubleValue());
+
+				in.setOnChangeAction(ValidateElementsAction.of(in).onSuccess(changeSettingAction(setting, in.inputValue())));
+				el = in;
+				resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+			}else {
+				Select sel = new Select();
+				sel.setOptions(() -> {
+					List<Option> ops = new ArrayList<>();
+					for(Integer val : s.getAllowedValues()) {
+						ops.add(new Option(String.valueOf(val), String.valueOf(val), Objects.equals(config.get().getSetting(s), val), true));
+					}
+					return ops;
+				});
+				sel.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(sel).asInt()));
+				el = sel;
+				resetAction = SetValueAction.of(sel, defaultValue).triggerUpdate(false);
+			}
 		}else if(setting instanceof DoubleSetting) {
 			DoubleSetting s = (DoubleSetting) setting;
 
@@ -306,12 +334,18 @@ public class SettingsPane extends Group {
 		if(str == null) return ActionResponse.error("Need setting");
 		Setting<?> set = config.getSetting(str);
 		if(set == null) return ActionResponse.error("Invalid setting");
-		SettingsPane.setSetting(config, set, event.getData().get("value"));
+		String err = setSetting(config, set, event.getData().get("value"));
+		if(err != null) return ActionResponse.error(err);
 		return ActionResponse.success();
 	}
 
-	private static <T> void setSetting(Config config, Setting<T> setting, Object value) {
-		config.setSetting(setting, setting.getType().cast(value, SettingsPane::jsonCast).get());
+	private static <T> String setSetting(Config config, Setting<T> setting, Object value) {
+		NullableOptional<T> opt = setting.getType().cast(value, SettingsPane::jsonCast);
+		if(!opt.isPresent()) return "Invalid setting type";
+		T t = opt.get();
+		if(setting.getAllowedValues() != null && !setting.getAllowedValues().contains(t)) return "Invalid value";
+		config.setSetting(setting, t);
+		return null;
 	}
 
 	private static <T> NullableOptional<T> jsonCast(Object o, Class<T> typeClass, Complex<?> exactClass) {

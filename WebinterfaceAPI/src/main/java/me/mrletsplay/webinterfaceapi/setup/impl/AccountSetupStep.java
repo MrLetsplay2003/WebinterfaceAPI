@@ -35,8 +35,7 @@ public class AccountSetupStep extends SetupStep {
 
 	Webinterface.getCredentialsStorage().storeCredentials(username, password);
 	AccountConnection con = new AccountConnection(PasswordAuth.ID, username, username, null, null);
-	acc = Webinterface.getAccountStorage().createAccount();
-	acc.addConnection(con);
+	acc = Webinterface.getAccountStorage().createAccount(con);
 	acc.addPermission("*");
 
 	return null;

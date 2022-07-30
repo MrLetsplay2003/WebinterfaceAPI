@@ -24,6 +24,11 @@ public class PasswordAuth implements AuthMethod {
 	private static final Pattern VALID_USERNAME = Pattern.compile("[a-zA-Z0-9-_.]{2,64}"); // 2 - 64 chars, alphanumeric with -_.
 
 	@Override
+	public void initialize() {
+
+	}
+
+	@Override
 	public String getID() {
 		return ID;
 	}

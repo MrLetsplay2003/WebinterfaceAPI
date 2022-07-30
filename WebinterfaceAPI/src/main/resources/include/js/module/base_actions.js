@@ -11,6 +11,9 @@ class WebinterfaceBaseActions {
 				if(parameters.triggerUpdate) $(element).trigger("change");
 				checkInputValidity(element); // Update possible error message
 			}
+		}else if(element.tagName == "SELECT") {
+			element.value = parameters.value;
+			if(parameters.triggerUpdate) $(element).trigger("change");
 		}else if(element.classList.contains("dynamic-list")) {
 			listSetItems(element, parameters.value, parameters.triggerUpdate);
 		}

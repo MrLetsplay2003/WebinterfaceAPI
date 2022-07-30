@@ -15,6 +15,8 @@ public interface AuthMethod {
 
 	public String getName();
 
+	public void initialize();
+
 	public void handleAuthRequest();
 
 	public AccountConnection handleAuthResponse() throws AuthException;
@@ -53,6 +55,10 @@ public interface AuthMethod {
 	}
 
 	public default boolean isAvailable() {
+		return true;
+	}
+
+	public default boolean canConnect() {
 		return true;
 	}
 

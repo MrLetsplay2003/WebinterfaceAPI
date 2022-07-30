@@ -62,7 +62,7 @@ public class DefaultHandler implements ActionHandler {
 		Account acc = Webinterface.getAccountStorage().getAccountByID(accountID);
 		if(acc == null) return ActionResponse.error("Account doesn't exist");
 		if(acc.getID().equals(event.getAccount().getID())) return ActionResponse.error("Can't delete own account");
-		Webinterface.getAccountStorage().deleteAccount(acc);
+		Webinterface.getAccountStorage().deleteAccount(acc.getID());
 		return ActionResponse.success();
 	}
 

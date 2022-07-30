@@ -1,7 +1,6 @@
 package me.mrletsplay.webinterfaceapi.auth;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import me.mrletsplay.mrcore.permission.Permissible;
@@ -11,97 +10,86 @@ import me.mrletsplay.webinterfaceapi.Webinterface;
 public class Account implements Permissible {
 
 	private String id;
-	private List<AccountConnection> connections;
-	private List<Permission> permissions;
-	
-	public Account(String id, List<AccountConnection> connections, List<Permission> permissions) {
+	private String username;
+	private String avatar;
+	private String email;
+
+	public Account(String id, String username, String avatar, String email) {
 		this.id = id;
-		this.connections = connections;
-		this.permissions = permissions;
+		this.username = username;
+		this.avatar = avatar;
+		this.email = email;
 	}
-	
+
+	public Account(String id, String username) {
+		this(id, username, null, null);
+	}
+
 	public String getID() {
 		return id;
 	}
-	
-	public boolean isTemporary() {
-		return connections.stream()
-				.allMatch(AccountConnection::isTemporary);
+
+	public String getAvatar() {
+		return avatar;
 	}
-	
-	public List<String> getEmails() {
-		return connections.stream()
-				.map(c -> c.getUserEmail())
-				.filter(Objects::nonNull)
-				.collect(Collectors.toList());
+
+	public String getEmail() {
+		return email;
 	}
-	
-	public String getPrimaryEmail() {
-		return connections.stream()
-				.map(c -> c.getUserEmail())
-				.filter(Objects::nonNull)
-				.findFirst().orElse(null);
+
+	public String getUsername() {
+		return username;
 	}
-	
-	public String getAvatarUrl() {
-		return connections.stream()
-				.map(c -> c.getUserAvatar())
-				.filter(Objects::nonNull)
-				.findFirst().orElse(null);
-	}
-	
-	public String getName() {
-		return connections.stream()
-				.map(c -> c.getUserName())
-				.filter(Objects::nonNull)
-				.findFirst().orElse(null);
-	}
-	
+
 	public void addConnection(AccountConnection connection) {
-		this.connections.add(connection);
-		Webinterface.getAccountStorage().storeAccount(this);
+		Webinterface.getAccountStorage().addConnection(id, connection);
+		if(avatar == null && connection.getUserAvatar() != null) {
+			avatar = connection.getUserAvatar();
+			Webinterface.getAccountStorage().updateAccount(this);
+		}
+
+		if(email == null && connection.getUserEmail() != null) {
+			email = connection.getUserEmail();
+			Webinterface.getAccountStorage().updateAccount(this);
+		}
 	}
-	
+
 	public void removeConnection(AccountConnection connection) {
-		this.connections.remove(connection);
-		Webinterface.getAccountStorage().storeAccount(this);
+		removeConnection(connection.getConnectionName());
 	}
-	
+
 	public void removeConnection(String connectionName) {
-		AccountConnection con = getConnection(connectionName);
-		if(con == null) return;
-		removeConnection(con);
+		Webinterface.getAccountStorage().removeConnection(id, connectionName);
 	}
-	
+
 	public List<AccountConnection> getConnections() {
-		return connections;
+		return Webinterface.getAccountStorage().getConnections(id);
 	}
-	
+
 	public AccountConnection getConnection(String connectionName) {
-		return connections.stream().filter(c -> c.getConnectionName().equals(connectionName)).findFirst().orElse(null);
+		return Webinterface.getAccountStorage().getConnection(id, connectionName);
 	}
-	
+
 	@Override
 	public void addPermission(Permission permission) {
-		permissions.add(permission);
-		Webinterface.getAccountStorage().storeAccount(this);
+		Webinterface.getAccountStorage().addPermission(id, permission.getPermission());
 	}
 
 	@Override
 	public void removePermission(Permission permission) {
-		permissions.remove(permission);
-		Webinterface.getAccountStorage().storeAccount(this);
+		Webinterface.getAccountStorage().removePermission(id, permission.getPermission());
 	}
 
 	@Override
 	public void setPermissions(List<Permission> permissions) {
-		this.permissions = permissions;
-		Webinterface.getAccountStorage().storeAccount(this);
+		Webinterface.getAccountStorage().setPermissions(id, permissions.stream().map(p -> p.getPermission()).collect(Collectors.toList()));
 	}
 
 	@Override
 	public List<Permission> getPermissions() {
-		return permissions;
+		return Webinterface.getAccountStorage().getPermissions(id).stream()
+			.map(Permission::new)
+			.collect(Collectors.toList());
 	}
-	
+
 }

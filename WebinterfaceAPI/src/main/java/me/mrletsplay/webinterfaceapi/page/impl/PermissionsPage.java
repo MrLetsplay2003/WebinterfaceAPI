@@ -62,7 +62,7 @@ public class PermissionsPage extends Page {
 			b.addOption("Select an account", null, account == null, false);
 			for(Account acc : Webinterface.getAccountStorage().getAccounts()) {
 				boolean self = acc.getID().equals(Session.getCurrentSession().getAccountID());
-				b.addOption(acc.getName() + " (" + acc.getID() + ")" + (self ? " - Can't change own permissions" : ""), acc.getID(), acc.getID().equals(accID), !self);
+				b.addOption(acc.getUsername() + " (" + acc.getID() + ")" + (self ? " - Can't change own permissions" : ""), acc.getID(), acc.getID().equals(accID), !self);
 			}
 			b.onChange(s -> RedirectAction.to(ActionValue.string("/wiapi/permissions?acc=").plus(s.selectedValue())));
 			group.addElement(b.create());

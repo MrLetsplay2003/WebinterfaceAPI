@@ -84,17 +84,6 @@ public class AccountPage extends Page {
 					.leftboundText()
 					.create());
 
-				grp.addElement(TitleText.builder()
-					.text("Is Temporary")
-					.noLineBreaks()
-					.leftboundText()
-					.withLayoutOptions(DefaultLayoutOption.NEW_LINE)
-					.create());
-				grp.addElement(Text.builder()
-					.text(con.isTemporary() ? "yes" : "no")
-					.leftboundText()
-					.create());
-
 				if(loginCons.size() > 1) {
 					grp.addElement(Button.builder()
 						.text("Remove connection")
