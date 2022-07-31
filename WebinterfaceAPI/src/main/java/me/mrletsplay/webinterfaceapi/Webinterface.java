@@ -10,7 +10,9 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -18,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
-import me.mrletsplay.mrcore.main.MrCoreServiceRegistry;
 import me.mrletsplay.mrcore.misc.ByteUtils;
 import me.mrletsplay.simplehttpserver.http.HttpServer;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
@@ -33,8 +34,8 @@ import me.mrletsplay.webinterfaceapi.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.auth.CredentialsStorage;
 import me.mrletsplay.webinterfaceapi.auth.FileAccountStorage;
 import me.mrletsplay.webinterfaceapi.auth.FileCredentialsStorage;
-import me.mrletsplay.webinterfaceapi.auth.MySQLAccountStorage;
-import me.mrletsplay.webinterfaceapi.auth.MySQLCredentialsStorage;
+import me.mrletsplay.webinterfaceapi.auth.SQLAccountStorage;
+import me.mrletsplay.webinterfaceapi.auth.SQLCredentialsStorage;
 import me.mrletsplay.webinterfaceapi.auth.impl.DiscordAuth;
 import me.mrletsplay.webinterfaceapi.auth.impl.GitHubAuth;
 import me.mrletsplay.webinterfaceapi.auth.impl.GoogleAuth;
@@ -71,21 +72,24 @@ import me.mrletsplay.webinterfaceapi.page.impl.DefaultSettingsPage;
 import me.mrletsplay.webinterfaceapi.page.impl.PermissionsPage;
 import me.mrletsplay.webinterfaceapi.page.impl.WelcomePage;
 import me.mrletsplay.webinterfaceapi.session.FileSessionStorage;
-import me.mrletsplay.webinterfaceapi.session.MySQLSessionStorage;
+import me.mrletsplay.webinterfaceapi.session.SQLSessionStorage;
 import me.mrletsplay.webinterfaceapi.session.Session;
 import me.mrletsplay.webinterfaceapi.session.SessionStorage;
 import me.mrletsplay.webinterfaceapi.setup.Setup;
+import me.mrletsplay.webinterfaceapi.setup.impl.DatabaseSetupStep;
+import me.mrletsplay.webinterfaceapi.sql.SQLHelper;
+import me.mrletsplay.webinterfaceapi.util.WebinterfaceState;
 
 public class Webinterface {
 
 	private static Logger logger;
 
-	private static WebinterfaceService service;
-
 	private static HttpDocumentProvider documentProvider;
 
 	private static HttpServer httpServer;
 	private static HttpsServer httpsServer;
+
+	private static ScheduledExecutorService taskScheduler;
 
 	private static List<Page> pages;
 	private static List<PageCategory> categories;
@@ -94,7 +98,8 @@ public class Webinterface {
 	private static List<AuthMethod> authMethods;
 	private static List<JSModule> jsModules;
 
-	private static boolean initialized = false;
+	private static WebinterfaceState state;
+
 	private static File rootDirectory;
 	private static Path includePath;
 	private static AccountStorage accountStorage;
@@ -106,70 +111,59 @@ public class Webinterface {
 	private static Setup setup;
 
 	static {
+		cleanUp();
+	}
+
+	/**
+	 * Cleans up all of the static variables to ensure consistent state between restarts
+	 */
+	private static void cleanUp() {
+		if(System.getProperty("webinterface.log-dir") == null)
+			System.setProperty("webinterface.log-dir", new File(rootDirectory, "logs").getAbsolutePath());
+
+		logger = LoggerFactory.getLogger(Webinterface.class);
+
+		documentProvider = new WebinterfaceDocumentProvider();
+		httpServer = null;
+		httpsServer = null;
+
+		taskScheduler = Executors.newScheduledThreadPool(1);
+
 		pages = new ArrayList<>();
 		categories = new ArrayList<>();
 		handlers = new ArrayList<>();
 		events = new ArrayList<>();
 		authMethods = new ArrayList<>();
 		jsModules = new ArrayList<>();
+
+		state = WebinterfaceState.STOPPED;
+
 		rootDirectory = new File(Paths.get("").toAbsolutePath().toString());
 		includePath = new File(rootDirectory, "include").toPath();
+		accountStorage = null;
+		sessionStorage = null;
+		credentialsStorage = null;
+		config = null;
 		markdownRenderer = new MarkdownRenderer();
+		webSocketEndpoint = new WebSocketDocument();
 		setup = new Setup();
 
 		registerActionHandler(new DefaultHandler());
-
-		service = new WebinterfaceService();
-		MrCoreServiceRegistry.registerService("WebinterfaceAPI", service);
 	}
 
+	/**
+	 * Initializes core components needed for any WIAPI installation
+	 */
 	private static void initialize() {
-		service.fire(WebinterfaceService.EVENT_PRE_INIT);
-
-		if(System.getProperty("webinterface.log-dir") == null)
-			System.setProperty("webinterface.log-dir", new File(rootDirectory, "logs").getAbsolutePath());
-		logger = LoggerFactory.getLogger(Webinterface.class);
 
 		config = new FileConfig(new File(getConfigurationDirectory(), "config.yml"));
 		config.registerSettings(DefaultSettings.INSTANCE);
-
-		switch(config.getSetting(DefaultSettings.DATABASE)) {
-			case "file":
-				accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
-				sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
-				credentialsStorage = new FileCredentialsStorage(new File(rootDirectory, "data/credentials.yml"));
-				break;
-			case "sql":
-				String provider = config.getSetting(DefaultSettings.MYSQL_PROVIDER);
-				String host = config.getSetting(DefaultSettings.MYSQL_HOST);
-				int port = config.getSetting(DefaultSettings.MYSQL_PORT);
-				String user = config.getSetting(DefaultSettings.MYSQL_USER);
-				String pass = config.getSetting(DefaultSettings.MYSQL_PASSWORD);
-				String database = config.getSetting(DefaultSettings.MYSQL_DATABASE);
-				String prefix = config.getSetting(DefaultSettings.MYSQL_TABLE_PREFIX);
-
-				String url = "jdbc:" + provider + "://" + host + ":" + port;
-				accountStorage = new MySQLAccountStorage(url, user, pass, database, prefix);
-				sessionStorage = new MySQLSessionStorage(url, user, pass, database, prefix);
-				credentialsStorage = new MySQLCredentialsStorage(url, user, pass, database, prefix);
-				break;
-			default:
-				throw new IllegalArgumentException("Invalid database configured in config");
-		}
-
-		registerAuthMethod(new NoAuth());
-		registerAuthMethod(new DiscordAuth());
-		registerAuthMethod(new GoogleAuth());
-		registerAuthMethod(new GitHubAuth());
-		registerAuthMethod(new PasswordAuth());
 
 		Arrays.stream(DefaultJSModule.values()).forEach(Webinterface::registerJSModule);
 
 		PHP.setEnabled(config.getSetting(DefaultSettings.ENABLE_PHP));
 		PHP.setCGIPath(config.getSetting(DefaultSettings.PHP_CGI_PATH));
 		PHP.setFileExtensions(config.getSetting(DefaultSettings.PHP_FILE_EXTENSIONS));
-
-		if(documentProvider == null) documentProvider = new WebinterfaceDocumentProvider();
 
 		httpServer = new HttpServer(HttpServer.newConfigurationBuilder()
 			.host(config.getSetting(DefaultSettings.HTTP_BIND))
@@ -199,10 +193,47 @@ public class Webinterface {
 			}
 		}
 
+		extractResources("/webinterfaceapi-resources.list");
 		documentProvider.registerDocumentPattern("/_internal/include/{path...}", new IncludedFilesDocument());
+	}
+
+	/**
+	 * Internal method. Do not call manually
+	 */
+	public static void initializeDatabase() {
+		switch(config.getSetting(DefaultSettings.DATABASE)) {
+			case "file":
+				accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
+				sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
+				credentialsStorage = new FileCredentialsStorage(new File(rootDirectory, "data/credentials.yml"));
+				break;
+			case "sql":
+				SQLHelper.initialize();
+				accountStorage = new SQLAccountStorage();
+				sessionStorage = new SQLSessionStorage();
+				credentialsStorage = new SQLCredentialsStorage();
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid database configured in config");
+		}
+
+		accountStorage.initialize();
+		sessionStorage.initialize();
+		credentialsStorage.initialize();
+	}
+
+	/**
+	 * Internal method. Do not call manually
+	 */
+	public static void registerWIContent() {
+		registerAuthMethod(new NoAuth());
+		registerAuthMethod(new DiscordAuth());
+		registerAuthMethod(new GoogleAuth());
+		registerAuthMethod(new GitHubAuth());
+		registerAuthMethod(new PasswordAuth());
+
 		documentProvider.registerDocument("/_internal/call", new ActionCallbackDocument());
 		documentProvider.registerDocument("/_internal/fileupload", new FileUploadDocument());
-		webSocketEndpoint = new WebSocketDocument();
 		documentProvider.registerDocument("/_internal/ws", webSocketEndpoint);
 		documentProvider.registerDocument("/", new HomeDocument());
 		documentProvider.registerDocument("/login", new LoginDocument());
@@ -222,25 +253,28 @@ public class Webinterface {
 		authMethods.forEach(Webinterface::registerAuthPages);
 		jsModules.forEach(Webinterface::registerJSModulePage);
 
-		if(setup.getNextStep() != null) {
-			documentProvider.registerDocument("/setup", new SetupDocument());
-			documentProvider.registerDocument("/setup/submit", new SetupSubmitDocument());
-		}
-
-		initialized = true;
-		service.fire(WebinterfaceService.EVENT_POST_INIT);
+		authMethods.forEach(AuthMethod::initialize);
 	}
 
 	public static void start() {
-		service.fire(WebinterfaceService.EVENT_PRE_START);
+		state = WebinterfaceState.STARTING;
 
 		initialize();
-		extractResources("/webinterfaceapi-resources.list");
 
-		accountStorage.initialize();
-		sessionStorage.initialize();
-		credentialsStorage.initialize();
-		authMethods.forEach(AuthMethod::initialize);
+		if(setup.isStepDone(DatabaseSetupStep.ID)) initializeDatabase();
+
+		if(setup.getNextStep() != null) {
+			// Setup is not done, only register setup-related stuff
+			documentProvider.registerDocument("/", () -> {
+				HttpServerHeader h = HttpRequestContext.getCurrentContext().getServerHeader();
+				h.setStatusCode(HttpStatusCodes.SEE_OTHER_303);
+				h.getFields().set("Location", "/setup");
+			});
+			documentProvider.registerDocument("/setup", new SetupDocument());
+			documentProvider.registerDocument("/setup/submit", new SetupSubmitDocument());
+		}else {
+			registerWIContent();
+		}
 
 		try {
 			httpServer.start();
@@ -250,22 +284,16 @@ public class Webinterface {
 			return;
 		}
 
-		httpServer.getExecutor().execute(() -> {
-			Supplier<Boolean> keepRunning = () -> httpServer.isRunning() && !httpServer.getExecutor().isShutdown() && !Thread.interrupted();
-			while(keepRunning.get()) {
-				for(Session sess : getSessionStorage().getSessions()) {
-					if(sess.hasExpired()) getSessionStorage().deleteSession(sess.getSessionID());
-				}
-				for(int i = 0; i < 10; i++) {
-					if(!keepRunning.get()) return;
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException ignored) {}
-				}
+		taskScheduler.scheduleAtFixedRate(() -> {
+			logger.debug("Cleaning up sessions");
+			for(Session sess : getSessionStorage().getSessions()) {
+				if(sess.hasExpired()) getSessionStorage().deleteSession(sess.getSessionID());
 			}
-		});
+		}, 10, 10, TimeUnit.MINUTES);
+	}
 
-		service.fire(WebinterfaceService.EVENT_POST_START);
+	public static WebinterfaceState getState() {
+		return state;
 	}
 
 	/**
@@ -337,10 +365,6 @@ public class Webinterface {
 		}
 	}
 
-	public static boolean isInitialized() {
-		return initialized;
-	}
-
 	public static HttpServer getHttpServer() {
 		return httpServer;
 	}
@@ -358,7 +382,7 @@ public class Webinterface {
 	}
 
 	public static void setRootDirectory(File rootDirectory) {
-		if(initialized) throw new IllegalStateException("Webinterface is running");
+		if(state != WebinterfaceState.STOPPED) throw new IllegalStateException("Webinterface is running");
 		Webinterface.rootDirectory = rootDirectory;
 		includePath = new File(rootDirectory, "include").toPath();
 	}
@@ -381,7 +405,7 @@ public class Webinterface {
 
 	public static void registerPage(Page page) {
 		pages.add(page);
-		if(initialized) documentProvider.registerDocument(page.getUrl(), page);
+		if(state == WebinterfaceState.RUNNING) documentProvider.registerDocument(page.getUrl(), page);
 	}
 
 	public static List<Page> getPages() {
@@ -452,7 +476,7 @@ public class Webinterface {
 	public static void registerAuthMethod(AuthMethod method) {
 		if(authMethods.stream().anyMatch(a -> a.getID().equals(method.getID()))) return;
 		authMethods.add(method);
-		if(initialized) {
+		if(state == WebinterfaceState.RUNNING) {
 			registerAuthPages(method);
 			method.initialize();
 		}
@@ -479,7 +503,7 @@ public class Webinterface {
 
 	public static void registerJSModule(JSModule module) {
 		jsModules.add(module);
-		if(initialized) registerJSModulePage(module);
+		if(state == WebinterfaceState.RUNNING) registerJSModulePage(module);
 	}
 
 	private static void registerJSModulePage(JSModule module) {
@@ -526,18 +550,23 @@ public class Webinterface {
 		return setup;
 	}
 
-	public static boolean checkSetupDone() {
-		if(Webinterface.getSetup().getNextStep() == null) return true;
-		HttpServerHeader h = HttpRequestContext.getCurrentContext().getServerHeader();
-		h.setStatusCode(HttpStatusCodes.SEE_OTHER_303);
-		h.getFields().set("Location", "/setup");
-		return false;
-	}
-
 	public static void shutdown() {
-		initialized = false;
+		state = WebinterfaceState.STOPPING;
 		if(httpServer != null) httpServer.shutdown();
 		if(httpsServer != null) httpsServer.shutdown();
+		if(taskScheduler != null) taskScheduler.shutdown();
+
+		logger.info("Waiting for task scheduler");
+		try {
+			if(!taskScheduler.awaitTermination(30, TimeUnit.SECONDS)) taskScheduler.shutdownNow();
+		} catch (InterruptedException e) {
+			logger.warn("Interrupted during shutdown", e);
+		}
+
+		cleanUp();
+
+		state = WebinterfaceState.STOPPED;
+		logger.info("Shutdown done");
 	}
 
 	public static Logger getLogger() {

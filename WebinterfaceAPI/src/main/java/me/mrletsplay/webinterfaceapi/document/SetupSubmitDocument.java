@@ -18,6 +18,7 @@ public class SetupSubmitDocument implements HttpDocument {
 		JSONObject data = ctx.getClientHeader().getPostData().getParsedAs(DefaultClientContentTypes.JSON_OBJECT);
 		SetupStep step = Webinterface.getSetup().getNextStep();
 		if(step == null) return;
+		// TODO: verify data
 		String r = step.callback(data);
 		if(r != null) {
 			error(r);

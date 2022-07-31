@@ -49,6 +49,7 @@ public class FileCredentialsStorage implements CredentialsStorage {
 		if(!config.isSet(id)) return false;
 		byte[] salt = Base64.getDecoder().decode(config.getString(id + ".salt"));
 		String hash = config.getString(id + ".hash");
+		System.out.println(id + "/" + plainCredentials + "/" + hash + "/" + hash(plainCredentials, salt));
 		return hash(plainCredentials, salt).equals(hash);
 	}
 

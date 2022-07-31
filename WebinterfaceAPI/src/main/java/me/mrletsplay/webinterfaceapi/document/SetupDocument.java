@@ -25,6 +25,7 @@ public class SetupDocument implements HttpDocument {
 			ctx.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 			ctx.getServerHeader().getFields().set("Location", "/");
 
+			Webinterface.registerWIContent();
 			Webinterface.getDocumentProvider().unregisterDocument("/setup");
 			Webinterface.getDocumentProvider().unregisterDocument("/setup/submit");
 

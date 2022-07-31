@@ -37,6 +37,7 @@ public class NoAuth implements AuthMethod {
 	public void initialize() {
 		Account acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(ID, ANON_ID);
 		if(acc == null) {
+			Webinterface.getLogger().debug("Creating anonymous user for no_auth");
 			Webinterface.getAccountStorage().createAccount(ANON_CONNECTION);
 		}
 	}

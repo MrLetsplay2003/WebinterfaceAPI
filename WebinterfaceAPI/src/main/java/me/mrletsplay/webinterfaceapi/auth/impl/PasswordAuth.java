@@ -25,7 +25,7 @@ public class PasswordAuth implements AuthMethod {
 
 	@Override
 	public void initialize() {
-
+		// Nothing to do
 	}
 
 	@Override

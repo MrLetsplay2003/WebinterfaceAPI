@@ -33,6 +33,7 @@ public class FileAccountStorage implements AccountStorage {
 	public Account createAccount(AccountConnection connection) {
 		Account acc = new Account(UUID.randomUUID().toString(), connection.getUserName());
 		updateAccount(acc);
+		acc.addConnection(connection);
 		return acc;
 	}
 

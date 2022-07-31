@@ -331,7 +331,6 @@ public class Page implements HttpDocument {
 
 	@Override
 	public void createContent() {
-		if(!Webinterface.checkSetupDone()) return;
 		if(!Session.requireSession()) return;
 		toHtml().createContent();
 	}
