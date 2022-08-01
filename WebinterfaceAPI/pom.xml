@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>WebinterfaceAPI-Parent</artifactId>
 		<groupId>me.mrletsplay</groupId>
-		<version>3.1.1</version>
+		<version>3.2</version>
 	</parent>
 
 	<artifactId>WebinterfaceAPI</artifactId>

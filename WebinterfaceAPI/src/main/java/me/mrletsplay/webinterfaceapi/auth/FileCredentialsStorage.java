@@ -32,24 +32,23 @@ public class FileCredentialsStorage implements CredentialsStorage {
 	}
 
 	@Override
-	public void storeCredentials(String id, String plainCredentials) {
+	public void storeCredentials(String authMethod, String id, String plainCredentials) {
 		byte[] salt = generateSalt();
-		config.set(id + ".salt", Base64.getEncoder().encodeToString(salt));
-		config.set(id + ".hash", hash(plainCredentials, salt));
+		config.set(authMethod + "." + id + ".salt", Base64.getEncoder().encodeToString(salt));
+		config.set(authMethod + "." + id + ".hash", hash(plainCredentials, salt));
 		config.saveToFile();
 	}
 
 	@Override
-	public void deleteCredentials(String id) {
-		config.unset(id);
+	public void deleteCredentials(String authMethod, String id) {
+		config.unset(authMethod + "." + id);
 	}
 
 	@Override
-	public boolean checkCredentials(String id, String plainCredentials) {
+	public boolean checkCredentials(String authMethod, String id, String plainCredentials) {
 		if(!config.isSet(id)) return false;
-		byte[] salt = Base64.getDecoder().decode(config.getString(id + ".salt"));
-		String hash = config.getString(id + ".hash");
-		System.out.println(id + "/" + plainCredentials + "/" + hash + "/" + hash(plainCredentials, salt));
+		byte[] salt = Base64.getDecoder().decode(config.getString(authMethod + "." + id + ".salt"));
+		String hash = config.getString(authMethod + "." + id + ".hash");
 		return hash(plainCredentials, salt).equals(hash);
 	}
 

@@ -33,7 +33,7 @@ public class AccountSetupStep extends SetupStep {
 	Account acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(PasswordAuth.ID, username, true);
 	if(acc != null) return "Account already exists";
 
-	Webinterface.getCredentialsStorage().storeCredentials(username, password);
+	Webinterface.getCredentialsStorage().storeCredentials(PasswordAuth.ID, username, password);
 	AccountConnection con = new AccountConnection(PasswordAuth.ID, username, username, null, null);
 	acc = Webinterface.getAccountStorage().createAccount(con);
 	acc.addPermission("*");

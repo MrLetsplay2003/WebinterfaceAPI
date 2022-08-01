@@ -399,6 +399,8 @@ img.element {
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
 	background-color: orangered;
+	color: var(--theme-color-content-text);
+	font-family: 'Open Sans', sans-serif;
 }
 
 /* Non-mobile styles for side nav responsiveness, 750px breakpoint */

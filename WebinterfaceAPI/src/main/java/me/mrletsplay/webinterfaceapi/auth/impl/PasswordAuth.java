@@ -65,13 +65,13 @@ public class PasswordAuth implements AuthMethod {
 			if(!register) {
 				if(acc == null) throw new AuthException("Invalid username/password");
 				AccountConnection con = acc.getConnection(ID);
-				if(!Webinterface.getCredentialsStorage().checkCredentials(username, password)) throw new AuthException("Invalid username/password");
+				if(!Webinterface.getCredentialsStorage().checkCredentials(ID, username, password)) throw new AuthException("Invalid username/password");
 				return con;
 			}else {
 				if(!Webinterface.getConfig().getSetting(DefaultSettings.ALLOW_REGISTRATION)) throw new AuthException("Registration is disabled");
 				if(!isValidUsername(username)) throw new AuthException("Username contains invalid characters or is too long/short");
 				if(acc != null) throw new AuthException("An account with that username already exists");
-				Webinterface.getCredentialsStorage().storeCredentials(username, password);
+				Webinterface.getCredentialsStorage().storeCredentials(ID, username, password);
 				return new AccountConnection(getID(), username, username, null, null);
 			}
 		}catch(AuthException e) {
