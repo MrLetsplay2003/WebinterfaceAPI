@@ -1,3 +1,5 @@
+import java.sql.Driver;
+
 open module me.mrletsplay.webinterfaceapi {
 	exports me.mrletsplay.webinterfaceapi.auth.impl;
 	exports me.mrletsplay.webinterfaceapi.config.setting;
@@ -31,5 +33,7 @@ open module me.mrletsplay.webinterfaceapi {
 	requires org.apache.commons.text;
 	requires java.sql;
 	requires commons.dbcp2;
-    requires java.management;
+	requires java.management;
+
+	uses Driver;
 }

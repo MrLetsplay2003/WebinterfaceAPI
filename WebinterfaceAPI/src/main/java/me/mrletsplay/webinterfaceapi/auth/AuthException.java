@@ -1,8 +1,6 @@
 package me.mrletsplay.webinterfaceapi.auth;
 
-import me.mrletsplay.mrcore.misc.FriendlyException;
-
-public class AuthException extends FriendlyException {
+public class AuthException extends RuntimeException {
 
 	private static final long serialVersionUID = -5361244211055931029L;
 

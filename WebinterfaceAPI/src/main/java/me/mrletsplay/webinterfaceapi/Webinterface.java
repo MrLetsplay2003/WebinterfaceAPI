@@ -149,13 +149,14 @@ public class Webinterface {
 		setup = new Setup();
 
 		registerActionHandler(new DefaultHandler());
+
+		SQLHelper.cleanUp();
 	}
 
 	/**
 	 * Initializes core components needed for any WIAPI installation
 	 */
 	private static void initialize() {
-
 		config = new FileConfig(new File(getConfigurationDirectory(), "config.yml"));
 		config.registerSettings(DefaultSettings.INSTANCE);
 
@@ -203,9 +204,9 @@ public class Webinterface {
 	public static void initializeDatabase() {
 		switch(config.getSetting(DefaultSettings.DATABASE)) {
 			case "file":
-				accountStorage = new FileAccountStorage(new File(rootDirectory, "data/accounts.yml"));
-				sessionStorage = new FileSessionStorage(new File(rootDirectory, "data/sessions.yml"));
-				credentialsStorage = new FileCredentialsStorage(new File(rootDirectory, "data/credentials.yml"));
+				accountStorage = new FileAccountStorage(new File(getDataDirectory(), "accounts.yml"));
+				sessionStorage = new FileSessionStorage(new File(getDataDirectory(), "sessions.yml"));
+				credentialsStorage = new FileCredentialsStorage(new File(getDataDirectory(), "credentials.yml"));
 				break;
 			case "sql":
 				SQLHelper.initialize();
@@ -290,6 +291,8 @@ public class Webinterface {
 				if(sess.hasExpired()) getSessionStorage().deleteSession(sess.getSessionID());
 			}
 		}, 10, 10, TimeUnit.MINUTES);
+
+		state = WebinterfaceState.RUNNING;
 	}
 
 	public static WebinterfaceState getState() {
@@ -310,7 +313,7 @@ public class Webinterface {
 				return;
 			}
 
-			Path resourcesPath = getRootDirectory().toPath().resolve("data/resources.json");
+			Path resourcesPath = getDataDirectory().toPath().resolve("resources.json");
 			JSONObject resourcesObj;
 			if(Files.exists(resourcesPath)) {
 				resourcesObj = new JSONObject(Files.readString(resourcesPath, StandardCharsets.UTF_8));
@@ -397,6 +400,10 @@ public class Webinterface {
 
 	public static File getConfigurationDirectory() {
 		return new File(rootDirectory, "cfg/");
+	}
+
+	public static File getDataDirectory() {
+		return new File(rootDirectory, "data/");
 	}
 
 	public static Config getConfig() {

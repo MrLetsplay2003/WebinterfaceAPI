@@ -77,7 +77,7 @@ public class SetupDocument implements HttpDocument {
 					break;
 				case CHOICE:
 					addSelect(c2, e.getID(), e.getName(), e.getChoices(), (String) e.getInitialValue());
-					break; // TODO: implement
+					break;
 				case HEADING:
 					addSubTitle(c2, e.getName());
 					break;
@@ -115,6 +115,7 @@ public class SetupDocument implements HttpDocument {
 		input.setAttribute("data-name", name);
 		input.setAttribute("data-type", type.name().toLowerCase(Locale.US));
 		input.setAttribute("type", type == SetupElementType.PASSWORD ? "password" : "text");
+		input.setAttribute("autocomplete", "off");
 		if(defaultValue != null) input.setAttribute("value", defaultValue);
 		element.appendChild(input);
 	}
