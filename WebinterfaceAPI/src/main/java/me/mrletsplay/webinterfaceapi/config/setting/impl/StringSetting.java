@@ -6,8 +6,19 @@ import me.mrletsplay.webinterfaceapi.config.setting.SettingsCategory;
 
 public class StringSetting extends AbstractSetting<StringSetting, String> {
 
+	private boolean password;
+
 	public StringSetting(SettingsCategory category, String key, String defaultValue) {
 		super(category, key, defaultValue, Complex.value(String.class));
+	}
+
+	public StringSetting password(boolean password) {
+		this.password = password;
+		return this;
+	}
+
+	public boolean isPassword() {
+		return password;
 	}
 
 }

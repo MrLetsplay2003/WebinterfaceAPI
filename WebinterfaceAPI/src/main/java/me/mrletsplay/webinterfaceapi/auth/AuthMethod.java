@@ -22,23 +22,13 @@ public interface AuthMethod {
 	public AccountConnection handleAuthResponse() throws AuthException;
 
 	public default HttpURLPath getAuthResponseUrl() {
-		HttpRequestContext c = HttpRequestContext.getCurrentContext();
-
 		Config cfg = Webinterface.getConfig();
 
 		String override = cfg.getOverride("auth." + getID() + ".redirect-url", String.class);
 		if(override != null) return HttpURLPath.of(override);
 
-		String host;
-		if(cfg.getSetting(DefaultSettings.USE_CLIENT_HOST)) {
-			host = c.getClientHeader().getFields().getFirst("Host");
-		}else {
-			int port = c.isConnectionSecure() ? cfg.getSetting(DefaultSettings.HTTPS_PORT) : cfg.getSetting(DefaultSettings.HTTP_PORT);
-			String hostname = c.isConnectionSecure() ? cfg.getSetting(DefaultSettings.HTTPS_HOST) : cfg.getSetting(DefaultSettings.HTTP_HOST);
-			host = hostname + ":" + port;
-		}
-
-		return HttpURLPath.of((c.isConnectionSecure() ? "https" : "http") + "://" + host + "/auth/" + getID() + "/response"); // TODO: verify host
+		String baseURL = cfg.getSetting(DefaultSettings.HTTP_BASE_URL);
+		return HttpURLPath.of(baseURL + "/auth/" + getID() + "/response");
 	}
 
 	public default HttpURLPath getPostAuthRedirectURL() {

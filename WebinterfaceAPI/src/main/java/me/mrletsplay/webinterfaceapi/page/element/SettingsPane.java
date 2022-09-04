@@ -84,15 +84,27 @@ public class SettingsPane extends Group {
 			defaultValue = ActionValue.string((String) setting.getDefaultValue());
 
 			if(s.getAllowedValues() == null) {
-				InputField in = new InputField();
-				in.setInitialValue(() -> {
-					String v = config.get().getSetting(s);
-					return v == null ? "" : v;
-				});
-				in.setPlaceholder(s.getFriendlyName());
-				in.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(in)));
-				el = in;
-				resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+				if(!s.isPassword()) {
+					InputField in = new InputField();
+					in.setInitialValue(() -> {
+						String v = config.get().getSetting(s);
+						return v == null ? "" : v;
+					});
+					in.setPlaceholder(s.getFriendlyName());
+					in.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(in)));
+					el = in;
+					resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+				}else {
+					PasswordField in = new PasswordField();
+					in.setShowInitialValue(() -> {
+						String v = config.get().getSetting(s);
+						return v != null;
+					});
+					in.setPlaceholder(s.getFriendlyName());
+					in.setOnChangeAction(changeSettingAction(setting, ActionValue.elementValue(in), true));
+					el = in;
+					resetAction = SetValueAction.of(in, defaultValue).triggerUpdate(false);
+				}
 			}else {
 				Select sel = new Select();
 				sel.setOptions(() -> {
@@ -318,11 +330,15 @@ public class SettingsPane extends Group {
 		addElement(grp);
 	}
 
-	private Action changeSettingAction(Setting<?> setting, ActionValue value) {
+	private Action changeSettingAction(Setting<?> setting, ActionValue value, boolean hide) {
 		return SendJSAction.of(requestTarget, requestMethod, ActionValue.object()
 				.put("setting", ActionValue.string(setting.getKey()))
 				.put("value", value)
-			).onSuccess(ShowToastAction.info(ActionValue.string("Changed " + setting.getFriendlyName() + " to ").plus(value)));
+			).onSuccess(ShowToastAction.info(ActionValue.string("Changed " + setting.getFriendlyName() + " to ").plus(hide ? ActionValue.string("***") : value)));
+	}
+
+	private Action changeSettingAction(Setting<?> setting, ActionValue value) {
+		return changeSettingAction(setting, value, false);
 	}
 
 	public List<SettingsCategory> getSettingsCategories() {

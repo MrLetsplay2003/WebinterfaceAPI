@@ -47,22 +47,20 @@ public class DefaultSettings implements AutoSettings {
 
 	public static final StringSetting
 		SQL_USER = sql.addString("sql.user", "webinterfaceapi", "SQL User"),
-		SQL_PASSWORD = sql.addString("sql.password", "password", "SQL Password"),
+		SQL_PASSWORD = sql.addString("sql.password", "password", "SQL Password").password(true),
 		SQL_DATABASE = sql.addString("sql.database", "webinterfaceapi", "SQL Database"),
 		SQL_TABLE_PREFIX = sql.addString("sql.table-prefix", null, "SQL Table Prefix");
 
 	// HTTP
 
-	public static final BooleanSetting
-		USE_CLIENT_HOST = http.addBoolean("server.http.use-client-host", false, "Use client HTTP Host");
+	public static final StringSetting
+		HTTP_BASE_URL = http.addString("server.http.base-url", "http://localhost:8880", "HTTP Base URL", "Public URL of the website, absolute URLs will be relative to this. Make sure to not include a trailing slash");
 
 	public static final StringSetting
-		HTTP_BIND = http.addString("server.http.bind", "0.0.0.0", "HTTP IP Bind"),
-		HTTP_HOST = http.addString("server.http.host", "localhost", "HTTP Host");
+		HTTP_BIND = http.addString("server.http.bind", "0.0.0.0", "HTTP IP Bind");
 
 	public static final IntSetting
 		HTTP_PORT = http.addInt("server.http.port", 8880, "HTTP Port").min(1).max(65535);
-
 
 	// HTTPS
 
@@ -70,8 +68,7 @@ public class DefaultSettings implements AutoSettings {
 		HTTPS_ENABLE = https.addBoolean("server.https.enable", false, "Enable HTTPS");
 
 	public static final StringSetting
-		HTTPS_BIND = https.addString("server.https.bind", "0.0.0.0", "HTTPS IP Bind"),
-		HTTPS_HOST = https.addString("server.https.host", "localhost", "HTTPS Host");
+		HTTPS_BIND = https.addString("server.https.bind", "0.0.0.0", "HTTPS IP Bind");
 
 	public static final IntSetting
 		HTTPS_PORT = https.addInt("server.https.port", 8881, "HTTPS Port").min(1).max(65535);
