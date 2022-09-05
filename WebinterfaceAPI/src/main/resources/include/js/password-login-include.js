@@ -5,7 +5,9 @@ if(window.location.search.length > 1) {
 	}catch(e) {}
 }
 
-function login(register) {
+function login(event, register) {
+	event.preventDefault();
+	
 	let uEl = document.getElementById("username-input");
 	let pEl = document.getElementById("password-input");
 

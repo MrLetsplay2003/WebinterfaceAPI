@@ -9,12 +9,19 @@ public class AccountConnection {
 		userEmail,
 		userAvatar;
 
-	public AccountConnection(String connectionName, String userID, String userName, String userEmail, String userAvatar) {
+	private Runnable postRegistrationCallback;
+
+	public AccountConnection(String connectionName, String userID, String userName, String userEmail, String userAvatar, Runnable postRegistrationCallback) {
 		this.connectionName = connectionName;
 		this.userID = userID;
 		this.userName = userName;
 		this.userEmail = userEmail;
 		this.userAvatar = userAvatar;
+		this.postRegistrationCallback = postRegistrationCallback;
+	}
+
+	public AccountConnection(String connectionName, String userID, String userName, String userEmail, String userAvatar) {
+		this(connectionName, userID, userName, userEmail, userAvatar, null);
 	}
 
 	public String getConnectionName() {
@@ -35,6 +42,13 @@ public class AccountConnection {
 
 	public String getUserAvatar() {
 		return userAvatar;
+	}
+
+	/**
+	 * Only used for registration using the 'secret' method, to allow auth methods to run code after the registration was completed
+	 */
+	public void runPostRegistrationCallback() {
+		if(postRegistrationCallback != null) postRegistrationCallback.run();
 	}
 
 }

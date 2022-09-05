@@ -30,6 +30,12 @@ public interface AccountStorage {
 
 	public Account getAccountByID(String id);
 
+	/**
+	 * @deprecated An email is not a unique identifier for an account
+	 * @param email
+	 * @return
+	 */
+	@Deprecated
 	public Account getAccountByEmail(String email);
 
 	public Account getAccountByConnectionSpecificID(String connectionName, String id, boolean caseInsensitive);

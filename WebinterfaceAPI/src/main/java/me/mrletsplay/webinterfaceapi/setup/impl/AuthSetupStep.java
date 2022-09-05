@@ -7,7 +7,9 @@ import me.mrletsplay.webinterfaceapi.auth.impl.GitHubAuth;
 import me.mrletsplay.webinterfaceapi.auth.impl.GoogleAuth;
 import me.mrletsplay.webinterfaceapi.config.Config;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
+import me.mrletsplay.webinterfaceapi.setup.ChoiceList;
 import me.mrletsplay.webinterfaceapi.setup.SetupStep;
+import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 
 public class AuthSetupStep extends SetupStep {
 
@@ -15,27 +17,44 @@ public class AuthSetupStep extends SetupStep {
 		super("auth", "Configure authentication methods");
 		setDescription("Set up authentication methods for people to log in with");
 
+		addHeading("Registration");
+		addChoice("registration-mode", "Registration mode", new ChoiceList()
+			.addChoice("enable", "Allow all registration")
+			.addChoice("secret", "Require registration secret")
+			.addChoice("disable", "Disable registration"),
+			"enable");
+
+		addString("registration-secret", "Registration secret", WebinterfaceUtils.randomID(16));
+
+		addHeading("Anonymous");
 		addBoolean("no-auth", "Allow anonymous login", true);
 
 		addHeading("Discord");
 		addBoolean("discord-auth", "Enable Discord auth", false);
 		addString("discord-client-id", "Discord client ID", null);
-		addString("discord-client-secret", "Discord client secret", null);
+		addPassword("discord-client-secret", "Discord client secret", null);
 
 		addHeading("Google");
 		addBoolean("google-auth", "Enable Google auth", false);
 		addString("google-client-id", "Google client ID", null);
-		addString("google-client-secret", "Google client secret", null);
+		addPassword("google-client-secret", "Google client secret", null);
 
 		addHeading("GitHub");
 		addBoolean("github-auth", "Enable GitHub auth", false);
 		addString("github-client-id", "GitHub client ID", null);
-		addString("github-client-secret", "GitHub client secret", null);
+		addPassword("github-client-secret", "GitHub client secret", null);
 	}
 
 	@Override
 	public String callback(JSONObject data) {
 		Config cfg = Webinterface.getConfig();
+
+		String registrationMode = data.getString("registration-mode");
+		cfg.setSetting(DefaultSettings.REGISTRATION_MODE, registrationMode);
+
+		String registrationSecret = data.getString("registration-secret").trim();
+		if("secret".equals(registrationMode) && registrationSecret.isEmpty()) return "Registration secret must be set when using 'secret' registration mode";
+		if(!registrationSecret.isEmpty()) cfg.setSetting(DefaultSettings.REGISTRATION_SECRET, registrationSecret);
 
 		boolean noAuth = data.getBoolean("no-auth");
 		cfg.setSetting(DefaultSettings.ALLOW_ANONYMOUS, noAuth);

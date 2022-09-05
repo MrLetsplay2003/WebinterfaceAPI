@@ -53,6 +53,7 @@ import me.mrletsplay.webinterfaceapi.document.IncludedFilesDocument;
 import me.mrletsplay.webinterfaceapi.document.LoginDocument;
 import me.mrletsplay.webinterfaceapi.document.LogoutDocument;
 import me.mrletsplay.webinterfaceapi.document.PasswordLoginDocument;
+import me.mrletsplay.webinterfaceapi.document.RegistrationSecretDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupSubmitDocument;
 import me.mrletsplay.webinterfaceapi.document.WebinterfaceDocumentProvider;
@@ -239,6 +240,7 @@ public class Webinterface {
 		documentProvider.registerDocument("/", new HomeDocument());
 		documentProvider.registerDocument("/login", new LoginDocument());
 		documentProvider.registerDocument("/logout", new LogoutDocument());
+		documentProvider.registerDocument("/registration-secret", new RegistrationSecretDocument());
 		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) documentProvider.registerDocument("/auth/password/login", new PasswordLoginDocument());
 
 		PageCategory cat = createCategory("WebinterfaceAPI");

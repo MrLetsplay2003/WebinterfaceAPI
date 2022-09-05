@@ -14,8 +14,6 @@ import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.Account;
 import me.mrletsplay.webinterfaceapi.auth.AccountConnection;
-import me.mrletsplay.webinterfaceapi.auth.AuthException;
-import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
 
 public class Session {
 
@@ -71,25 +69,20 @@ public class Session {
 	}
 
 	public static Session startSession(AccountConnection accountData) {
-		String sID = UUID.randomUUID().toString();
-		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
-
 		Account acc = Webinterface.getAccountStorage().getAccountByConnectionSpecificID(accountData.getConnectionName(), accountData.getUserID());
 
-//		if(acc == null && accountData.getUserEmail() != null) { FIXME
-//			acc = Webinterface.getAccountStorage().getAccountByPrimaryEmail(accountData.getUserEmail());
-//		}
-
-		if(acc == null) {
-			if(!Webinterface.getConfig().getSetting(DefaultSettings.ALLOW_REGISTRATION)) {
-				throw new AuthException("Registration not allowed");
-			}
-
-			acc = Webinterface.getAccountStorage().createAccount(accountData);
-		}
+		if(acc == null) acc = Webinterface.getAccountStorage().createAccount(accountData);
 		if(acc.getConnection(accountData.getConnectionName()) == null) acc.addConnection(accountData);
-		Session s = new Session(sID, acc.getID(), expiresAt, new HashMap<>());
+
+		return startSession(acc);
+	}
+
+	public static Session startSession(Account account) {
+		String sID = UUID.randomUUID().toString();
+		Instant expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);
+		Session s = new Session(sID, account.getID(), expiresAt, new HashMap<>());
 		Webinterface.getSessionStorage().storeSession(s);
+		Webinterface.getLogger().debug("Starting new session for account " + account.getID());
 		return s;
 	}
 

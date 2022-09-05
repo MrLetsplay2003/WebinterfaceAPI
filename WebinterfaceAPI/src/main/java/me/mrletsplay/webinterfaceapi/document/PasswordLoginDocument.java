@@ -60,13 +60,13 @@ public class PasswordLoginDocument implements HttpDocument {
 		HtmlElement lBtn = new HtmlElement("button");
 		lBtn.setText("Log In");
 		lBtn.addClass("login-button");
-		lBtn.setAttribute("onclick", "login(false)");
+		lBtn.setAttribute("onclick", "login(event, false)");
 		ul.appendChild(lBtn);
 
 		HtmlElement rBtn = new HtmlElement("button");
 		rBtn.setText("Register");
 		rBtn.addClass("login-button");
-		rBtn.setAttribute("onclick", "login(true)");
+		rBtn.setAttribute("onclick", "login(event, true)");
 		ul.appendChild(rBtn);
 
 		HtmlElement alertBox = new HtmlElement("div");

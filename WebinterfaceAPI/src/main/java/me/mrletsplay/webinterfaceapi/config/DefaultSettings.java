@@ -9,6 +9,7 @@ import me.mrletsplay.webinterfaceapi.config.setting.impl.BooleanSetting;
 import me.mrletsplay.webinterfaceapi.config.setting.impl.IntSetting;
 import me.mrletsplay.webinterfaceapi.config.setting.impl.StringListSetting;
 import me.mrletsplay.webinterfaceapi.config.setting.impl.StringSetting;
+import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 
 public class DefaultSettings implements AutoSettings {
 
@@ -78,7 +79,6 @@ public class DefaultSettings implements AutoSettings {
 		HTTPS_CERTIFICATE_PASSWORD = https.addString("server.https.certificate.password", null, "HTTPS Certificate password"),
 		HTTPS_CERTIFICATE_KEY_PATH = https.addString("server.https.certificate.key-path", null, "HTTPS Certificate Key path");
 
-
 	// PHP
 
 	public static final BooleanSetting
@@ -90,17 +90,18 @@ public class DefaultSettings implements AutoSettings {
 	public static final StringListSetting
 		PHP_FILE_EXTENSIONS = php.addStringList("php.file-extensions", Arrays.asList(".php"), "PHP file extensions");
 
-
 	//Auth
 
+	public static final StringSetting
+		REGISTRATION_MODE = auth.addString("auth.registration-mode", "enable", "Registration mode").allowedValues(Arrays.asList("enable", "secret", "disable")),
+		REGISTRATION_SECRET = auth.addString("auth.registration-secret", WebinterfaceUtils.randomID(16), "Registration secret", "Used for the 'secret' registration mode");
+
 	public static final BooleanSetting
-		ALLOW_REGISTRATION = auth.addBoolean("auth.allow-register", true, "Allow registration"),
 		ALLOW_ANONYMOUS = auth.addBoolean("auth.anonymous", true, "Allow anonymous login"),
 		ENABLE_DISCORD_AUTH = auth.addBoolean("auth.discord", true, "Enable Discord auth"),
 		ENABLE_GITHUB_AUTH = auth.addBoolean("auth.github", true, "Enable GitHub auth"),
 		ENABLE_GOOGLE_AUTH = auth.addBoolean("auth.google", true, "Enable Google auth"),
 		ENABLE_PASSWORD_AUTH = auth.addBoolean("auth.password", true, "Enable Password auth");
-
 
 	// Performance
 

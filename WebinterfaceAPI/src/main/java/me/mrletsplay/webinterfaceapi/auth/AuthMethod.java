@@ -31,6 +31,12 @@ public interface AuthMethod {
 		return HttpURLPath.of(baseURL + "/auth/" + getID() + "/response");
 	}
 
+	public default HttpURLPath getRegistrationSecretURL() {
+		HttpURLPath path = HttpURLPath.of("/registration-secret");
+		path.getQuery().set("from", HttpRequestContext.getCurrentContext().getRequestedPath().getQuery().getFirst("from", "/"));
+		return path;
+	}
+
 	public default HttpURLPath getPostAuthRedirectURL() {
 		return HttpURLPath.of(HttpRequestContext.getCurrentContext().getRequestedPath().getQuery().getFirst("from", "/"));
 	}
