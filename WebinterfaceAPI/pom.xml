@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>WebinterfaceAPI-Parent</artifactId>
 		<groupId>me.mrletsplay</groupId>
-		<version>3.3</version>
+		<version>3.3.1</version>
 	</parent>
 
 	<artifactId>WebinterfaceAPI</artifactId>
@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
 			<artifactId>SimpleHTTPServer</artifactId>
-			<version>1.2.1</version>
+			<version>1.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
