@@ -32,7 +32,7 @@ public class BukkitHandler implements ActionHandler {
 				public BaseComponent[] getLayout(UIBuildEvent e) {
 					Account acc = (Account) e.getUIInstance().getProperty(WebinterfacePlugin.plugin, "account");
 					return new ComponentBuilder("Connect to "
-							+ acc.getName()
+							+ acc.getUsername()
 							+ "?").event(new HoverEvent(Action.SHOW_TEXT, CommandWebinterfaceAPI.createHoverText(acc))).create();
 				}
 			})

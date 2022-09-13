@@ -3,7 +3,6 @@ package me.mrletsplay.webinterfaceapi.bukkit.command;
 import me.mrletsplay.mrcore.bukkitimpl.command.BukkitCommand;
 import me.mrletsplay.mrcore.command.event.CommandInvokedEvent;
 import me.mrletsplay.webinterfaceapi.Webinterface;
-import me.mrletsplay.webinterfaceapi.auth.Account;
 import me.mrletsplay.webinterfaceapi.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.auth.impl.PasswordAuth;
 
@@ -36,9 +35,9 @@ public class CommandUserCreate extends BukkitCommand {
 			return;
 		}
 
-		Account acc = Webinterface.getAccountStorage().createAccount();
-		acc.addConnection(new AccountConnection(PasswordAuth.ID, username, username, null, null));
-		Webinterface.getCredentialsStorage().storeCredentials(username, password);
+		AccountConnection con = new AccountConnection(PasswordAuth.ID, username, username, null, null);
+		Webinterface.getAccountStorage().createAccount(con);
+		Webinterface.getCredentialsStorage().storeCredentials(PasswordAuth.ID, username, password);
 		event.getSender().sendMessage("§aUser created");
 	}
 

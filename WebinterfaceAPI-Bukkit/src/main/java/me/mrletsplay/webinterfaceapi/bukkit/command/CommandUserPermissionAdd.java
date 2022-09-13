@@ -56,7 +56,7 @@ public class CommandUserPermissionAdd extends BukkitCommand {
 				.append("Granted permission ").color(ChatColor.GREEN)
 				.append(permission).color(ChatColor.GOLD)
 				.append(" to user ").color(ChatColor.GREEN)
-				.append(account.getName()).event(new HoverEvent(Action.SHOW_TEXT, CommandWebinterfaceAPI.createHoverText(account))).color(ChatColor.GOLD).create());
+				.append(account.getUsername()).event(new HoverEvent(Action.SHOW_TEXT, CommandWebinterfaceAPI.createHoverText(account))).color(ChatColor.GOLD).create());
 	}
 
 }

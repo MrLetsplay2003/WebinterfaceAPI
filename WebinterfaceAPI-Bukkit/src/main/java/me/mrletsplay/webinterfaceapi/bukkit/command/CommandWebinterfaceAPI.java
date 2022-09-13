@@ -20,7 +20,7 @@ public class CommandWebinterfaceAPI extends BukkitCommand {
 	}
 
 	public static Text createHoverText(Account account) {
-		return new Text("§7Account Name: §6" + account.getName() + "\n§7Account ID: §6" + account.getID());
+		return new Text("§7Account Name: §6" + account.getUsername() + "\n§7Account ID: §6" + account.getID());
 	}
 
 }
