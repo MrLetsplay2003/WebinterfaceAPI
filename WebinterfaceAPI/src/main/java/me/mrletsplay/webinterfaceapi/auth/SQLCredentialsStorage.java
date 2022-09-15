@@ -41,7 +41,7 @@ public class SQLCredentialsStorage implements CredentialsStorage {
 		byte[] salt = generateSalt();
 		byte[] hash = hash(plainCredentials, salt);
 		SQLHelper.run(c -> {
-			try(PreparedStatement st = c.prepareStatement("INSERT INTO " + tableName("credentials") + "(AuthMethod, `Id`, Salt, Hash) VALUES(?, ?, ?, ?)")) {
+			try(PreparedStatement st = c.prepareStatement("INSERT INTO " + tableName("credentials") + "(AuthMethod, `Id`, Salt, Hash) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE Salt = VALUES(Salt), Hash = VALUES(Hash)")) {
 				st.setString(1, authMethod);
 				st.setString(2, id);
 				st.setBytes(3, salt);

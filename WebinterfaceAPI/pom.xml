@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>WebinterfaceAPI-Parent</artifactId>
 		<groupId>me.mrletsplay</groupId>
-		<version>3.3.4</version>
+		<version>3.3.5</version>
 	</parent>
 
 	<artifactId>WebinterfaceAPI</artifactId>
@@ -73,7 +73,6 @@
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
 			<artifactId>MrCore</artifactId>
-			<version>4.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -90,7 +89,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.4.0</version>
+			<version>1.4.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -101,12 +100,11 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
 			<artifactId>SimpleHTTPServer</artifactId>
-			<version>1.2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

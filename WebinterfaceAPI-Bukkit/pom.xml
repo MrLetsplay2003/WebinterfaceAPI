@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>WebinterfaceAPI-Parent</artifactId>
 		<groupId>me.mrletsplay</groupId>
-		<version>3.3.4</version>
+		<version>3.3.5</version>
 	</parent>
 
 	<artifactId>WebinterfaceAPI-Bukkit</artifactId>
@@ -71,13 +71,11 @@
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
 			<artifactId>MrCore-Bukkit</artifactId>
-			<version>4.1</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
 			<artifactId>SimpleHTTPServer</artifactId>
-			<version>1.2.5</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -89,7 +87,7 @@
 		<dependency>
 			<groupId>me.mrletsplay</groupId>
 			<artifactId>WebinterfaceAPI</artifactId>
-			<version>3.3.4</version>
+			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>me.mrletsplay</groupId>
