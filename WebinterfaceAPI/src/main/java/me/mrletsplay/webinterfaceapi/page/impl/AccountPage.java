@@ -62,6 +62,16 @@ public class AccountPage extends Page {
 				title.getStyle().setProperty("font-size", "24px");
 				grp.addElement(title);
 
+				grp.addElement(TitleText.builder()
+					.text("Connection Name")
+					.noLineBreaks()
+					.leftboundText()
+					.create());
+				grp.addElement(Text.builder()
+					.text(con.getConnectionName())
+					.leftboundText()
+					.create());
+
 				if(mth != null) {
 					grp.addElement(TitleText.builder()
 						.text("Auth method")

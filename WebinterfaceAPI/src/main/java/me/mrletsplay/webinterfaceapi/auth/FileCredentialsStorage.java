@@ -46,7 +46,7 @@ public class FileCredentialsStorage implements CredentialsStorage {
 
 	@Override
 	public boolean checkCredentials(String authMethod, String id, String plainCredentials) {
-		if(!config.isSet(id)) return false;
+		if(!config.isSet(authMethod + "." + id)) return false;
 		byte[] salt = Base64.getDecoder().decode(config.getString(authMethod + "." + id + ".salt"));
 		String hash = config.getString(authMethod + "." + id + ".hash");
 		return hash(plainCredentials, salt).equals(hash);

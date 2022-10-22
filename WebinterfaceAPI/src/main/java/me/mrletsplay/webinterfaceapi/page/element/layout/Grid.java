@@ -42,7 +42,9 @@ public class Grid {
 	}
 
 	public void apply(HtmlElement elementContainer, HtmlElement element) {
-		element.appendAttribute("style", "grid-template-columns: " + Arrays.stream(columns).collect(Collectors.joining(" ")) + ";");
+		if(columns != null) element.appendAttribute("style", "grid-template-columns: " + Arrays.stream(columns).collect(Collectors.joining(" ")) + ";");
+		if(rows != null) element.appendAttribute("style", "grid-template-rows: " + Arrays.stream(rows).collect(Collectors.joining(" ")) + ";");
+		if(gap != null) element.appendAttribute("style", "grid-gap: " + gap + ";");
 	}
 
 }

@@ -10,6 +10,7 @@ import me.mrletsplay.webinterfaceapi.util.WebinterfaceUtils;
 public class Button extends AbstractPageElement {
 
 	private Supplier<String> text;
+	private Supplier<Boolean> disabled;
 	private String icon;
 
 	public Button(Supplier<String> text) {
@@ -20,7 +21,7 @@ public class Button extends AbstractPageElement {
 		this(() -> text);
 	}
 
-	private Button() {}
+	public Button() {}
 
 	public void setText(Supplier<String> text) {
 		this.text = text;
@@ -28,6 +29,14 @@ public class Button extends AbstractPageElement {
 
 	public void setText(String text) {
 		setText(() -> text);
+	}
+
+	public void setDisabled(Supplier<Boolean> disabled) {
+		this.disabled = disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		setDisabled(() -> disabled);
 	}
 
 	public Supplier<String> getText() {
@@ -46,7 +55,13 @@ public class Button extends AbstractPageElement {
 	public HtmlElement createElement() {
 		HtmlButton b = HtmlElement.button();
 		b.setText(text);
-		if(icon != null) b.appendChild(WebinterfaceUtils.iconifyIcon(icon));
+		if(disabled != null) {
+			boolean d = disabled.get();
+			if(d) b.setAttribute("disabled", "disabled");
+		}
+		if(icon != null) {
+			b.appendChild(WebinterfaceUtils.iconifyIcon(icon));
+		}
 		return b;
 	}
 
@@ -67,6 +82,16 @@ public class Button extends AbstractPageElement {
 
 		public Builder text(Supplier<String> text) {
 			element.setText(text);
+			return this;
+		}
+
+		public Builder disabled(boolean disabled) {
+			element.setDisabled(disabled);
+			return this;
+		}
+
+		public Builder disabled(Supplier<Boolean> disabled) {
+			element.setDisabled(disabled);
 			return this;
 		}
 

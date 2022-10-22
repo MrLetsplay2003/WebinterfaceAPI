@@ -1,11 +1,20 @@
 button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	background-color: var(--theme-color-content-bg);
 	border: 1px solid var(--theme-color-content-border);
+	min-width: 40px;
 	height: 40px;
 	border-radius: 5px;
 	padding: 8px;
 	font-weight: var(--theme-button-font-weight);
 	color: var(--theme-color-content-text);
+}
+
+button > .iconify {
+	width: 1.5em;
+	height: 1.5em;
 }
 
 button[disabled] {

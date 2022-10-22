@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.mrletsplay</groupId>
 	<artifactId>WebinterfaceAPI-Parent</artifactId>
-	<version>3.3.5</version>
+	<version>3.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>WebinterfaceAPI-Parent</name>
 
@@ -13,7 +13,7 @@
 	</modules>
 	
 	<properties>
-		<mrcore.version>4.1</mrcore.version>
+		<mrcore.version>4.2-SNAPSHOT</mrcore.version>
 		<simplehttpserver.version>1.2.5</simplehttpserver.version>
 	</properties>
 

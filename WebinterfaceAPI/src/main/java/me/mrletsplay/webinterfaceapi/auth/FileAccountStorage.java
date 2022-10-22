@@ -93,6 +93,8 @@ public class FileAccountStorage implements AccountStorage {
 	@Override
 	public List<AccountConnection> getConnections(String accountID) {
 		List<AccountConnection> connections = new ArrayList<>();
+//		System.out.println(config.toJSON().toFancyString());
+		config.saveToFile();
 		for(String conName : config.getKeys(accountID + ".connections")) {
 			AccountConnection con = new AccountConnection(
 				conName,
@@ -119,16 +121,19 @@ public class FileAccountStorage implements AccountStorage {
 
 	@Override
 	public void addConnection(String accountID, AccountConnection connection) {
+		System.out.println(accountID + "/" + connection.getConnectionName());
 		if(config.isSet(accountID + ".connections." + connection.getConnectionName())) return; // Connection already exists
 		config.set(accountID + ".connections." + connection.getConnectionName() + ".id", connection.getUserID());
 		config.set(accountID + ".connections." + connection.getConnectionName() + ".name", connection.getUserName());
 		config.set(accountID + ".connections." + connection.getConnectionName() + ".email", connection.getUserEmail());
 		config.set(accountID + ".connections." + connection.getConnectionName() + ".avatar", connection.getUserAvatar());
+		config.saveToFile();
 	}
 
 	@Override
 	public void removeConnection(String accountID, String connectionName) {
 		config.unset(accountID + ".connections." + connectionName);
+		config.saveToFile();
 	}
 
 	@Override
@@ -141,6 +146,7 @@ public class FileAccountStorage implements AccountStorage {
 	@Override
 	public void setPermissions(String accountID, List<String> permissions) {
 		config.set(accountID + ".permissions", permissions);
+		config.saveToFile();
 	}
 
 	@Override

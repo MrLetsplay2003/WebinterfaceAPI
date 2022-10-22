@@ -95,6 +95,10 @@ public class Group extends AbstractPageElement {
 		return el;
 	}
 
+	public static Builder builder() {
+		return new Builder(new Group());
+	}
+
 	public static class Builder extends AbstractElementBuilder<Group, Builder> {
 
 		private Builder(Group element) {
@@ -123,6 +127,11 @@ public class Group extends AbstractPageElement {
 
 		public Builder dataHandler(DataHandler dataHandler) {
 			this.element.setDataHandler(dataHandler);
+			return this;
+		}
+
+		public Builder grid(Grid grid) {
+			this.element.setGrid(grid);
 			return this;
 		}
 
