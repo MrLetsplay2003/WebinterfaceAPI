@@ -35,6 +35,10 @@ public interface ActionValue {
 		return key(String.valueOf(index));
 	}
 
+	public default ActionValue urlEncoded() {
+		return () -> "encodeURIComponent(" + toJavaScript() + ")";
+	}
+
 	public static ActionValue string(Supplier<String> string) {
 		return () -> {
 			String str = string.get();
