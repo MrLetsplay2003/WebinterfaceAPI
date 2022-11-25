@@ -76,8 +76,16 @@ public class Page implements HttpDocument {
 		return url;
 	}
 
+	public void setPermission(String permission) {
+		this.permission = permission;
+	}
+
 	public String getPermission() {
 		return permission;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 
 	public boolean isHidden() {
