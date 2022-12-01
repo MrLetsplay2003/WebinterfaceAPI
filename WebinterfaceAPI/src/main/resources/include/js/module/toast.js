@@ -28,7 +28,7 @@ class WebinterfaceToast {
 		let alert = WebinterfaceToast.wiData.alerts.shift();
 		let alertBox = $("#alert-box");
 
-		alertBox.html(alert.msg);
+		alertBox.text(alert.msg);
 		
 		if(alert.isError) {
 			alertBox.css({backgroundColor: "#e63d00"});
