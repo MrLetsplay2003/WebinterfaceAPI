@@ -17,6 +17,20 @@
 		<simplehttpserver.version>1.3-SNAPSHOT</simplehttpserver.version>
 	</properties>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>Graphite-Official</id>
+			<url>https://maven.graphite-official.com/releases</url>
+		</pluginRepository>
+	</pluginRepositories>
+	
+	<repositories>
+		<repository>
+			<id>Graphite-Official</id>
+			<url>https://maven.graphite-official.com/releases</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
