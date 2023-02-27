@@ -110,6 +110,7 @@ public class FileAccountStorage implements AccountStorage {
 
 	@Override
 	public AccountConnection getConnection(String accountID, String connectionName) {
+		if(!config.isSet(accountID + ".connections." + connectionName)) return null;
 		return new AccountConnection(
 			connectionName,
 			config.getString(accountID + ".connections." + connectionName + ".id"),
@@ -121,7 +122,6 @@ public class FileAccountStorage implements AccountStorage {
 
 	@Override
 	public void addConnection(String accountID, AccountConnection connection) {
-		System.out.println(accountID + "/" + connection.getConnectionName());
 		if(config.isSet(accountID + ".connections." + connection.getConnectionName())) return; // Connection already exists
 		config.set(accountID + ".connections." + connection.getConnectionName() + ".id", connection.getUserID());
 		config.set(accountID + ".connections." + connection.getConnectionName() + ".name", connection.getUserName());
