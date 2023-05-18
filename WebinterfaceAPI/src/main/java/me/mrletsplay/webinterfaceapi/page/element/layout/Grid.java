@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 
-public class Grid {
+public class Grid implements ElementLayoutOption {
 
 	private String[] columns;
 	private String[] rows;
@@ -41,6 +41,7 @@ public class Grid {
 		return gap;
 	}
 
+	@Override
 	public void apply(HtmlElement elementContainer, HtmlElement element) {
 		if(columns != null) element.appendAttribute("style", "grid-template-columns: " + Arrays.stream(columns).collect(Collectors.joining(" ")) + ";");
 		if(rows != null) element.appendAttribute("style", "grid-template-rows: " + Arrays.stream(rows).collect(Collectors.joining(" ")) + ";");

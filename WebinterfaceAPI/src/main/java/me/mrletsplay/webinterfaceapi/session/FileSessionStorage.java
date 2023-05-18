@@ -14,11 +14,11 @@ public class FileSessionStorage implements SessionStorage {
 
 	private File file;
 	private FileCustomConfig config;
-	
+
 	public FileSessionStorage(File file) {
 		this.file = file;
 	}
-	
+
 	@Override
 	public void initialize() {
 		this.config = ConfigLoader.loadFileConfig(file);
@@ -27,7 +27,7 @@ public class FileSessionStorage implements SessionStorage {
 	public File getFile() {
 		return file;
 	}
-	
+
 	@Override
 	public void storeSession(Session session) {
 		config.set(session.getSessionID() + ".expires-at", session.getExpiresAt().toEpochMilli());
@@ -35,13 +35,13 @@ public class FileSessionStorage implements SessionStorage {
 		config.set(session.getSessionID() + ".properties", new JSONObject(session.getProperties()).toString());
 		config.saveToFile();
 	}
-	
+
 	@Override
 	public void deleteSession(String sessionID) {
 		config.unset(sessionID);
 		config.saveToFile();
 	}
-	
+
 	@Override
 	public void deleteSessionsByAccountID(String accountID) {
 		for(String sessID : config.getKeys()) {
@@ -57,10 +57,10 @@ public class FileSessionStorage implements SessionStorage {
 				sessionID,
 				config.getString(sessionID + ".account-id"),
 				Instant.ofEpochMilli(config.getLong(sessionID + ".expires-at")),
-				Complex.castMap(new JSONObject(config.getString(sessionID + ".properties")), String.class, String.class).get()
+				Complex.castMap(new JSONObject(config.getString(sessionID + ".properties")).toMap(), String.class, String.class).get()
 			);
 	}
-	
+
 	@Override
 	public List<Session> getSessions() {
 		List<Session> ss = new ArrayList<>();

@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
+import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.exception.InvalidModuleException;
 
 public interface FileJSModule extends JSModule {
@@ -16,7 +17,7 @@ public interface FileJSModule extends JSModule {
 	public default void createContent() {
 		HttpRequestContext ctx = HttpRequestContext.getCurrentContext();
 
-		File f = new File("include/js/module/", getFileName());
+		File f = new File(Webinterface.getIncludePath().resolve("js/module/").toFile(), getFileName());
 		if(!f.exists()) throw new InvalidModuleException(getIdentifier());
 
 		if(f.isDirectory()) {

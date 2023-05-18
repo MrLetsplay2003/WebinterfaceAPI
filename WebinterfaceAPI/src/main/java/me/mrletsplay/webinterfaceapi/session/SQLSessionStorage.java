@@ -66,7 +66,7 @@ public class SQLSessionStorage implements SessionStorage {
 				st.setString(1, sessionID);
 				try(ResultSet r = st.executeQuery()) {
 					if(!r.next()) return null;
-					return new Session(r.getString("SessionId"), r.getString("AccountId"), Instant.ofEpochMilli(r.getLong("ExpiresAt")), Complex.castMap(new JSONObject(r.getString("Properties")), String.class, String.class).get());
+					return new Session(r.getString("SessionId"), r.getString("AccountId"), Instant.ofEpochMilli(r.getLong("ExpiresAt")), Complex.castMap(new JSONObject(r.getString("Properties")).toMap(), String.class, String.class).get());
 				}
 			}
 		});
@@ -79,7 +79,7 @@ public class SQLSessionStorage implements SessionStorage {
 				try(ResultSet r = st.executeQuery()) {
 					List<Session> sessions = new ArrayList<>();
 					while(r.next()) {
-						sessions.add(new Session(r.getString("SessionId"), r.getString("AccountId"), Instant.ofEpochMilli(r.getLong("ExpiresAt")), Complex.castMap(new JSONObject(r.getString("Properties")), String.class, String.class).get()));
+						sessions.add(new Session(r.getString("SessionId"), r.getString("AccountId"), Instant.ofEpochMilli(r.getLong("ExpiresAt")), Complex.castMap(new JSONObject(r.getString("Properties")).toMap(), String.class, String.class).get()));
 					}
 					return sessions;
 				}
