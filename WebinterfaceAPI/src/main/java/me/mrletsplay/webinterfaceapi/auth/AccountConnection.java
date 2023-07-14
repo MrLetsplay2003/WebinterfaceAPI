@@ -45,7 +45,7 @@ public class AccountConnection {
 	}
 
 	/**
-	 * Only used for registration using the 'secret' method, to allow auth methods to run code after the registration was completed
+	 * Allows auth methods to run code after the registration was completed
 	 */
 	public void runPostRegistrationCallback() {
 		if(postRegistrationCallback != null) postRegistrationCallback.run();

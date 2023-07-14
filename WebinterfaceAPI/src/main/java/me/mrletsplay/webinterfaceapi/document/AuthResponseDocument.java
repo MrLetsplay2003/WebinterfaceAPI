@@ -59,6 +59,8 @@ public class AuthResponseDocument implements HttpDocument {
 						}
 
 						throw new AuthException("Registration is disabled");
+					}else {
+						connection.runPostRegistrationCallback();
 					}
 				}
 

@@ -93,7 +93,6 @@ public class FileAccountStorage implements AccountStorage {
 	@Override
 	public List<AccountConnection> getConnections(String accountID) {
 		List<AccountConnection> connections = new ArrayList<>();
-//		System.out.println(config.toJSON().toFancyString());
 		config.saveToFile();
 		for(String conName : config.getKeys(accountID + ".connections")) {
 			AccountConnection con = new AccountConnection(
