@@ -37,7 +37,7 @@ public class HTTPSetupStep extends SetupStep {
 		if(httpPort < 1 || httpPort > 65535) return "Invalid HTTP port";
 
 		Config cfg = Webinterface.getConfig();
-		cfg.setSetting(DefaultSettings.HTTP_BASE_URL, httpBind);
+		cfg.setSetting(DefaultSettings.HTTP_BASE_URL, httpBaseURL);
 		cfg.setSetting(DefaultSettings.HTTP_BIND, httpBind);
 		cfg.setSetting(DefaultSettings.HTTP_PORT, httpPort);
 
