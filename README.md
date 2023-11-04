@@ -16,6 +16,6 @@ via the graphite-official repository
 ```xml
 <repository>
 	<id>Graphite-Official</id>
-	<url>http://maven.graphite-official.com/releases/</url>
+	<url>http://maven.graphite-official.com/releases</url>
 </repository>
 ```
