@@ -21,12 +21,14 @@ import org.slf4j.LoggerFactory;
 import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.misc.ByteUtils;
-import me.mrletsplay.simplehttpserver.http.HttpServer;
+import me.mrletsplay.simplehttpserver.http.HttpRequestMethod;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
-import me.mrletsplay.simplehttpserver.http.HttpsServer;
-import me.mrletsplay.simplehttpserver.http.document.HttpDocumentProvider;
+import me.mrletsplay.simplehttpserver.http.document.DefaultDocumentProvider;
+import me.mrletsplay.simplehttpserver.http.document.DocumentProvider;
 import me.mrletsplay.simplehttpserver.http.header.HttpServerHeader;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
+import me.mrletsplay.simplehttpserver.http.server.HttpServer;
+import me.mrletsplay.simplehttpserver.http.server.HttpsServer;
 import me.mrletsplay.simplehttpserver.http.websocket.WebSocketEndpoint;
 import me.mrletsplay.simplehttpserver.php.PHP;
 import me.mrletsplay.webinterfaceapi.auth.AccountStorage;
@@ -56,7 +58,6 @@ import me.mrletsplay.webinterfaceapi.document.PasswordLoginDocument;
 import me.mrletsplay.webinterfaceapi.document.RegistrationSecretDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupDocument;
 import me.mrletsplay.webinterfaceapi.document.SetupSubmitDocument;
-import me.mrletsplay.webinterfaceapi.document.WebinterfaceDocumentProvider;
 import me.mrletsplay.webinterfaceapi.document.websocket.Packet;
 import me.mrletsplay.webinterfaceapi.document.websocket.WebSocketData;
 import me.mrletsplay.webinterfaceapi.document.websocket.WebSocketDocument;
@@ -85,7 +86,7 @@ public class Webinterface {
 
 	private static Logger logger;
 
-	private static HttpDocumentProvider documentProvider;
+	private static DocumentProvider documentProvider;
 
 	private static HttpServer httpServer;
 	private static HttpsServer httpsServer;
@@ -124,7 +125,7 @@ public class Webinterface {
 
 		logger = LoggerFactory.getLogger(Webinterface.class);
 
-		documentProvider = new WebinterfaceDocumentProvider();
+		documentProvider = new DefaultDocumentProvider();
 		httpServer = null;
 		httpsServer = null;
 
@@ -196,7 +197,7 @@ public class Webinterface {
 		}
 
 		extractResources("/webinterfaceapi-resources.list");
-		documentProvider.registerDocumentPattern("/_internal/include/{path...}", new IncludedFilesDocument());
+		documentProvider.registerPattern(HttpRequestMethod.GET, "/_internal/include/{path...}", new IncludedFilesDocument());
 	}
 
 	/**
@@ -234,14 +235,17 @@ public class Webinterface {
 		registerAuthMethod(new GitHubAuth());
 		registerAuthMethod(new PasswordAuth());
 
-		documentProvider.registerDocument("/_internal/call", new ActionCallbackDocument());
-		documentProvider.registerDocument("/_internal/fileupload", new FileUploadDocument());
-		documentProvider.registerDocument("/_internal/ws", webSocketEndpoint);
-		documentProvider.registerDocument("/", new HomeDocument());
-		documentProvider.registerDocument("/login", new LoginDocument());
-		documentProvider.registerDocument("/logout", new LogoutDocument());
-		documentProvider.registerDocument("/registration-secret", new RegistrationSecretDocument());
-		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) documentProvider.registerDocument("/auth/password/login", new PasswordLoginDocument());
+		documentProvider.register(HttpRequestMethod.POST, "/_internal/call", new ActionCallbackDocument());
+		documentProvider.register(HttpRequestMethod.POST, "/_internal/fileupload", new FileUploadDocument());
+		documentProvider.register(HttpRequestMethod.GET, "/_internal/ws", webSocketEndpoint);
+		documentProvider.register(HttpRequestMethod.GET, "/", new HomeDocument());
+		documentProvider.register(HttpRequestMethod.GET, "/login", new LoginDocument());
+		documentProvider.register(HttpRequestMethod.GET, "/logout", new LogoutDocument());
+
+		RegistrationSecretDocument secret = new RegistrationSecretDocument();
+		documentProvider.register(HttpRequestMethod.GET, "/registration-secret", secret);
+		documentProvider.register(HttpRequestMethod.POST, "/registration-secret", secret);
+		if(config.getSetting(DefaultSettings.ENABLE_PASSWORD_AUTH)) documentProvider.register(HttpRequestMethod.GET, "/auth/password/login", new PasswordLoginDocument());
 
 		PageCategory cat = createCategory("WebinterfaceAPI");
 		cat.addPage(new WelcomePage());
@@ -250,8 +254,8 @@ public class Webinterface {
 		cat.addPage(new AccountPage());
 		cat.addPage(new DefaultSettingsPage());
 
-		pages.forEach(page -> documentProvider.registerDocument(page.getUrl(), page));
-		categories.forEach(category -> category.getPages().forEach(page -> documentProvider.registerDocument(page.getUrl(), page)));
+		pages.forEach(page -> documentProvider.register(HttpRequestMethod.GET, page.getUrl(), page));
+		categories.forEach(category -> category.getPages().forEach(page -> documentProvider.register(HttpRequestMethod.GET, page.getUrl(), page)));
 
 		authMethods.forEach(Webinterface::registerAuthPages);
 		jsModules.forEach(Webinterface::registerJSModulePage);
@@ -268,13 +272,13 @@ public class Webinterface {
 
 		if(setup.getNextStep() != null) {
 			// Setup is not done, only register setup-related stuff
-			documentProvider.registerDocument("/", () -> {
+			documentProvider.register(HttpRequestMethod.GET, "/", () -> {
 				HttpServerHeader h = HttpRequestContext.getCurrentContext().getServerHeader();
 				h.setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 				h.getFields().set("Location", "/setup");
 			});
-			documentProvider.registerDocument("/setup", new SetupDocument());
-			documentProvider.registerDocument("/setup/submit", new SetupSubmitDocument());
+			documentProvider.register(HttpRequestMethod.GET, "/setup", new SetupDocument());
+			documentProvider.register(HttpRequestMethod.POST, "/setup/submit", new SetupSubmitDocument());
 		}else {
 			registerWIContent();
 		}
@@ -378,11 +382,11 @@ public class Webinterface {
 		return httpsServer;
 	}
 
-	public static void setDocumentProvider(WebinterfaceDocumentProvider documentProvider) {
+	public static void setDocumentProvider(DocumentProvider documentProvider) {
 		Webinterface.documentProvider = documentProvider;
 	}
 
-	public static HttpDocumentProvider getDocumentProvider() {
+	public static DocumentProvider getDocumentProvider() {
 		return documentProvider;
 	}
 
@@ -414,7 +418,7 @@ public class Webinterface {
 
 	public static void registerPage(Page page) {
 		pages.add(page);
-		if(state == WebinterfaceState.RUNNING) documentProvider.registerDocument(page.getUrl(), page);
+		if(state == WebinterfaceState.RUNNING) documentProvider.register(HttpRequestMethod.GET, page.getUrl(), page);
 	}
 
 	public static List<Page> getPages() {
@@ -492,8 +496,8 @@ public class Webinterface {
 	}
 
 	private static void registerAuthPages(AuthMethod method) {
-		documentProvider.registerDocument("/auth/" + method.getID(), new AuthRequestDocument(method));
-		documentProvider.registerDocument("/auth/" + method.getID() + "/response", new AuthResponseDocument(method));
+		documentProvider.register(HttpRequestMethod.GET, "/auth/" + method.getID(), new AuthRequestDocument(method));
+		documentProvider.register(HttpRequestMethod.POST, "/auth/" + method.getID() + "/response", new AuthResponseDocument(method));
 	}
 
 	public static List<AuthMethod> getAuthMethods() {
@@ -516,7 +520,7 @@ public class Webinterface {
 	}
 
 	private static void registerJSModulePage(JSModule module) {
-		documentProvider.registerDocument("/_internal/module/" + module.getIdentifier() + ".js", module);
+		documentProvider.register(HttpRequestMethod.GET, "/_internal/module/" + module.getIdentifier() + ".js", module);
 	}
 
 	public static List<JSModule> getJSModules() {

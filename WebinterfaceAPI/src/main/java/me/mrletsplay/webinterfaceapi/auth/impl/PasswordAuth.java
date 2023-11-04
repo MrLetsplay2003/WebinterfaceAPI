@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
 import me.mrletsplay.simplehttpserver.http.header.DefaultClientContentTypes;
-import me.mrletsplay.simplehttpserver.http.header.HttpURLPath;
+import me.mrletsplay.simplehttpserver.http.header.HttpUrlPath;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
-import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
+import me.mrletsplay.simplehttpserver.http.request.urlencoded.UrlEncoded;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.Account;
 import me.mrletsplay.webinterfaceapi.auth.AccountConnection;
@@ -43,11 +43,11 @@ public class PasswordAuth implements AuthMethod {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 
-		URLEncoded query = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery();
+		UrlEncoded query = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery();
 		String red = query.getFirst("from", "/");
 		boolean con = query.has("connect") && query.getFirst("connect").equals("true");
 
-		HttpURLPath pth = new HttpURLPath("/auth/password/login");
+		HttpUrlPath pth = new HttpUrlPath("/auth/password/login");
 		pth.getQuery().set("from", red);
 		if(con) pth.getQuery().set("connect", "true");
 		c.getServerHeader().getFields().set("Location", pth.toString());
@@ -57,7 +57,7 @@ public class PasswordAuth implements AuthMethod {
 	public AccountConnection handleAuthResponse() throws AuthException {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		try {
-			URLEncoded params = c.getClientHeader().getPostData().getParsedAs(DefaultClientContentTypes.URLENCODED);
+			UrlEncoded params = c.getClientHeader().getPostData().getParsedAs(DefaultClientContentTypes.URLENCODED);
 			String username = params.getFirst("username"); // NONBETA: allow case
 			String password = params.getFirst("password");
 			boolean register = (params.has("register") ? params.getFirst("register").equalsIgnoreCase("on") : false);

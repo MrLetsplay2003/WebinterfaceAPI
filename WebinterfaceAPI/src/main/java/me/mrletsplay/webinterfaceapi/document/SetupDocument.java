@@ -5,6 +5,7 @@ import java.util.Locale;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlDocument;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 import me.mrletsplay.simplehttpserver.dom.html.element.HtmlSelect;
+import me.mrletsplay.simplehttpserver.http.HttpRequestMethod;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
@@ -26,8 +27,8 @@ public class SetupDocument implements HttpDocument {
 			ctx.getServerHeader().getFields().set("Location", "/");
 
 			Webinterface.registerWIContent();
-			Webinterface.getDocumentProvider().unregisterDocument("/setup");
-			Webinterface.getDocumentProvider().unregisterDocument("/setup/submit");
+			Webinterface.getDocumentProvider().unregister(HttpRequestMethod.GET, "/setup");
+			Webinterface.getDocumentProvider().unregister(HttpRequestMethod.POST, "/setup/submit");
 
 			return;
 		}

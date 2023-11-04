@@ -15,9 +15,9 @@ import me.mrletsplay.mrcore.io.IOUtils;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.misc.FriendlyException;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
-import me.mrletsplay.simplehttpserver.http.header.HttpURLPath;
+import me.mrletsplay.simplehttpserver.http.header.HttpUrlPath;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
-import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
+import me.mrletsplay.simplehttpserver.http.request.urlencoded.UrlEncoded;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.auth.AuthException;
@@ -86,7 +86,7 @@ public class GoogleAuth implements AuthMethod {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 
-		URLEncoded query = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery();
+		UrlEncoded query = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery();
 		boolean connect = query.has("connect") && query.getFirst("connect").equals("true");
 
 		c.getServerHeader().getFields().set("Location", AUTH_ENDPOINT
@@ -132,10 +132,10 @@ public class GoogleAuth implements AuthMethod {
 	}
 
 	@Override
-	public HttpURLPath getPostAuthRedirectURL() {
+	public HttpUrlPath getPostAuthRedirectURL() {
 		String path = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery().getFirst("state", "/");
 		if(path.startsWith("connect~")) path = path.substring("connect~".length());
-		return HttpURLPath.of(path);
+		return HttpUrlPath.of(path);
 	}
 
 	@Override

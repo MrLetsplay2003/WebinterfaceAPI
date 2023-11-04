@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
+import me.mrletsplay.simplehttpserver.http.util.MimeType;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.exception.InvalidModuleException;
 
@@ -37,11 +38,11 @@ public interface FileJSModule extends JSModule {
 				}
 			}
 
-			ctx.getServerHeader().setContent("text/javascript", total);
+			ctx.getServerHeader().setContent(MimeType.JAVASCRIPT, total);
 		}else {
 			try {
 				byte[] bs = Files.readAllBytes(f.toPath());
-				ctx.getServerHeader().setContent("text/javascript", bs);
+				ctx.getServerHeader().setContent(MimeType.JAVASCRIPT, bs);
 			} catch (IOException e) {
 				throw new InvalidModuleException(getIdentifier(), e);
 			}

@@ -4,3 +4,5 @@
 /cfg/
 /dependency-reduced-pom.xml
 /logs/
+/.settings/
+/.classpath

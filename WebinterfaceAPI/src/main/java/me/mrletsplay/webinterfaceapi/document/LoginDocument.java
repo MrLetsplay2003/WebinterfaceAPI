@@ -5,7 +5,7 @@ import me.mrletsplay.simplehttpserver.dom.html.HtmlDocument;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
-import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
+import me.mrletsplay.simplehttpserver.http.request.urlencoded.UrlEncoded;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.AuthMethod;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
@@ -36,7 +36,7 @@ public class LoginDocument implements HttpDocument {
 			a.addClass("login-list-item");
 			a.setText(m.getName());
 
-			URLEncoded query = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery();
+			UrlEncoded query = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery();
 
 			boolean shouldConnect = query.has("connect") && query.getFirst("connect").equals("true");
 

@@ -3,6 +3,7 @@ package me.mrletsplay.webinterfaceapi.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.mrletsplay.simplehttpserver.http.HttpRequestMethod;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.util.WebinterfaceState;
 
@@ -22,7 +23,7 @@ public class PageCategory {
 
 	public void addPage(Page page) {
 		pages.add(page);
-		if(Webinterface.getState() == WebinterfaceState.RUNNING) Webinterface.getDocumentProvider().registerDocument(page.getUrl(), page);
+		if(Webinterface.getState() == WebinterfaceState.RUNNING) Webinterface.getDocumentProvider().register(HttpRequestMethod.GET, page.getUrl(), page);
 	}
 
 	public List<Page> getPages() {

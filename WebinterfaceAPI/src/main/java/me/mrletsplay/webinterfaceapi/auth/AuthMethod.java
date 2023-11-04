@@ -2,9 +2,9 @@ package me.mrletsplay.webinterfaceapi.auth;
 
 import java.io.File;
 
-import me.mrletsplay.simplehttpserver.http.header.HttpURLPath;
+import me.mrletsplay.simplehttpserver.http.header.HttpUrlPath;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
-import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
+import me.mrletsplay.simplehttpserver.http.request.urlencoded.UrlEncoded;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.config.Config;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
@@ -21,28 +21,28 @@ public interface AuthMethod {
 
 	public AccountConnection handleAuthResponse() throws AuthException;
 
-	public default HttpURLPath getAuthResponseUrl() {
+	public default HttpUrlPath getAuthResponseUrl() {
 		Config cfg = Webinterface.getConfig();
 
 		String override = cfg.getOverride("auth." + getID() + ".redirect-url", String.class);
-		if(override != null) return HttpURLPath.of(override);
+		if(override != null) return HttpUrlPath.of(override);
 
 		String baseURL = cfg.getSetting(DefaultSettings.HTTP_BASE_URL);
-		return HttpURLPath.of(baseURL + "/auth/" + getID() + "/response");
+		return HttpUrlPath.of(baseURL + "/auth/" + getID() + "/response");
 	}
 
-	public default HttpURLPath getRegistrationSecretURL() {
-		HttpURLPath path = HttpURLPath.of("/registration-secret");
+	public default HttpUrlPath getRegistrationSecretURL() {
+		HttpUrlPath path = HttpUrlPath.of("/registration-secret");
 		path.getQuery().set("from", HttpRequestContext.getCurrentContext().getRequestedPath().getQuery().getFirst("from", "/"));
 		return path;
 	}
 
-	public default HttpURLPath getPostAuthRedirectURL() {
-		return HttpURLPath.of(HttpRequestContext.getCurrentContext().getRequestedPath().getQuery().getFirst("from", "/"));
+	public default HttpUrlPath getPostAuthRedirectURL() {
+		return HttpUrlPath.of(HttpRequestContext.getCurrentContext().getRequestedPath().getQuery().getFirst("from", "/"));
 	}
 
 	public default boolean getShouldConnect() {
-		URLEncoded query = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery();
+		UrlEncoded query = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery();
 		return query.has("connect") && query.getFirst("connect", "/").equals("true");
 	}
 

@@ -7,6 +7,7 @@ import me.mrletsplay.mrcore.json.JSONType;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.header.DefaultClientContentTypes;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
+import me.mrletsplay.simplehttpserver.http.util.MimeType;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.page.action.ActionEvent;
 import me.mrletsplay.webinterfaceapi.page.action.ActionResponse;
@@ -45,7 +46,7 @@ public class ActionCallbackDocument implements HttpDocument {
 	}
 
 	private void setResponse(ActionResponse response) {
-		HttpRequestContext.getCurrentContext().getServerHeader().setContent("application/json", response.toJSON().toString().getBytes(StandardCharsets.UTF_8));
+		HttpRequestContext.getCurrentContext().getServerHeader().setContent(MimeType.JSON, response.toJSON().toString().getBytes(StandardCharsets.UTF_8));
 	}
 
 }

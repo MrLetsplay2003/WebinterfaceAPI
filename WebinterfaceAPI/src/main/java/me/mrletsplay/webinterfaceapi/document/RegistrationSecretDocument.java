@@ -6,11 +6,13 @@ import java.util.Map;
 
 import me.mrletsplay.simplehttpserver.dom.html.HtmlDocument;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlElement;
+import me.mrletsplay.simplehttpserver.http.HttpRequestMethod;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.header.DefaultClientContentTypes;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
-import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
+import me.mrletsplay.simplehttpserver.http.request.urlencoded.UrlEncoded;
+import me.mrletsplay.simplehttpserver.http.util.MimeType;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
@@ -32,8 +34,8 @@ public class RegistrationSecretDocument implements HttpDocument {
 			return;
 		}
 
-		if(ctx.getClientHeader().getMethod().equalsIgnoreCase("POST") && ctx.getClientHeader().getPostData() != null) {
-			URLEncoded enc = ctx.getClientHeader().getPostData().getParsedAs(DefaultClientContentTypes.URLENCODED);
+		if(ctx.getClientHeader().getMethod() == HttpRequestMethod.POST && ctx.getClientHeader().getPostData() != null) {
+			UrlEncoded enc = ctx.getClientHeader().getPostData().getParsedAs(DefaultClientContentTypes.URLENCODED);
 			String secret = enc.getFirst("secret");
 			String id = enc.getFirst("registration-id");
 			if(id == null || !ACTIVE_REGISTRATIONS.containsKey(id)) {
@@ -57,7 +59,7 @@ public class RegistrationSecretDocument implements HttpDocument {
 			}else {
 				ACTIVE_REGISTRATIONS.remove(id);
 				ctx.getServerHeader().setStatusCode(HttpStatusCodes.ACCESS_DENIED_403);
-				ctx.getServerHeader().setContent("text/plain", "Invalid secret".getBytes(StandardCharsets.UTF_8));
+				ctx.getServerHeader().setContent(MimeType.TEXT, "Invalid secret".getBytes(StandardCharsets.UTF_8));
 				return;
 			}
 		}

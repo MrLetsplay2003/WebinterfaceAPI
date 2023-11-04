@@ -9,6 +9,7 @@ import java.util.Map;
 import me.mrletsplay.mrcore.http.HttpException;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
+import me.mrletsplay.simplehttpserver.http.util.MimeType;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.config.DefaultSettings;
 
@@ -22,7 +23,7 @@ public class IncludedFilesDocument implements HttpDocument {
 
 	private CachedFile loadContentNoCache(Path path) {
 		try {
-			return new CachedFile(Files.probeContentType(path), Files.readAllBytes(path));
+			return new CachedFile(MimeType.of(Files.probeContentType(path)), Files.readAllBytes(path));
 		} catch (IOException e) {
 			throw new HttpException("Failed to load file", e);
 		}
@@ -46,15 +47,15 @@ public class IncludedFilesDocument implements HttpDocument {
 			CachedFile f = loadContent(p);
 			HttpRequestContext.getCurrentContext().getServerHeader().setContent(f.mimeType, f.data);
 		}else{
-			Webinterface.getDocumentProvider().get404Document().createContent();
+			Webinterface.getDocumentProvider().getNotFoundDocument().createContent();
 		}
 	}
 
 	private static class CachedFile {
-		public String mimeType;
+		public MimeType mimeType;
 		public byte[] data;
 
-		public CachedFile(String mimeType, byte[] data) {
+		public CachedFile(MimeType mimeType, byte[] data) {
 			this.mimeType = mimeType;
 			this.data = data;
 		}

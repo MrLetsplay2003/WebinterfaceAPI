@@ -10,6 +10,7 @@ import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.simplehttpserver.http.request.form.FormData;
 import me.mrletsplay.simplehttpserver.http.request.form.FormElement;
 import me.mrletsplay.simplehttpserver.http.request.multipart.Multipart;
+import me.mrletsplay.simplehttpserver.http.util.MimeType;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.page.action.ActionEvent;
 import me.mrletsplay.webinterfaceapi.page.action.ActionResponse;
@@ -53,7 +54,7 @@ public class FileUploadDocument implements HttpDocument {
 	}
 
 	private void setResponse(ActionResponse response) {
-		HttpRequestContext.getCurrentContext().getServerHeader().setContent("application/json", response.toJSON().toString().getBytes(StandardCharsets.UTF_8));
+		HttpRequestContext.getCurrentContext().getServerHeader().setContent(MimeType.JSON, response.toJSON().toString().getBytes(StandardCharsets.UTF_8));
 	}
 
 }

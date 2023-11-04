@@ -6,6 +6,7 @@ import java.util.UUID;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
 import me.mrletsplay.simplehttpserver.http.document.HttpDocument;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
+import me.mrletsplay.simplehttpserver.http.util.MimeType;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.Account;
 import me.mrletsplay.webinterfaceapi.auth.AccountConnection;
@@ -27,7 +28,7 @@ public class AuthResponseDocument implements HttpDocument {
 	public void createContent() {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		if(!method.isAvailable()) {
-			c.getServerHeader().setContent("text/plain", "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
+			c.getServerHeader().setContent(MimeType.TEXT, "Auth method unavailable".getBytes(StandardCharsets.UTF_8));
 			return;
 		}
 
@@ -71,10 +72,10 @@ public class AuthResponseDocument implements HttpDocument {
 			c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 			c.getServerHeader().getFields().set("Location", method.getPostAuthRedirectURL().toString());
 		} catch(AuthException e) {
-			c.getServerHeader().setContent("text/plain", ("Auth failed: " + e.getMessage()).getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
+			c.getServerHeader().setContent(MimeType.TEXT, ("Auth failed: " + e.getMessage()).getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 		}catch(Exception e) {
 			Webinterface.getLogger().error("Unexpected authentication error", e);
-			c.getServerHeader().setContent("text/plain", "Auth error".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
+			c.getServerHeader().setContent(MimeType.TEXT, "Auth error".getBytes(StandardCharsets.UTF_8)); // TODO: handle exc msg
 		}
 	}
 

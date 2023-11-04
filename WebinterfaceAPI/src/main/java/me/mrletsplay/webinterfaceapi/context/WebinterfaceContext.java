@@ -8,7 +8,7 @@ import java.util.Set;
 import me.mrletsplay.simplehttpserver.dom.css.StyleSheet;
 import me.mrletsplay.simplehttpserver.dom.html.HtmlDocument;
 import me.mrletsplay.simplehttpserver.dom.js.JSScript;
-import me.mrletsplay.simplehttpserver.http.header.HttpURLPath;
+import me.mrletsplay.simplehttpserver.http.header.HttpUrlPath;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.js.JSModule;
 
@@ -116,7 +116,7 @@ public class WebinterfaceContext {
 	 * Returns the requested path
 	 * @return The requested path
 	 */
-	public HttpURLPath getRequestedPath() {
+	public HttpUrlPath getRequestedPath() {
 		return httpContext.getRequestedPath();
 	}
 

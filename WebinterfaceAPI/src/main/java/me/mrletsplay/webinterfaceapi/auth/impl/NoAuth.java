@@ -1,7 +1,7 @@
 package me.mrletsplay.webinterfaceapi.auth.impl;
 
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
-import me.mrletsplay.simplehttpserver.http.header.HttpURLPath;
+import me.mrletsplay.simplehttpserver.http.header.HttpUrlPath;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.Account;
@@ -47,7 +47,7 @@ public class NoAuth implements AuthMethod {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 		String red = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery().getFirst("from", "/");
-		HttpURLPath pth = getAuthResponseUrl();
+		HttpUrlPath pth = getAuthResponseUrl();
 		pth.getQuery().set("from", red);
 		c.getServerHeader().getFields().set("Location", pth.toString());
 	}

@@ -11,9 +11,9 @@ import me.mrletsplay.mrcore.http.HttpUtils;
 import me.mrletsplay.mrcore.http.data.URLEncodedData;
 import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
-import me.mrletsplay.simplehttpserver.http.header.HttpURLPath;
+import me.mrletsplay.simplehttpserver.http.header.HttpUrlPath;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
-import me.mrletsplay.simplehttpserver.http.request.urlencoded.URLEncoded;
+import me.mrletsplay.simplehttpserver.http.request.urlencoded.UrlEncoded;
 import me.mrletsplay.webinterfaceapi.Webinterface;
 import me.mrletsplay.webinterfaceapi.auth.AccountConnection;
 import me.mrletsplay.webinterfaceapi.auth.AuthException;
@@ -79,7 +79,7 @@ public class DiscordAuth implements AuthMethod {
 		HttpRequestContext c = HttpRequestContext.getCurrentContext();
 		c.getServerHeader().setStatusCode(HttpStatusCodes.SEE_OTHER_303);
 
-		URLEncoded query = HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQuery();
+		UrlEncoded query = HttpRequestContext.getCurrentContext().getClientHeader().getPath().getQuery();
 		boolean connect = query.has("connect") && query.getFirst("connect").equals("true");
 
 		c.getServerHeader().getFields().set("Location", AUTH_ENDPOINT
@@ -134,10 +134,10 @@ public class DiscordAuth implements AuthMethod {
 	}
 
 	@Override
-	public HttpURLPath getPostAuthRedirectURL() {
+	public HttpUrlPath getPostAuthRedirectURL() {
 		String path = HttpRequestContext.getCurrentContext().getRequestedPath().getQuery().getFirst("state", "/");
 		if(path.startsWith("connect~")) path = path.substring("connect~".length());
-		return HttpURLPath.of(path);
+		return HttpUrlPath.of(path);
 	}
 
 	@Override
