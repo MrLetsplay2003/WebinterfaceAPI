@@ -34,11 +34,11 @@ open module me.mrletsplay.webinterfaceapi {
 	requires transitive simplehttpserver;
 	requires transitive org.slf4j;
 	requires transitive org.commonmark;
+	requires transitive java.sql;
 
 	requires org.apache.commons.text;
-	requires java.sql;
-	requires commons.dbcp2;
 	requires java.management;
+	requires transitive org.apache.commons.dbcp2;
 
 	uses Driver;
 }

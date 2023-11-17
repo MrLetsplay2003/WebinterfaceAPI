@@ -13,7 +13,7 @@
 	</modules>
 	
 	<properties>
-		<mrcore.version>4.3-SNAPSHOT</mrcore.version>
+		<mrcore.version>4.4</mrcore.version>
 		<simplehttpserver.version>2.0-SNAPSHOT</simplehttpserver.version>
 	</properties>
 
