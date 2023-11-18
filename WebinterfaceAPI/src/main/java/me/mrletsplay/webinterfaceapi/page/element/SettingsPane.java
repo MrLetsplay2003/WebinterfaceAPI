@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import me.mrletsplay.mrcore.json.JSONArray;
 import me.mrletsplay.mrcore.misc.Complex;
 import me.mrletsplay.mrcore.misc.NullableOptional;
 import me.mrletsplay.webinterfaceapi.config.Config;
@@ -367,6 +368,11 @@ public class SettingsPane extends Group {
 	private static <T> NullableOptional<T> jsonCast(Object o, Class<T> typeClass, Complex<?> exactClass) {
 		if(o == null) return NullableOptional.of(null);
 		if(typeClass.isInstance(o)) return NullableOptional.of(typeClass.cast(o));
+
+		if(typeClass == List.class && o instanceof JSONArray) {
+			return NullableOptional.of(typeClass.cast(((JSONArray) o).toList()));
+		}
+
 		if(Number.class.isAssignableFrom(typeClass)) {
 			if(!(o instanceof Number)) return NullableOptional.empty();
 			Number n = (Number) o;

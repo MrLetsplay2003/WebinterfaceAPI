@@ -1,7 +1,10 @@
 package me.mrletsplay.webinterfaceapi.config;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
+import me.mrletsplay.simplehttpserver.http.HttpRequestMethod;
 import me.mrletsplay.webinterfaceapi.config.setting.AutoSetting;
 import me.mrletsplay.webinterfaceapi.config.setting.AutoSettings;
 import me.mrletsplay.webinterfaceapi.config.setting.SettingsCategory;
@@ -23,7 +26,8 @@ public class DefaultSettings implements AutoSettings {
 		https = new SettingsCategory("HTTPS"),
 		auth = new SettingsCategory("Auth"),
 		php = new SettingsCategory("PHP"),
-		performance = new SettingsCategory("Performance");
+		performance = new SettingsCategory("Performance"),
+		cors = new SettingsCategory("CORS");
 
 	// General
 
@@ -107,6 +111,26 @@ public class DefaultSettings implements AutoSettings {
 
 	public static final BooleanSetting
 		ENABLE_FILE_CACHING = performance.addBoolean("performance.file-caching", true, "Enable file caching");
+
+	// CORS
+
+	public static final BooleanSetting
+		CORS_ALLOW_ALL_ORIGINS = cors.addBoolean("cors.allow-all-origins", false, "Allow all origins");
+
+	public static final StringListSetting
+		CORS_ALLOWED_ORIGINS = cors.addStringList("cors.allowed-origins", Collections.emptyList(), "Allowed origins"),
+		CORS_ALLOWED_HEADERS = cors.addStringList("cors.allowed-headers", Collections.emptyList(), "Allowed headers"),
+		CORS_EXPOSED_HEADERS = cors.addStringList("cors.exposed-headers", Collections.emptyList(), "Exposed headers");
+
+	public static final IntSetting
+		CORS_MAX_AGE = cors.addInt("cors.max-age", 5, "Max age");
+
+	public static final BooleanSetting
+		CORS_ALLOW_CREDENTIALS = cors.addBoolean("cors.allow-credentials", false, "Allow credentials"),
+		CORS_SEND_ALL_ALLOWED_METHODS = cors.addBoolean("cors.send-all-allowed-methods", false, "Send all allowed methods", "Sends all allowed methods that are configured, not just the ones for which documents are registered");
+
+	public static final StringListSetting
+		CORS_ALLOWED_METHODS = cors.addStringList("cors.allowed-methods", Arrays.stream(HttpRequestMethod.values()).map(m -> m.name()).collect(Collectors.toList()), "Allowed methods");
 
 	private DefaultSettings() {}
 

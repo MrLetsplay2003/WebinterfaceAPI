@@ -23,6 +23,7 @@ import me.mrletsplay.mrcore.json.JSONObject;
 import me.mrletsplay.mrcore.misc.ByteUtils;
 import me.mrletsplay.simplehttpserver.http.HttpRequestMethod;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
+import me.mrletsplay.simplehttpserver.http.cors.CorsConfiguration;
 import me.mrletsplay.simplehttpserver.http.document.DefaultDocumentProvider;
 import me.mrletsplay.simplehttpserver.http.document.DocumentProvider;
 import me.mrletsplay.simplehttpserver.http.header.HttpServerHeader;
@@ -172,6 +173,15 @@ public class Webinterface {
 			.host(config.getSetting(DefaultSettings.HTTP_BIND))
 			.port(config.getSetting(DefaultSettings.HTTP_PORT))
 			.debugMode(config.getSetting(DefaultSettings.ENABLE_DEBUG_MODE))
+			.defaultCorsConfiguration(CorsConfiguration.createDefault()
+				.allowAllOrigins(config.getSetting(DefaultSettings.CORS_ALLOW_ALL_ORIGINS))
+				.addAllowedOrigins(config.getSetting(DefaultSettings.CORS_ALLOWED_ORIGINS).toArray(String[]::new))
+				.addAllowedHeaders(config.getSetting(DefaultSettings.CORS_ALLOWED_HEADERS).toArray(String[]::new))
+				.addExposedHeader(config.getSetting(DefaultSettings.CORS_EXPOSED_HEADERS).toArray(String[]::new))
+				.maxAge(config.getSetting(DefaultSettings.CORS_MAX_AGE))
+				.allowCredentials(config.getSetting(DefaultSettings.CORS_ALLOW_CREDENTIALS))
+				.sendAllAllowedMethods(config.getSetting(DefaultSettings.CORS_SEND_ALL_ALLOWED_METHODS))
+				.addAllowedMethods(config.getSetting(DefaultSettings.CORS_ALLOWED_METHODS).stream().map(HttpRequestMethod::get).toArray(HttpRequestMethod[]::new)))
 			.create());
 		httpServer.setDocumentProvider(documentProvider);
 
