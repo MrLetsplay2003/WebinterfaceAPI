@@ -177,7 +177,7 @@ public class Webinterface {
 				.allowAllOrigins(config.getSetting(DefaultSettings.CORS_ALLOW_ALL_ORIGINS))
 				.addAllowedOrigins(config.getSetting(DefaultSettings.CORS_ALLOWED_ORIGINS).toArray(String[]::new))
 				.addAllowedHeaders(config.getSetting(DefaultSettings.CORS_ALLOWED_HEADERS).toArray(String[]::new))
-				.addExposedHeader(config.getSetting(DefaultSettings.CORS_EXPOSED_HEADERS).toArray(String[]::new))
+				.addExposedHeaders(config.getSetting(DefaultSettings.CORS_EXPOSED_HEADERS).toArray(String[]::new))
 				.maxAge(config.getSetting(DefaultSettings.CORS_MAX_AGE))
 				.allowCredentials(config.getSetting(DefaultSettings.CORS_ALLOW_CREDENTIALS))
 				.sendAllAllowedMethods(config.getSetting(DefaultSettings.CORS_SEND_ALL_ALLOWED_METHODS))
