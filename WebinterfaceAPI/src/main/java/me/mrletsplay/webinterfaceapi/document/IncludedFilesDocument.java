@@ -42,7 +42,7 @@ public class IncludedFilesDocument implements HttpDocument {
 	@Override
 	public void createContent() {
 		String path = HttpRequestContext.getCurrentContext().getPathParameters().get("path");
-		Path p = Webinterface.getIncludePath().resolve(path);
+		Path p = Webinterface.getIncludePath().resolve(path).normalize();
 		if(p.startsWith(Webinterface.getIncludePath()) && Files.isRegularFile(p)) { // Check that file exists and is actually in the directory
 			CachedFile f = loadContent(p);
 			HttpRequestContext.getCurrentContext().getServerHeader().setContent(f.mimeType, f.data);
