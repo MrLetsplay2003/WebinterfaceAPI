@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Pattern;
 
+import me.mrletsplay.simplehttpserver.http.HttpRequestMethod;
 import me.mrletsplay.simplehttpserver.http.HttpStatusCodes;
 import me.mrletsplay.simplehttpserver.http.header.DefaultClientContentTypes;
 import me.mrletsplay.simplehttpserver.http.header.HttpUrlPath;
@@ -51,6 +52,11 @@ public class PasswordAuth implements AuthMethod {
 		pth.getQuery().set("from", red);
 		if(con) pth.getQuery().set("connect", "true");
 		c.getServerHeader().getFields().set("Location", pth.toString());
+	}
+
+	@Override
+	public HttpRequestMethod getAuthResponseMethod() {
+		return HttpRequestMethod.POST;
 	}
 
 	@Override

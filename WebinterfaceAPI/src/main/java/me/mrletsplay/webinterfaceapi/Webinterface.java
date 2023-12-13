@@ -507,7 +507,7 @@ public class Webinterface {
 
 	private static void registerAuthPages(AuthMethod method) {
 		documentProvider.register(HttpRequestMethod.GET, "/auth/" + method.getID(), new AuthRequestDocument(method));
-		documentProvider.register(HttpRequestMethod.POST, "/auth/" + method.getID() + "/response", new AuthResponseDocument(method));
+		documentProvider.register(method.getAuthResponseMethod(), "/auth/" + method.getID() + "/response", new AuthResponseDocument(method));
 	}
 
 	public static List<AuthMethod> getAuthMethods() {

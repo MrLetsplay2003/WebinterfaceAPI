@@ -2,6 +2,7 @@ package me.mrletsplay.webinterfaceapi.auth;
 
 import java.io.File;
 
+import me.mrletsplay.simplehttpserver.http.HttpRequestMethod;
 import me.mrletsplay.simplehttpserver.http.header.HttpUrlPath;
 import me.mrletsplay.simplehttpserver.http.request.HttpRequestContext;
 import me.mrletsplay.simplehttpserver.http.request.urlencoded.UrlEncoded;
@@ -18,6 +19,10 @@ public interface AuthMethod {
 	public void initialize();
 
 	public void handleAuthRequest();
+
+	public default HttpRequestMethod getAuthResponseMethod() {
+		return HttpRequestMethod.GET;
+	}
 
 	public AccountConnection handleAuthResponse() throws AuthException;
 
