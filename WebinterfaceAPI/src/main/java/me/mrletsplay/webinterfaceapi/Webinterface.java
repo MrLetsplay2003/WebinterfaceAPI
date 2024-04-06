@@ -146,7 +146,8 @@ public class Webinterface {
 		accountStorage = null;
 		sessionStorage = null;
 		credentialsStorage = null;
-		config = null;
+		config = new FileConfig(new File(getConfigurationDirectory(), "config.yml"));
+		config.registerSettings(DefaultSettings.INSTANCE);
 		markdownRenderer = new MarkdownRenderer();
 		webSocketEndpoint = new WebSocketDocument();
 		setup = new Setup();
@@ -160,9 +161,6 @@ public class Webinterface {
 	 * Initializes core components needed for any WIAPI installation
 	 */
 	private static void initialize() {
-		config = new FileConfig(new File(getConfigurationDirectory(), "config.yml"));
-		config.registerSettings(DefaultSettings.INSTANCE);
-
 		Arrays.stream(DefaultJSModule.values()).forEach(Webinterface::registerJSModule);
 
 		PHP.setEnabled(config.getSetting(DefaultSettings.ENABLE_PHP));
