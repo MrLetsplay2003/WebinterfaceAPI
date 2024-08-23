@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>WebinterfaceAPI-Parent</artifactId>
 		<groupId>me.mrletsplay</groupId>
-		<version>3.5-SNAPSHOT</version>
+		<version>3.5</version>
 	</parent>
 
 	<artifactId>WebinterfaceAPI-Bukkit</artifactId>
